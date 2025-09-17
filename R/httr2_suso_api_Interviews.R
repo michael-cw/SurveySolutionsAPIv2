@@ -316,7 +316,7 @@ suso_get_stats_interview<-function(server= suso_get_api_key("susoServer"),
 
     responses <- httr2::req_perform_parallel(
       requests,
-      pool = curl::new_pool(host_con = getOption("suso.maxpar.req"), total_con = getOption("suso.maxpar.con")),
+      max_active = getOption("suso.maxpar.req"),
       on_error = "continue"
     )
 

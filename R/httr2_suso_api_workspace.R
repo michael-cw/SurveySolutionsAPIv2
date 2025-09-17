@@ -403,7 +403,7 @@ suso_assignWorkspace <- function(server = suso_get_api_key("susoServer"),
     # execute requests in parallel
     responses <- httr2::req_perform_parallel(
       requests,
-      pool = curl::new_pool(host_con = getOption("suso.maxpar.req"), total_con = getOption("suso.maxpar.con")),
+      max_active = getOption("suso.maxpar.req"),
       on_error = "return"
     )
 
