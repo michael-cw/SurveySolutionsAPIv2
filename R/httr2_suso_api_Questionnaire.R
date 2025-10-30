@@ -73,33 +73,33 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
                                               "RejectedByHeadquarters",
                                               "ApprovedByHeadquarters"),
                                  supervisorName = NULL) {
-
+  
   take <- 100
   # workspace default
   workspace<-.ws_default(ws = workspace)
-
+  
   # check (.helpers.R)
   .check_basics(token, server, apiUser, apiPass)
-
+  
   # check if questID is provided & correct
   if(!is.null(questID)){
     .checkUUIDFormat(questID)
   }
-
+  
   # check if version is provided & numeric
   if(!is.null(version)){
     .checkNum(version)
   }
-
+  
   # check if operation.type is provided & correct
   operation.type <- match.arg(operation.type)
-
+  
   # define endpoint
   endpoint <- paste0(server, "graphql")
-
+  
   if (operation.type == "list") {
     #uses susographql package
-
+    
     # first request
     quest1<-susographql::suso_gql_questionnaires(
       endpoint = endpoint,
@@ -111,10 +111,10 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
       take = take,
       skip = 0
     )
-
+    
     # check if there are more questionnaires than 100
     tot<-quest1$questionnaires$totalCount
-
+    
     # get first 100
     quest1<-data.table::data.table(quest1$questionnaires$nodes)
     # get the rest
@@ -135,13 +135,13 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
           skip = i*take
         )$questionnaires$nodes
       }
-
+      
       # bind all together
       quest2<-data.table::rbindlist(quest2)
       quest1<-data.table::rbindlist(list(quest1,quest2))
-
+      
     }
-
+    
     # if empty return
     if(nrow(quest1)==0) {
       return(data.table::data.table(NULL))
@@ -151,11 +151,11 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
                            old = c("questionnaireId", "variable", "version", "id", "title"),
                            new = c("QuestionnaireId", "Variable", "Version", "QuestionnaireIdentity", "Title")
       )
-
+      
       # Set date time to utc with lubridate
       # !! ATTENTION: susographql does currently not return the data, check and update
       # quest1[,LastEntryDate:=as_datetime(LastEntryDate)][]
-
+      
       # add translation ids (if any)
       if(!is.null(quest1$translations) && !(all(sapply(quest1[["translations"]], function(x) length(x) == 0)))){
         quest1<-.unnest_df_in_dt(quest1, col=translations, id = (names(quest1)[names(quest1)!="translations"]), "name", "id")
@@ -164,13 +164,13 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
         # if none available delete
         quest1<-quest1[,translations:=NULL]
       }
-
+      
       # return
       return(quest1[])
     }
   } else if (operation.type == "statuses") {
     # only for consistency reason, api is deprecated
-
+    
     test_json<-jsonlite::fromJSON('[
                                       "Restored",
                                       "Created",
@@ -188,7 +188,7 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
                                     ]'
     )
     return(test_json)
-
+    
   } else if(operation.type == "structure") {
     if (is.null(questID) | is.null(version)){
       withr::with_options(
@@ -196,19 +196,19 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
         cli::cli_abort(c("x" = "questID and/or version missing."), call = NULL)
       )
     }
-
+    
     # Build the URL, first for token, then for base auth
     if(!is.null(token)){
       url<-.baseurl_token(server, workspace, token, "questionnaires", version = "v1")
     } else {
       url<-.baseurl_baseauth(server, workspace, apiUser, apiPass, "questionnaires", version = "v1")
     }
-
+    
     url<-req_url_path_append(url, questID, version, "document")
-
+    
     # get argument for class
     args<-.getargsforclass(workspace = workspace)
-
+    
     # check if export file with same parameters is is available
     aJsonFile<-tempfile(fileext = ".json")
     tryCatch(
@@ -216,14 +216,14 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
         httr2::req_perform(
           path = aJsonFile
         )
-
+      
       # get the response data
       if(resp_has_body(resp)){
         # get body by content type
         if(resp_content_type(resp) == "application/json") {
           test_json <- tidyjson::read_json(aJsonFile)
           test_json <- .suso_transform_fullValid_q(test_json)
-
+          
           # Variable Format
           if(nrow(test_json$q)>0) {
             test_json$q[,LastEntryDate:=lubridate::as_datetime(LastEntryDate)][]
@@ -236,9 +236,9 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
       },
       error = function(e) .http_error_handler(e, "ass")
     )
-
+    
     return(test_json)
-
+    
   } else if(operation.type == "interviews") {
     # use graphql
     # prepare inputs
@@ -247,23 +247,23 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
       .checkNum(errorsCount)
       op<-rlang::arg_match(errosCountFilter)
       errorsCount<-switch(op,
-                 lower = susographql::lte(errorsCount),
-                 equal = susographql::eq(errorsCount),
-                 upper = susographql::gte(errorsCount)
-                 )
+                          lower = susographql::lte(errorsCount),
+                          equal = susographql::eq(errorsCount),
+                          upper = susographql::gte(errorsCount)
+      )
     }
-
+    
     # not answered count
     if(!is.null(notAnsweredCount)){
       .checkNum(notAnsweredCount)
       op<-rlang::arg_match(notAnsweredCountFilter)
       notAnsweredCount<-switch(op,
-                          lower = susographql::lte(notAnsweredCount),
-                          equal = susographql::eq(notAnsweredCount),
-                          upper = susographql::gte(notAnsweredCount)
-                          )
+                               lower = susographql::lte(notAnsweredCount),
+                               equal = susographql::eq(notAnsweredCount),
+                               upper = susographql::gte(notAnsweredCount)
+      )
     }
-
+    
     # workstatus
     if(!is.null(workStatus)) {
       workStatus<-rlang::arg_match(workStatus)
@@ -271,23 +271,23 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
       # NULL if all
       if(workStatus=="ALL") workStatus<-NULL
     }
-
+    
     # int key
     if(!is.null(InterviewKey)) {
       .checkIntKeyformat(InterviewKey)
-
+      
     }
-
+    
     # interview mode
     if(!is.null(interviewMode)) {
       interviewMode<-rlang::arg_match(interviewMode)
     }
-
+    
     # assid
     if(!is.null(AssId)) .checkNum(AssId)
-
-
-
+    
+    
+    
     # first request
     quest1<-susographql::suso_gql_interviews(
       endpoint = endpoint,
@@ -307,45 +307,47 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
       take = take,
       skip = 0
     )
-
+    
     # check if there are more questionnaires than 100
     tot<-quest1$interviews$totalCount
-
+    
     # get first 100
     quest1<-data.table::data.table(quest1$interviews$nodes)
-
+    
     if(tot>take){
       # if yes, then get the rest in a loop
       rest<-tot-take
       steps<-ceiling(rest/take)
       quest2<-list()
       for(i in 1:steps){
-        quest2[[i]]<-susographql::suso_gql_interviews(
-          endpoint = endpoint,
-          workspace = workspace,
-          user = apiUser,
-          password = apiPass,
-          questionnaireId = questID,
-          questionnaireVersion = susographql::eq(version),
-          errorsCount = errorsCount,
-          notAnsweredCount = notAnsweredCount,
-          status = workStatus,
-          clientKey = InterviewKey,
-          supervisorName = supervisorName,
-          responsibleName = ResponsibleName,
-          interviewMode = interviewMode,
-          assignmentId = AssId,
-          take = take,
-          skip = i*take
-        )$interviews$nodes
+        quest2[[i]]<-data.table::data.table(
+          susographql::suso_gql_interviews(
+            endpoint = endpoint,
+            workspace = workspace,
+            user = apiUser,
+            password = apiPass,
+            questionnaireId = questID,
+            questionnaireVersion = susographql::eq(version),
+            errorsCount = errorsCount,
+            notAnsweredCount = notAnsweredCount,
+            status = workStatus,
+            clientKey = InterviewKey,
+            supervisorName = supervisorName,
+            responsibleName = ResponsibleName,
+            interviewMode = interviewMode,
+            assignmentId = AssId,
+            take = take,
+            skip = i*take
+          )$interviews$nodes
+        )
       }
-
+      
       # bind all together
       quest2<-data.table::rbindlist(quest2, fill = T)
-      quest1<-data.table::rbindlist(list(quest1,quest2))
-
+      quest1<-data.table::rbindlist(list(quest1,quest2), fill = T)
+      
     }
-
+    
     # if empty return
     if(nrow(quest1)==0) {
       return(data.table::data.table(NULL))
@@ -364,6 +366,6 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
     }
     return(quest1)
   }
-
+  
   ##############################################
 }
