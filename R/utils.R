@@ -256,28 +256,74 @@
 .detectCores <- function() {
   # Determine OS
   os <- .Platform$OS.type
-
-  # Define system command based on the OS
+  
   if (os == "unix") {
-    command <- "nproc"
+    # Check if it's macOS or Linux
+    sys_info <- Sys.info()
+    if (sys_info["sysname"] == "Darwin") {
+      # macOS
+      command <- "sysctl -n hw.logicalcpu"
+    } else {
+      # Linux and other Unix-like systems
+      command <- "nproc"
+    }
+    
+    # Execute the command
+    result <- tryCatch(
+      system(command, intern = TRUE, ignore.stderr = TRUE),
+      error = function(e) NULL
+    )
+    
+    if (!is.null(result) && length(result) > 0) {
+      cores <- as.numeric(result[1])
+      if (!is.na(cores) && cores > 0) {
+        return(cores)
+      }
+    }
+    
   } else if (os == "windows") {
-    command <- "WMIC CPU Get NumberOfLogicalProcessors"
-  } else {
-    stop("Unsupported operating system.")
+    # Try multiple methods for Windows
+    
+    # Method 1: Try using environment variable (fastest and most reliable)
+    cores <- as.numeric(Sys.getenv("NUMBER_OF_PROCESSORS"))
+    if (!is.na(cores) && cores > 0) {
+      return(cores)
+    }
+    
+    # Method 2: Try PowerShell (more reliable on Windows 11)
+    result <- tryCatch({
+      system("powershell -Command \"(Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors\"", 
+             intern = TRUE, ignore.stderr = TRUE)
+    }, error = function(e) NULL)
+    
+    if (!is.null(result) && length(result) > 0) {
+      cores <- as.numeric(result[1])
+      if (!is.na(cores) && cores > 0) {
+        return(cores)
+      }
+    }
+    
+    # Method 3: Try WMIC (might be deprecated in Windows 11)
+    result <- tryCatch({
+      system("WMIC CPU Get NumberOfLogicalProcessors /Value", 
+             intern = TRUE, ignore.stderr = TRUE)
+    }, error = function(e) NULL)
+    
+    if (!is.null(result) && length(result) > 0) {
+      # Parse WMIC output
+      for (line in result) {
+        if (grepl("NumberOfLogicalProcessors", line)) {
+          cores <- as.numeric(sub(".*=", "", line))
+          if (!is.na(cores) && cores > 0) {
+            return(cores)
+          }
+        }
+      }
+    }
   }
-
-  # Execute the command
-  result <- system(command, intern = TRUE)
-
-  # Process the output
-  if (os == "windows") {
-    # Extract the number from the output
-    cores <- as.numeric(result[2])
-  } else {
-    cores <- as.numeric(result)
-  }
-
-  return(cores)
+  
+  # Ultimate fallback: use R's built-in function
+  # return(parallel::detectCores())
 }
 
 
