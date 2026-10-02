@@ -17,6 +17,17 @@ on the robust 'httr2' package, this version supersedes the previous
 operations such as censuses, the package also incorporates features for
 parallel processing, enhancing its efficiency and scalability.
 
+## See also
+
+Useful links:
+
+- <https://michael-cw.github.io/SurveySolutionsAPIv2/>
+
+- <https://github.com/michael-cw/SurveySolutionsAPIv2>
+
+- Report bugs at
+  <https://github.com/michael-cw/SurveySolutionsAPIv2/issues>
+
 ## Author
 
 **Maintainer**: Michael Wild <mwild@worldbank.org> \[copyright holder\]

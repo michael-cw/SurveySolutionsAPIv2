@@ -66,23 +66,31 @@ Returns an S3 object of assignmentClass
 
 If operations.type is *recordAudio*, `TRUE/FALSE` is required as
 payload. If it is *archive*, *unarchive*, *close*, or *downsize*, no
-payload is required. If it is *assign* the payload must be the uid of
-the new responsible person. If it is *changeQuantity* the payload must
-be the new integer number of assignments (-1 for unlimited). If it is
-*changeStatus* the payload must be the new status string (e.g. "Closed",
-"Deleted") or a named list with Status and optional Comment. If it is
-*changeTargetArea* the payload must be the new target area string.
+payload is required. If it is *assign* the payload must be the user ID
+(UUID) or username of the new responsible person (character, or
+data.frame/list with Responsible). If it is *changeQuantity* the payload
+must be the new integer number of assignments (-1 for unlimited). If it
+is *changeStatus* the payload must be the new status string (e.g.
+"Closed", "Deleted") or a named list with Status and optional Comment.
+If it is *changeTargetArea* the payload must be the new target area
+string.
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
 
-# (re-)assign existing assignment
+# (re-)assign existing assignment by UUID, username, or data.frame
 asslist<-suso_set_assignments(
                    workspace = "myworkspace",
                    AssId = 10,
                    payload = "43f3d2bd-7959-4706-97ae-2653b5685c9e",
+                   operations.type = "assign"
+                   )
+asslist<-suso_set_assignments(
+                   workspace = "myworkspace",
+                   AssId = 10,
+                   payload = data.frame(Responsible = "interviewer01"),
                    operations.type = "assign"
                    )
 # downsize assignment
