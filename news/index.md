@@ -4,8 +4,8 @@
 
 #### New Features & Endpoint Parity
 
-- Added full coverage for modern Survey Solutions REST (v1, v2) and
-  GraphQL endpoints:
+- Completed coverage of all Survey Solutions REST (v1, v2) and GraphQL
+  endpoints:
   - **Export Operations**:
     [`suso_getExportList()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_getExportList.md)
     to list export jobs,
@@ -46,21 +46,10 @@
 
 #### Questionnaire Processing
 
-- Modernized `suso_getQuestDetails(operation.type = "structure")` to
-  parse complex modern questionnaire JSON schemas into clean flat
-  tables:
-  - Returns structured questions (`q`) and validation/metadata tables
-    (`v`).
-  - Added `include_raw = FALSE` argument to optionally retain raw JSON
-    column representations when needed for custom post-processing.
-  - Robust handling of nested rosters, cascading categories, conditions,
-    and validation rules.
+- Updated `suso_getQuestDetails(operation.type = "structure")`
 
 #### Performance & Modernization
 
-- Complete port to the latest `httr2` ecosystem with standardized
-  request builders, error handling via `cli` and `rlang`, and automated
-  token refreshment.
 - Parallel HTTP request execution using
   [`httr2::req_perform_parallel()`](https://httr2.r-lib.org/reference/req_perform_parallel.html)
   with configurable concurrency limits via
@@ -68,27 +57,9 @@
 
 #### Documentation, Vignettes & Website
 
-- Complete documentation overhaul across all 65 exported functions,
-  ensuring every function includes comprehensive parameter descriptions,
-  return value specifications, and executable or `\dontrun{}` examples.
 - Added 5 thematic vignettes covering end-to-end Survey Solutions
-  workflows:
-  - `quickstart`: Authentication, workspace switching, and package
-    options.
-  - `questionnaires`: Hierarchies, skip patterns, validation rules, and
-    codebooks.
-  - `survey_management`: Multi-tenant workspaces, batch user
-    provisioning, preloaded assignments, and GIS maps.
-  - `interview_monitoring`: Lifecycle statuses, reassignments, comments,
-    and paradata analytics.
-  - `data_export`: Asynchronous v2 export pipelines, progress polling,
-    and `exportClass` data containers.
-- Bundled sanitized offline demonstration datasets in `inst/extdata/`
-  for robust vignette compilation without exposing server credentials.
-- Added `pkgdown` companion website configuration and GitHub Actions
-  workflows for continuous integration (`R-CMD-check.yaml`) and
-  automated website publishing (`pkgdown.yaml`).
-- Passed `R CMD check --as-cran` with 0 errors and 0 warnings.
+  workflows
+- Added `pkgdown` companion website
 
 ## SurveySolutionsAPIv2 0.1.1
 

@@ -54,7 +54,7 @@
 <h2 class="pkg-version" data-toc-text="0.1.2" id="surveysolutionsapiv2-012">SurveySolutionsAPIv2 0.1.2<a class="anchor" aria-label="anchor" href="#surveysolutionsapiv2-012"></a></h2>
 <div class="section level4">
 <h4 id="new-features--endpoint-parity-0-1-2">New Features &amp; Endpoint Parity<a class="anchor" aria-label="anchor" href="#new-features--endpoint-parity-0-1-2"></a></h4>
-<ul><li>Added full coverage for modern Survey Solutions REST (v1, v2) and GraphQL endpoints:
+<ul><li>Completed coverage of all Survey Solutions REST (v1, v2) and GraphQL endpoints:
 <ul><li>
 <strong>Export Operations</strong>: <code><a href="../reference/suso_getExportList.html">suso_getExportList()</a></code> to list export jobs, <code><a href="../reference/suso_getExportProcess.html">suso_getExportProcess()</a></code> to check job status, and <code><a href="../reference/suso_cancelExport.html">suso_cancelExport()</a></code> to abort running export jobs.</li>
 <li>
@@ -73,35 +73,17 @@
 </ul></div>
 <div class="section level4">
 <h4 id="questionnaire-processing-0-1-2">Questionnaire Processing<a class="anchor" aria-label="anchor" href="#questionnaire-processing-0-1-2"></a></h4>
-<ul><li>Modernized <code>suso_getQuestDetails(operation.type = "structure")</code> to parse complex modern questionnaire JSON schemas into clean flat tables:
-<ul><li>Returns structured questions (<code>q</code>) and validation/metadata tables (<code>v</code>).</li>
-<li>Added <code>include_raw = FALSE</code> argument to optionally retain raw JSON column representations when needed for custom post-processing.</li>
-<li>Robust handling of nested rosters, cascading categories, conditions, and validation rules.</li>
-</ul></li>
+<ul><li>Updated <code>suso_getQuestDetails(operation.type = "structure")</code>
+</li>
 </ul></div>
 <div class="section level4">
 <h4 id="performance--modernization-0-1-2">Performance &amp; Modernization<a class="anchor" aria-label="anchor" href="#performance--modernization-0-1-2"></a></h4>
-<ul><li>Complete port to the latest <code>httr2</code> ecosystem with standardized request builders, error handling via <code>cli</code> and <code>rlang</code>, and automated token refreshment.</li>
-<li>Parallel HTTP request execution using <code><a href="https://httr2.r-lib.org/reference/req_perform_parallel.html" class="external-link">httr2::req_perform_parallel()</a></code> with configurable concurrency limits via <code><a href="../reference/suso_set_maxpar_req.html">suso_set_maxpar_req()</a></code>.</li>
+<ul><li>Parallel HTTP request execution using <code><a href="https://httr2.r-lib.org/reference/req_perform_parallel.html" class="external-link">httr2::req_perform_parallel()</a></code> with configurable concurrency limits via <code><a href="../reference/suso_set_maxpar_req.html">suso_set_maxpar_req()</a></code>.</li>
 </ul></div>
 <div class="section level4">
 <h4 id="documentation-vignettes--website-0-1-2">Documentation, Vignettes &amp; Website<a class="anchor" aria-label="anchor" href="#documentation-vignettes--website-0-1-2"></a></h4>
-<ul><li>Complete documentation overhaul across all 65 exported functions, ensuring every function includes comprehensive parameter descriptions, return value specifications, and executable or <code>\dontrun{}</code> examples.</li>
-<li>Added 5 thematic vignettes covering end-to-end Survey Solutions workflows:
-<ul><li>
-<code>quickstart</code>: Authentication, workspace switching, and package options.</li>
-<li>
-<code>questionnaires</code>: Hierarchies, skip patterns, validation rules, and codebooks.</li>
-<li>
-<code>survey_management</code>: Multi-tenant workspaces, batch user provisioning, preloaded assignments, and GIS maps.</li>
-<li>
-<code>interview_monitoring</code>: Lifecycle statuses, reassignments, comments, and paradata analytics.</li>
-<li>
-<code>data_export</code>: Asynchronous v2 export pipelines, progress polling, and <code>exportClass</code> data containers.</li>
-</ul></li>
-<li>Bundled sanitized offline demonstration datasets in <code>inst/extdata/</code> for robust vignette compilation without exposing server credentials.</li>
-<li>Added <code>pkgdown</code> companion website configuration and GitHub Actions workflows for continuous integration (<code>R-CMD-check.yaml</code>) and automated website publishing (<code>pkgdown.yaml</code>).</li>
-<li>Passed <code>R CMD check --as-cran</code> with 0 errors and 0 warnings.</li>
+<ul><li>Added 5 thematic vignettes covering end-to-end Survey Solutions workflows</li>
+<li>Added <code>pkgdown</code> companion website</li>
 </ul></div>
 </div>
     <div class="section level2">
