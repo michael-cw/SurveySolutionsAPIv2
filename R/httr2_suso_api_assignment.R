@@ -417,7 +417,7 @@ suso_get_assignments<-function(server = suso_get_api_key("susoServer"),
 #'
 #' @details If operations.type is \emph{recordAudio}, \code{TRUE/FALSE} is required as payload.
 #' If it is \emph{archive}, \emph{unarchive}, \emph{close}, or \emph{downsize}, no payload is required.
-#' If it is \emph{assign} the payload must be the uid of the new responsible person.
+#' If it is \emph{assign} the payload must be the user ID (UUID) or username of the new responsible person (character, or data.frame/list with Responsible).
 #' If it is \emph{changeQuantity} the payload must be the new integer number of assignments (-1 for unlimited).
 #' If it is \emph{changeStatus} the payload must be the new status string (e.g. "Closed", "Deleted") or a named list with Status and optional Comment.
 #' If it is \emph{changeTargetArea} the payload must be the new target area string.
@@ -427,11 +427,17 @@ suso_get_assignments<-function(server = suso_get_api_key("susoServer"),
 #' @examples
 #' \dontrun{
 #'
-#' # (re-)assign existing assignment
+#' # (re-)assign existing assignment by UUID, username, or data.frame
 #' asslist<-suso_set_assignments(
 #'                    workspace = "myworkspace",
 #'                    AssId = 10,
 #'                    payload = "43f3d2bd-7959-4706-97ae-2653b5685c9e",
+#'                    operations.type = "assign"
+#'                    )
+#' asslist<-suso_set_assignments(
+#'                    workspace = "myworkspace",
+#'                    AssId = 10,
+#'                    payload = data.frame(Responsible = "interviewer01"),
 #'                    operations.type = "assign"
 #'                    )
 #' # downsize assignment
@@ -477,11 +483,15 @@ suso_set_assignments<-function(server = suso_get_api_key("susoServer"),
 
   # check payload by operations type
   if(operations.type=="recordAudio") {
+    if (is.data.frame(payload) && ncol(payload) >= 1) payload <- payload[[1]][1]
+    if (is.list(payload) && length(payload) >= 1) payload <- payload[[1]]
     if(!is.logical(payload)) {
       cli::cli_abort("payload must be TRUE/FALSE")
     }
     js_ch <- list(Enabled = jsonlite::unbox(payload))
   } else if(operations.type=="changeQuantity") {
+    if (is.data.frame(payload) && ncol(payload) >= 1) payload <- payload[[1]][1]
+    if (is.list(payload) && length(payload) >= 1) payload <- payload[[1]]
     if(!is.numeric(payload)) {
       cli::cli_abort("payload must be numeric")
     }
@@ -490,17 +500,51 @@ suso_set_assignments<-function(server = suso_get_api_key("susoServer"),
     }
     js_ch <- as.integer(payload)
   } else if(operations.type=="assign") {
-    .checkUUIDFormat(payload)
-    js_ch <- list(Responsible = jsonlite::unbox(payload))
+    resp_val <- NULL
+    if (is.data.frame(payload)) {
+      if ("Responsible" %in% names(payload)) {
+        resp_val <- payload$Responsible[1]
+      } else if ("ResponsibleId" %in% names(payload)) {
+        resp_val <- payload$ResponsibleId[1]
+      } else if ("ResponsibleName" %in% names(payload)) {
+        resp_val <- payload$ResponsibleName[1]
+      } else if (ncol(payload) >= 1) {
+        resp_val <- payload[[1]][1]
+      }
+    } else if (is.list(payload)) {
+      if ("Responsible" %in% names(payload)) {
+        resp_val <- payload$Responsible
+      } else if ("ResponsibleId" %in% names(payload)) {
+        resp_val <- payload$ResponsibleId
+      } else if ("ResponsibleName" %in% names(payload)) {
+        resp_val <- payload$ResponsibleName
+      } else if (length(payload) >= 1) {
+        resp_val <- payload[[1]]
+      }
+    } else if (is.character(payload) || is.factor(payload)) {
+      resp_val <- as.character(payload)[1]
+    }
+
+    if (is.null(resp_val) || !nzchar(trimws(as.character(resp_val)))) {
+      cli::cli_abort(c("x" = "payload for 'assign' must be a valid user ID (UUID) or username string (or data.frame/list containing Responsible)."))
+    }
+
+    resp_str <- trimws(as.character(resp_val))
+    js_ch <- list(Responsible = jsonlite::unbox(resp_str))
   } else if(operations.type %in% c("close", "archive", "unarchive", "downsize")) {
     js_ch <- NULL
   } else if(operations.type == "changeStatus") {
+    if (is.data.frame(payload)) {
+      payload <- as.list(payload[1, ])
+    }
     if (is.list(payload)) {
       js_ch <- payload
     } else {
       js_ch <- list(Status = jsonlite::unbox(as.character(payload)))
     }
   } else if(operations.type == "changeTargetArea") {
+    if (is.data.frame(payload) && ncol(payload) >= 1) payload <- payload[[1]][1]
+    if (is.list(payload) && length(payload) >= 1) payload <- payload[[1]]
     js_ch <- jsonlite::unbox(as.character(payload))
   }
 
@@ -552,7 +596,7 @@ suso_set_assignments<-function(server = suso_get_api_key("susoServer"),
       return(test_json)
     }
     },
-    error = .http_error_handler
+    error = function(e) .http_error_handler(e, type = "ass")
   )
 
 }

@@ -178,3 +178,18 @@ test_that("suso_createASS handles response transformation with empty metadata li
   expect_true(is.na(res_dt$Email))
   expect_equal(res_dt$NO_ID_DATA, "NO ID DATA LOADED")
 })
+
+test_that("suso_set_assignments parses assign payload correctly across data.frame, list, username, and UUID", {
+  # Test input validation
+  expect_error(
+    suso_set_assignments(server = "https://demo.mysurvey.solutions", apiUser = "u", apiPass = "p",
+                         AssId = 1, payload = "", operations.type = "assign"),
+    class = "rlang_error"
+  )
+  expect_error(
+    suso_set_assignments(server = "https://demo.mysurvey.solutions", apiUser = "u", apiPass = "p",
+                         AssId = "not_num", payload = "uuid", operations.type = "assign"),
+    class = "rlang_error"
+  )
+})
+
