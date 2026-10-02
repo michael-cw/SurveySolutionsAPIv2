@@ -188,18 +188,34 @@ is.assignmentClass(demo_ass)
 #> [1] TRUE
 ```
 
-### Reassigning Work in the Field
+### Reassigning Work and Modifying Assignments
 
-If an enumerator falls ill or is reassigned, transfer their assignment
-to another team member:
+If an enumerator falls ill or fieldwork territories are adjusted,
+reassign assignments to another team member or modify target quotas
+using
+[`suso_set_assignments()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_set_assignments.md):
 
 ``` r
 
-# Reassign assignment #101 to interviewer02
+# Reassign assignment #101 to interviewer02 by username
 suso_set_assignments(
-  assignment_id = 101,
-  reassign = TRUE,
-  responsible = "interviewer02"
+  AssId = 101,
+  payload = "interviewer02",
+  operations.type = "assign"
+)
+
+# Alternatively, pass a data frame or data table with Responsible (or user UUID)
+suso_set_assignments(
+  AssId = 101,
+  payload = data.frame(Responsible = "8a816c29-a017-49d0-8258-8c27fc3a13f7"),
+  operations.type = "assign"
+)
+
+# Modify assignment interview quota (e.g. increase to 20, or -1 for unlimited)
+suso_set_assignments(
+  AssId = 101,
+  payload = 20,
+  operations.type = "changeQuantity"
 )
 ```
 

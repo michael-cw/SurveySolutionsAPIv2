@@ -243,16 +243,31 @@ active workspace:</p>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="reassigning-work-in-the-field">Reassigning Work in the Field<a class="anchor" aria-label="anchor" href="#reassigning-work-in-the-field"></a>
+<h3 id="reassigning-work-and-modifying-assignments">Reassigning Work and Modifying Assignments<a class="anchor" aria-label="anchor" href="#reassigning-work-and-modifying-assignments"></a>
 </h3>
-<p>If an enumerator falls ill or is reassigned, transfer their
-assignment to another team member:</p>
+<p>If an enumerator falls ill or fieldwork territories are adjusted,
+reassign assignments to another team member or modify target quotas
+using <code><a href="../reference/suso_set_assignments.html">suso_set_assignments()</a></code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Reassign assignment #101 to interviewer02</span></span>
+<code class="sourceCode R"><span><span class="co"># Reassign assignment #101 to interviewer02 by username</span></span>
 <span><span class="fu"><a href="../reference/suso_set_assignments.html">suso_set_assignments</a></span><span class="op">(</span></span>
-<span>  assignment_id <span class="op">=</span> <span class="fl">101</span>,</span>
-<span>  reassign <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  responsible <span class="op">=</span> <span class="st">"interviewer02"</span></span>
+<span>  AssId <span class="op">=</span> <span class="fl">101</span>,</span>
+<span>  payload <span class="op">=</span> <span class="st">"interviewer02"</span>,</span>
+<span>  operations.type <span class="op">=</span> <span class="st">"assign"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Alternatively, pass a data frame or data table with Responsible (or user UUID)</span></span>
+<span><span class="fu"><a href="../reference/suso_set_assignments.html">suso_set_assignments</a></span><span class="op">(</span></span>
+<span>  AssId <span class="op">=</span> <span class="fl">101</span>,</span>
+<span>  payload <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Responsible <span class="op">=</span> <span class="st">"8a816c29-a017-49d0-8258-8c27fc3a13f7"</span><span class="op">)</span>,</span>
+<span>  operations.type <span class="op">=</span> <span class="st">"assign"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Modify assignment interview quota (e.g. increase to 20, or -1 for unlimited)</span></span>
+<span><span class="fu"><a href="../reference/suso_set_assignments.html">suso_set_assignments</a></span><span class="op">(</span></span>
+<span>  AssId <span class="op">=</span> <span class="fl">101</span>,</span>
+<span>  payload <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  operations.type <span class="op">=</span> <span class="st">"changeQuantity"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
