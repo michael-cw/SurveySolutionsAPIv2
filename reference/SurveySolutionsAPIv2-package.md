@@ -30,4 +30,4 @@ Useful links:
 
 ## Author
 
-**Maintainer**: Michael Wild <mwild@worldbank.org> \[copyright holder\]
+**Maintainer**: Michael Wild <michael.wild@me.com> \[copyright holder\]
