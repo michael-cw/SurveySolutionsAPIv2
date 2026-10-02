@@ -1,5 +1,95 @@
 # Changelog
 
+## SurveySolutionsAPIv2 0.1.2
+
+#### New Features & Endpoint Parity
+
+- Added full coverage for modern Survey Solutions REST (v1, v2) and
+  GraphQL endpoints:
+  - **Export Operations**:
+    [`suso_getExportList()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_getExportList.md)
+    to list export jobs,
+    [`suso_getExportProcess()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_getExportProcess.md)
+    to check job status, and
+    [`suso_cancelExport()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_cancelExport.md)
+    to abort running export jobs.
+  - **Interview Management**:
+    [`suso_assignInterview()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_assignInterview.md)
+    to reassign interviews to supervisors/interviewers,
+    [`suso_commentInterview()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_commentInterview.md)
+    to attach QA comments to specific questions,
+    [`suso_deleteInterview()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_deleteInterview.md)
+    to remove interviews, and
+    [`suso_getInterviewPDF()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_getInterviewPDF.md)
+    to download completed interview transcripts as PDF files.
+  - **Workspace Administration**:
+    [`suso_updateWorkspace()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_updateWorkspace.md)
+    to modify existing workspaces,
+    [`suso_deleteWorkspace()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_deleteWorkspace.md)
+    to delete workspaces, and
+    [`suso_enableWorkspace()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_enableWorkspace.md)
+    to toggle workspace active/disabled status.
+  - **Supervisor & User Metadata**:
+    [`suso_getSV_info()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_getSV_info.md)
+    to retrieve detailed supervisor profile information.
+  - **Questionnaire Settings**:
+    [`suso_questRecordAudio()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_questRecordAudio.md)
+    to configure audio recording policies and
+    [`suso_questCriticalityLevel()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_questCriticalityLevel.md)
+    to configure validation error criticality thresholds.
+  - **Server Administration**:
+    [`suso_globalNotice()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_globalNotice.md)
+    to publish server-wide announcement banners to all active users.
+  - **Survey Statistics**:
+    [`suso_getStatsQuestionnaires()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_getStatsQuestionnaires.md)
+    to retrieve aggregate questionnaire completion metrics.
+
+#### Questionnaire Processing
+
+- Modernized `suso_getQuestDetails(operation.type = "structure")` to
+  parse complex modern questionnaire JSON schemas into clean flat
+  tables:
+  - Returns structured questions (`q`) and validation/metadata tables
+    (`v`).
+  - Added `include_raw = FALSE` argument to optionally retain raw JSON
+    column representations when needed for custom post-processing.
+  - Robust handling of nested rosters, cascading categories, conditions,
+    and validation rules.
+
+#### Performance & Modernization
+
+- Complete port to the latest `httr2` ecosystem with standardized
+  request builders, error handling via `cli` and `rlang`, and automated
+  token refreshment.
+- Parallel HTTP request execution using
+  [`httr2::req_perform_parallel()`](https://httr2.r-lib.org/reference/req_perform_parallel.html)
+  with configurable concurrency limits via
+  [`suso_set_maxpar_req()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_set_maxpar_req.md).
+
+#### Documentation, Vignettes & Website
+
+- Complete documentation overhaul across all 65 exported functions,
+  ensuring every function includes comprehensive parameter descriptions,
+  return value specifications, and executable or `\dontrun{}` examples.
+- Added 5 thematic vignettes covering end-to-end Survey Solutions
+  workflows:
+  - `quickstart`: Authentication, workspace switching, and package
+    options.
+  - `questionnaires`: Hierarchies, skip patterns, validation rules, and
+    codebooks.
+  - `survey_management`: Multi-tenant workspaces, batch user
+    provisioning, preloaded assignments, and GIS maps.
+  - `interview_monitoring`: Lifecycle statuses, reassignments, comments,
+    and paradata analytics.
+  - `data_export`: Asynchronous v2 export pipelines, progress polling,
+    and `exportClass` data containers.
+- Bundled sanitized offline demonstration datasets in `inst/extdata/`
+  for robust vignette compilation without exposing server credentials.
+- Added `pkgdown` companion website configuration and GitHub Actions
+  workflows for continuous integration (`R-CMD-check.yaml`) and
+  automated website publishing (`pkgdown.yaml`).
+- Passed `R CMD check --as-cran` with 0 errors and 0 warnings.
+
 ## SurveySolutionsAPIv2 0.1.1
 
 - added system files (parameter: addsysfiles) like interviewer comments,
