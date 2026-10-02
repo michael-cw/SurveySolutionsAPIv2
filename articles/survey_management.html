@@ -281,15 +281,22 @@ using <code><a href="../reference/suso_set_assignments.html">suso_set_assignment
 <h3 id="uploading-and-assigning-maps">Uploading and Assigning Maps<a class="anchor" aria-label="anchor" href="#uploading-and-assigning-maps"></a>
 </h3>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Upload a new offline map</span></span>
+<code class="sourceCode R"><span><span class="co"># Either upload the content of a folder (automatically zipped)</span></span>
 <span><span class="fu"><a href="../reference/suso_mapupload.html">suso_mapupload</a></span><span class="op">(</span></span>
-<span>  filePath <span class="op">=</span> <span class="st">"maps/cluster_101_boundary.tif"</span></span>
+<span>  workspace   <span class="op">=</span> <span class="st">"myworkspace"</span>,</span>
+<span>  path_to_zip <span class="op">=</span> <span class="st">"./mapfiles/"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Or a zip file with the files included</span></span>
+<span><span class="fu"><a href="../reference/suso_mapupload.html">suso_mapupload</a></span><span class="op">(</span></span>
+<span>  workspace   <span class="op">=</span> <span class="st">"myworkspace"</span>,</span>
+<span>  path_to_zip <span class="op">=</span> <span class="st">"../mapfiles/maps.zip"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Assign map to an interviewer</span></span>
 <span><span class="fu"><a href="../reference/suso_mapassign.html">suso_mapassign</a></span><span class="op">(</span></span>
-<span>  fileName <span class="op">=</span> <span class="st">"cluster_101_boundary.tif"</span>,</span>
-<span>  userName <span class="op">=</span> <span class="st">"interviewer01"</span>,</span>
+<span>  fileName   <span class="op">=</span> <span class="st">"cluster_101_boundary.tif"</span>,</span>
+<span>  userName   <span class="op">=</span> <span class="st">"interviewer01"</span>,</span>
 <span>  assignUser <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>

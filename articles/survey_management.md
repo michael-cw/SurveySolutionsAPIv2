@@ -230,15 +230,22 @@ For spatial surveys, Survey Solutions supports offline basemaps
 
 ``` r
 
-# Upload a new offline map
+# Either upload the content of a folder (automatically zipped)
 suso_mapupload(
-  filePath = "maps/cluster_101_boundary.tif"
+  workspace   = "myworkspace",
+  path_to_zip = "./mapfiles/"
+)
+
+# Or a zip file with the files included
+suso_mapupload(
+  workspace   = "myworkspace",
+  path_to_zip = "../mapfiles/maps.zip"
 )
 
 # Assign map to an interviewer
 suso_mapassign(
-  fileName = "cluster_101_boundary.tif",
-  userName = "interviewer01",
+  fileName   = "cluster_101_boundary.tif",
+  userName   = "interviewer01",
   assignUser = TRUE
 )
 ```
