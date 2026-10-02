@@ -1,0 +1,213 @@
+# SurveySolutionsAPIv2
+
+**`SurveySolutionsAPIv2`** is a comprehensive, production-ready R
+interface to the World Bank’s [Survey
+Solutions](https://mysurvey.solutions) Computer-Assisted Personal
+Interviewing (CAPI) and Computer-Assisted Web Interviewing (CAWI)
+platform.
+
+Built on modern [`httr2`](https://httr2.r-lib.org/), this package
+supersedes the previous `httr`-based implementation
+(`SurveySolutionsAPI`). It covers the full current REST API (v1 and v2)
+as well as complementary GraphQL queries and mutations, providing a
+robust foundation for survey operations, quality control dashboards, and
+automated data pipelines.
+
+------------------------------------------------------------------------
+
+## Key Features
+
+- **Modern `httr2` Architecture**: Fast, resilient HTTP communications
+  with structured error handling via `cli` and automatic retries for
+  transient server errors.
+- **High Concurrency & Scalability**: Built-in support for parallel
+  asynchronous requests, dramatically reducing processing time when
+  creating thousands of assignments or querying census-scale staff
+  rosters.
+- **Recursive Questionnaire Parser**: High-performance tree traversal
+  (extracts 900+ questions in ~0.1s) capturing question hierarchy,
+  static text, calculated variables, routing expressions
+  (`ConditionExpression`), Designer validations (`val`), and categorical
+  answer options (`answers`).
+- **Clean Flat Tables**: Default `include_raw = FALSE` produces pure
+  atomic `data.table` outputs that serialize cleanly with
+  [`data.table::fwrite()`](https://rdrr.io/pkg/data.table/man/fwrite.html),
+  with an opt-in `include_raw = TRUE` to retain raw JSON nodes.
+- **Automated Data Export Pipelines**: End-to-end management of
+  server-side export jobs (Tabular, Stata, SPSS, Parquet) with automatic
+  polling, ZIP extraction, variable labeling, and multi-language
+  translation merging (`exportClass`).
+- **Field & Workspace Administration**: Multi-tenant workspace
+  management, bulk staff creation from data frames
+  ([`suso_createUSER()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_createUSER.md)),
+  preloaded sample assignments, and offline basemap management.
+- **Quality Control & Paradata**: Interview workflow tracking,
+  question-level commenting, supervisor approval/rejection, response
+  rate distributions, and enriched paradata (active duration, pause
+  detection, spatial GPS event traces).
+- **R Shiny Ready**: Native progress bars, customizable user
+  notifications, and interactive display methods via `DT` and `plotly`.
+
+------------------------------------------------------------------------
+
+## Installation
+
+### From CRAN (once published)
+
+``` r
+
+install.packages("SurveySolutionsAPIv2")
+```
+
+### Development Version from GitHub
+
+You can install the latest release directly from GitHub:
+
+``` r
+
+# install.packages("remotes")
+remotes::install_github("michael-cw/SurveySolutionsAPIv2")
+```
+
+------------------------------------------------------------------------
+
+## Quickstart
+
+### 1. Configure Credentials
+
+Configure your Survey Solutions server credentials securely using
+[`suso_set_key()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_set_key.md).
+Credentials can be supplied directly or loaded from environment
+variables:
+
+``` r
+
+library(SurveySolutionsAPIv2)
+
+# Set credentials for the active session
+suso_set_key(
+  suso_server   = Sys.getenv("SUSO_SERVER", "https://your-server.mysurvey.solutions"),
+  suso_user     = Sys.getenv("SUSO_USER", "api_user"),
+  suso_password = Sys.getenv("SUSO_PASSWORD", "secret_pass"),
+  workspace     = "primary"
+)
+
+# Test connectivity (returns HTTP 200 on success)
+suso_PwCheck()
+```
+
+### 2. Inspect Deployed Questionnaires
+
+Retrieve all questionnaires available in the active workspace:
+
+``` r
+
+# List questionnaires
+quest_list <- suso_getQuestDetails(operation.type = "list")
+print(quest_list[, .(Title, Variable, Version, QuestionnaireId)])
+```
+
+### 3. Extract Questionnaire Structure and Codebooks
+
+Parse the entire questionnaire into four structured `data.table`
+components:
+
+``` r
+
+# Extract questionnaire metadata
+q_struct <- suso_getQuestDetails(
+  questID        = quest_list$QuestionnaireId[1],
+  version        = quest_list$Version[1],
+  operation.type = "structure",
+  include_raw    = FALSE  # Clean flat tables, ready for data.table::fwrite
+)
+
+# Access questions, validations, and answer options
+questions <- q_struct$q
+validations <- q_struct$val
+codebook <- q_struct$answers
+```
+
+### 4. Create Sample Assignments in Bulk
+
+Distribute assignments to field enumerators with preloaded sample data:
+
+``` r
+
+suso_set_assignments(
+  questID     = quest_list$QuestionnaireId[1],
+  version     = quest_list$Version[1],
+  responsible = "interviewer01",
+  quantity    = 10,
+  prefill     = list(cluster_id = 101, region = "North")
+)
+```
+
+### 5. Automated Data Export
+
+Trigger, monitor, download, and parse export data with a single
+function:
+
+``` r
+
+# Export all approved interviews as Tabular data
+survey_data <- suso_export(
+  questID        = quest_list$QuestionnaireId[1],
+  version        = quest_list$Version[1],
+  type           = "Tabular",
+  workStatus     = "ApprovedByHeadquarters",
+  addTranslation = TRUE
+)
+
+# The returned exportClass object contains labeled data tables
+summary(survey_data)
+```
+
+------------------------------------------------------------------------
+
+## Documentation & Vignettes
+
+Comprehensive documentation and tutorials are available on the
+[companion pkgdown
+website](https://michael-cw.github.io/SurveySolutionsAPIv2/):
+
+1.  **[Quickstart: Connecting and Exploring Your
+    Server](https://michael-cw.github.io/SurveySolutionsAPIv2/articles/quickstart.html)**:
+    Authentication, connectivity, and workspace navigation.
+2.  **[Questionnaires, Structure, and
+    Codebooks](https://michael-cw.github.io/SurveySolutionsAPIv2/articles/questionnaires.html)**:
+    Parsing question hierarchy, routing logic, validation rules, and
+    generating codebooks.
+3.  **[Field Operations, Users, and
+    Assignments](https://michael-cw.github.io/SurveySolutionsAPIv2/articles/survey_management.html)**:
+    Workspace administration, batch user provisioning, assignments, and
+    map management.
+4.  **[Interview Monitoring, Paradata, and Quality
+    Control](https://michael-cw.github.io/SurveySolutionsAPIv2/articles/interview_monitoring.html)**:
+    Interview tracking, question commenting, approvals/rejections, and
+    paradata analytics.
+5.  **[Data Export and Processing
+    Pipelines](https://michael-cw.github.io/SurveySolutionsAPIv2/articles/data_export.html)**:
+    The v2 Export API, job polling, `exportClass` attributes, and
+    parallel processing.
+
+------------------------------------------------------------------------
+
+## Community and Support
+
+- **Bug Reports & Feature Requests**: [GitHub
+  Issues](https://github.com/michael-cw/SurveySolutionsAPIv2/issues)
+- **Survey Solutions Official Documentation**: [Support
+  Documentation](https://support.mysurvey.solutions/)
+- **User Community Forum**: [Survey Solutions User
+  Forum](https://forum.mysurvey.solutions/)
+- **API Reference**: [Swagger API
+  Documentation](https://demo.mysurvey.solutions/primary/apidocs/index.html#)
+
+------------------------------------------------------------------------
+
+## License
+
+This project is licensed under the MIT License — see the
+[LICENSE](https://michael-cw.github.io/SurveySolutionsAPIv2/LICENSE)
+file for details.

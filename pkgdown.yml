@@ -1,0 +1,13 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  data_export: data_export.html
+  interview_monitoring: interview_monitoring.html
+  questionnaires: questionnaires.html
+  quickstart: quickstart.html
+  survey_management: survey_management.html
+last_built: 2026-10-02T16:46Z
+urls:
+  reference: https://michael-cw.github.io/SurveySolutionsAPIv2/reference
+  article: https://michael-cw.github.io/SurveySolutionsAPIv2/articles
