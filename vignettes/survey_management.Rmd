@@ -135,18 +135,16 @@ Assignments represent fieldwork tasks allocated to specific interviewers or supe
 
 ### Creating Preloaded Assignments
 
-Assignments can be created with pre-filled sample identifiers (e.g. household ID, cluster, address, or target respondent name):
+Assignments can be created with pre-filled sample identifiers (e.g. household ID, cluster, address, or target respondent name) using `suso_createASS()`:
 
 ```r
 # Create assignments for a questionnaire
-suso_set_assignments(
+suso_createASS(
   questID = "17a9fa22-1ef6-46d2-8c30-426aa876f273",
   version = 1,
-  responsible = "interviewer01",
-  quantity = 10,
-  prefill = list(
-    cluster_id = 101,
-    region = "Capital"
+  df = list(
+    ResponsibleName = "interviewer01",
+    Quantity = 10
   )
 )
 ```
