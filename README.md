@@ -203,7 +203,7 @@ website](https://michael-cw.github.io/SurveySolutionsAPIv2/):
 - **Bug Reports & Feature Requests**: [GitHub
   Issues](https://github.com/michael-cw/SurveySolutionsAPIv2/issues)
 - **Survey Solutions Official Documentation**: [Support
-  Documentation](https://support.mysurvey.solutions/)
+  Documentation](https://docs.mysurvey.solutions/)
 - **User Community Forum**: [Survey Solutions User
   Forum](https://forum.mysurvey.solutions/)
 - **API Reference**: [Swagger API

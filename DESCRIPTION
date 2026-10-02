@@ -8,7 +8,7 @@ Description: A comprehensive suite of functions for interfacing
     (<https://demo.mysurvey.solutions/apidocs/index.html> and
     <https://docs.mysurvey.solutions/>). It supports all the
     current POST, GET, and PATCH requests of the REST API and extends
-    its capabilities by integrating selected GraphQL API queries and
+    its capabilities by integrating selected 'GraphQL' API queries and
     mutations when REST API equivalents are not available. Designed for
     ease of use, it includes several convenience functions to streamline
     operations. The package ensures that data retrieved from the API is
