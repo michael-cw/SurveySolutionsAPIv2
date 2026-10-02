@@ -158,25 +158,38 @@ suso_createASS <- function(df = NULL,
   # I.3.1. Function to transform response to dataframe
   transformresponse<-function(i, allresp) {
     # i. Convert to json
-    resp<-allresp[[i]]
-    respfull <- resp |>
+    resp_obj <- allresp[[i]]
+    respfull <- resp_obj |>
       resp_body_json(simplifyVector = TRUE, flatten = TRUE)
 
     # ii. Get identifying data
     # transform to wide format
-    resp<-data.frame(respfull$Assignment$IdentifyingData)
-    # skip when id dataframe is 0 rows
-    if(nrow(resp)>0) {
-      reshaped_data <- as.vector(t(resp))
-      new_col_names <- paste0(rep(names(resp), each = nrow(resp)), 1:nrow(resp))
-      resp<-setNames(data.frame(matrix(reshaped_data, ncol = length(reshaped_data), byrow = TRUE)), new_col_names)
-    } else if(nrow(resp)==0) {
-      resp<-data.frame(NO_ID_DATA="NO ID DATA LOADED")
+    id_data <- respfull$Assignment$IdentifyingData
+    if (!is.null(id_data) && (is.data.frame(id_data) || length(id_data) > 0)) {
+      resp <- tryCatch({
+        df_id <- as.data.frame(id_data)
+        if (nrow(df_id) > 0) {
+          reshaped_data <- as.vector(t(df_id))
+          new_col_names <- paste0(rep(names(df_id), each = nrow(df_id)), 1:nrow(df_id))
+          setNames(data.frame(matrix(reshaped_data, ncol = length(reshaped_data), byrow = TRUE)), new_col_names)
+        } else {
+          data.frame(NO_ID_DATA = "NO ID DATA LOADED")
+        }
+      }, error = function(e) data.frame(NO_ID_DATA = "NO ID DATA LOADED"))
+    } else {
+      resp <- data.frame(NO_ID_DATA = "NO ID DATA LOADED")
     }
     # iii. Get other data
-    nodf<-names(respfull$Assignment)[!grepl("IdentifyingData", names(respfull$Assignment))]
+    nodf <- names(respfull$Assignment)[!grepl("IdentifyingData", names(respfull$Assignment))]
     for(x in nodf){
-      resp[[x]] <- respfull$Assignment[[x]]
+      val <- respfull$Assignment[[x]]
+      if (is.null(val) || length(val) == 0) {
+        resp[[x]] <- NA
+      } else if (is.list(val) || length(val) > 1) {
+        resp[[x]] <- list(val)
+      } else {
+        resp[[x]] <- val
+      }
     }
     return(resp)
   }
@@ -193,7 +206,8 @@ suso_createASS <- function(df = NULL,
   # Transform Columns
   if(nrow(status_list)>0) {
     # transform date
-    status_list[,CreatedAtUtc:=lubridate::as_datetime(CreatedAtUtc)][,UpdatedAtUtc:=lubridate::as_datetime(UpdatedAtUtc)]
+    if ("CreatedAtUtc" %in% names(status_list)) status_list[, CreatedAtUtc := lubridate::as_datetime(CreatedAtUtc)]
+    if ("UpdatedAtUtc" %in% names(status_list)) status_list[, UpdatedAtUtc := lubridate::as_datetime(UpdatedAtUtc)]
   }
 
   return(status_list[])
