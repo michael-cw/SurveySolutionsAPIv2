@@ -25,12 +25,22 @@ suso_getQuestionsQuestionnaire(
 
 \item{token}{If Survey Solutions server token is provided \emph{apiUser} and \emph{apiPass} will be ignored}
 
-\item{questID}{only assignments for \emph{QuestionnaireId} are returned, requires \code{version} being not NULL}
+\item{questID}{Questionnaire ID (GUID)}
 
-\item{version}{version of the questionnaire, only required with \code{questID}}
+\item{version}{Questionnaire version (numeric)}
+}
+\value{
+A data.table listing questions with responses for the questionnaire.
 }
 \description{
-Returns all questions for single questionnaire (ONLY if they contain responses), if you require all questions
-from any questionnaire on the server, then you have to use \code{suso_getQuestDetails(...,
-operation.type = "structure")}
+Returns all questions for a single questionnaire (ONLY if they contain responses). If you require all questions
+from any questionnaire on the server, use \code{suso_getQuestDetails(..., operation.type = "structure")}.
+}
+\examples{
+\dontrun{
+suso_getQuestionsQuestionnaire(
+  questID = "11111111-2222-3333-4444-555555555555",
+  version = 1
+)
+}
 }

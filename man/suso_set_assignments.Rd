@@ -13,7 +13,7 @@ suso_set_assignments(
   AssId = NULL,
   payload = NULL,
   operations.type = c("recordAudio", "archive", "assign", "changeQuantity", "close",
-    "unarchive")
+    "unarchive", "downsize", "changeStatus", "changeTargetArea")
 )
 }
 \arguments{
@@ -29,22 +29,25 @@ suso_set_assignments(
 
 \item{AssId}{the assignment id for which the change is required}
 
-\item{payload}{requirements depend on the operations type. See details bellow.}
+\item{payload}{requirements depend on the operations type. See details below.}
 
-\item{operations.type}{specifies the desired operation, one of recordAudio, archive/unarchive, (re-)assign
-changeQuantity, or close, if specified, requires in some case also \emph{pauyload} to be specified. See details bellow.}
+\item{operations.type}{specifies the desired operation, one of recordAudio, archive, unarchive, assign,
+changeQuantity, close, downsize, changeStatus, changeTargetArea.}
 }
 \value{
 Returns an S3 object of assignmentClass
 }
 \description{
 \code{suso_set_assignments} allows to (re-)assign, change limits or audio
-recording settings, as well as archiving/unarchive and close assignments.
+recording settings, as well as archiving/unarchive, downsizing, changing status/target area, and closing assignments.
 }
 \details{
-If operations.type is \emph{recordAudio}, \code{TRUE/FALSE} is required as payload, if it is \emph{archive} or \emph{unarchive},
-no payload is required, if it is \emph{assign} the payload must be the uid of the new responsible, if it is \emph{changeQuantity} the payload
-must be the new integer number of assignments, if it is \emph{close} no payload is required.
+If operations.type is \emph{recordAudio}, \code{TRUE/FALSE} is required as payload.
+If it is \emph{archive}, \emph{unarchive}, \emph{close}, or \emph{downsize}, no payload is required.
+If it is \emph{assign} the payload must be the uid of the new responsible person.
+If it is \emph{changeQuantity} the payload must be the new integer number of assignments (-1 for unlimited).
+If it is \emph{changeStatus} the payload must be the new status string (e.g. "Closed", "Deleted") or a named list with Status and optional Comment.
+If it is \emph{changeTargetArea} the payload must be the new target area string.
 }
 \examples{
 \dontrun{
@@ -56,22 +59,12 @@ asslist<-suso_set_assignments(
                    payload = "43f3d2bd-7959-4706-97ae-2653b5685c9e",
                    operations.type = "assign"
                    )
-# get all assignment for specific responsible
+# downsize assignment
 asslist<-suso_set_assignments(
                    workspace = "myworkspace",
-                   responsibleID = "a67d2b82-bf28-40cf-bd1a-7901225c0885"
+                   AssId = 10,
+                   operations.type = "downsize"
                    )
-# get the overall count
-getinfo(asslist, "totalcount")
-
-#get all single assignment details
-asslist<-suso_set_assignments(
-                   workspace = "myworkspace",
-                   AssId = 1
-                   )
-# retrieve the uid of the person responsible
-getinfo(asslist, "responsibleid")
-
 }
 
 }

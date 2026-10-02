@@ -180,6 +180,7 @@ suso_mapinfo <- function(server= suso_get_api_key("susoServer"),
 #'               userName = "INT0004")
 #' }
 #'
+#' @return A data.table containing the map assignment details (file name, user name, shape type, and import timestamp).
 #' @export
 
 
@@ -255,11 +256,13 @@ suso_mapassign <- function(server= suso_get_api_key("susoServer"),
 #'
 #' @examples
 #' \dontrun{
-#' suso_mapassign(workspace = "myworkspace",
-#'               fileName = "Lat9264Lon625_ALL.tif",
-#'               userName = "INT0004")
+#' suso_deletemap(
+#'   workspace = "myworkspace",
+#'   fileName = "Lat9264Lon625_ALL.tif"
+#' )
 #' }
 #'
+#' @return A data.table containing the deleted map details (file name, shape type, and import timestamp).
 #' @export
 
 
@@ -327,11 +330,15 @@ suso_deletemap <- function(server= suso_get_api_key("susoServer"),
 #'
 #' @examples
 #' \dontrun{
-#' suso_mapassign(workspace = "myworkspace",
-#'               fileName = "Lat9264Lon625_ALL.tif",
-#'               userName = "INT0004")
+#' suso_mapreport(
+#'   workspace = "myworkspace",
+#'   questID = "11111111-2222-3333-4444-555555555555",
+#'   version = 1,
+#'   variable = "gps_loc"
+#' )
 #' }
 #'
+#' @return A list containing the map report result.
 #' @export
 
 

@@ -6,6 +6,12 @@
 \usage{
 suso_clear_keys()
 }
+\value{
+Invisible NULL.
+}
 \description{
 Clears all the API credentials
+}
+\examples{
+suso_clear_keys()
 }

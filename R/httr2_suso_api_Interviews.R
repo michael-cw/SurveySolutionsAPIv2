@@ -37,7 +37,7 @@
 #'
 #' }
 #'
-#'
+#' @return A data.table listing all interviews matching the specified questionnaire and status filter.
 #' @export
 
 
@@ -102,7 +102,7 @@ suso_getAllInterviewQuestionnaire <- function(server= suso_get_api_key("susoServ
 #'
 #' }
 #'
-#'
+#' @return A data.table containing all answers for the given interview.
 #' @export
 #'
 suso_getAllAnswerInterview <- function(server= suso_get_api_key("susoServer"),
@@ -176,6 +176,7 @@ suso_getAllAnswerInterview <- function(server= suso_get_api_key("susoServer"),
 #'
 #' }
 #'
+#' @return A data.table containing the history records for the interview.
 #' @export
 suso_getAllHistoryInterview <- function(server= suso_get_api_key("susoServer"),
                                         apiUser=suso_get_api_key("susoUser"),
@@ -247,6 +248,7 @@ suso_getAllHistoryInterview <- function(server= suso_get_api_key("susoServer"),
 #'
 #' }
 #'
+#' @return A data.table containing statistics for the requested interview(s).
 #' @export
 
 
@@ -415,6 +417,7 @@ suso_get_stats_interview<-function(server= suso_get_api_key("susoServer"),
 #'
 #' }
 #'
+#' @return A data.table containing the status of the rejection operation.
 #' @export
 #'
 suso_patchRejectInterview <- function(server= suso_get_api_key("susoServer"),
@@ -476,8 +479,8 @@ suso_patchRejectInterview <- function(server= suso_get_api_key("susoServer"),
 
 #' Approve interviews either as supervisor or as headquarter.
 #'
-#' @description Allows you to approve interviews in supervisor or headquarters role
-#' as well as to provide a comment (i.e. reason) for the approval.
+#' @description Allows you to approve interviews in supervisor or headquarters role,
+#' unapprove from headquarters status, as well as to provide a comment (i.e. reason).
 #'
 #'
 #' @details  For details please see:
@@ -490,7 +493,8 @@ suso_patchRejectInterview <- function(server= suso_get_api_key("susoServer"),
 #' @param workspace server workspace, if nothing provided, defaults to primary
 #' @param token If Survey Solutions server token is provided \emph{apiUser} and \emph{apiPass} will be ignored
 #' @param intID the \emph{InterviewId} of the interview.
-#' @param HQ if FALSE, approve as supervisor, if TRUE rejected as headquarters
+#' @param HQ if FALSE, approve as supervisor, if TRUE approve as headquarters
+#' @param hqunapprove if TRUE, unapprove from headquarters status (hqunapprove)
 #' @param comment comment which should be sent with the questionnaire
 #'
 #' @examples
@@ -506,15 +510,9 @@ suso_patchRejectInterview <- function(server= suso_get_api_key("susoServer"),
 #'           intID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea",
 #'           HQ = TRUE
 #'           )
-#' # approve the interview and provide a comment
-#' suso_patchApproveInterview(
-#'           workspace = "myworkspace",
-#'           intID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea",
-#'           comment = "Well done!"
-#'           )
-#'
 #' }
 #'
+#' @return A data.table containing the status of the approval operation.
 #' @export
 #'
 suso_patchApproveInterview <- function(server= suso_get_api_key("susoServer"),
@@ -524,9 +522,10 @@ suso_patchApproveInterview <- function(server= suso_get_api_key("susoServer"),
                                        token = NULL,
                                        intID = "",
                                        HQ = FALSE,
+                                       hqunapprove = FALSE,
                                        comment = "Well done!") {
-  ## select reject
-  approve<-ifelse(HQ, "hqapprove", "approve")
+  ## select approve action
+  approve <- if(hqunapprove) "hqunapprove" else if(HQ) "hqapprove" else "approve"
 
   ## default workspace
   workspace<-.ws_default(ws = workspace)
@@ -559,7 +558,7 @@ suso_patchApproveInterview <- function(server= suso_get_api_key("susoServer"),
     error = function(e) .http_error_handler(e, "ass")
   )
 
-  test_json<-data.table::data.table(resp_status=200, intID=intID, description="success", HQ = HQ)
+  test_json<-data.table::data.table(resp_status=200, intID=intID, description="success", action = approve)
 
   return(test_json)
 
@@ -567,15 +566,231 @@ suso_patchApproveInterview <- function(server= suso_get_api_key("susoServer"),
 }
 
 
+#' Delete an interview
+#'
+#' Deletes an interview from the Survey Solutions server.
+#'
+#' @param server Survey Solutions server address
+#' @param apiUser Survey Solutions API user
+#' @param apiPass Survey Solutions API password
+#' @param workspace server workspace name
+#' @param token API token
+#' @param intID InterviewId of the interview (GUID)
+#'
+#' @return A data.table indicating the deletion status.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' suso_deleteInterview(intID = "11111111-2222-3333-4444-555555555555")
+#' }
+suso_deleteInterview <- function(server = suso_get_api_key("susoServer"),
+                                 apiUser = suso_get_api_key("susoUser"),
+                                 apiPass = suso_get_api_key("susoPass"),
+                                 workspace = suso_get_api_key("workspace"),
+                                 token = NULL,
+                                 intID = "") {
+  workspace <- .ws_default(ws = workspace)
+  .check_basics(token, server, apiUser, apiPass)
+  .checkUUIDFormat(intID[1])
+
+  if (!is.null(token)) {
+    url <- .baseurl_token(server, workspace, token, "interviews")
+  } else {
+    url <- .baseurl_baseauth(server, workspace, apiUser, apiPass, "interviews")
+  }
+
+  url <- url |>
+    req_url_path_append(intID) |>
+    req_method("DELETE")
+
+  tryCatch({
+    resp <- req_perform(url)
+    return(data.table::data.table(resp_status = 200, intID = intID, description = "deleted"))
+  }, error = function(e) .http_error_handler(e, "ass"))
+}
 
 
+#' Download interview PDF transcript
+#'
+#' Downloads the PDF transcript of a completed interview.
+#'
+#' @param server Survey Solutions server address
+#' @param apiUser Survey Solutions API user
+#' @param apiPass Survey Solutions API password
+#' @param workspace server workspace name
+#' @param token API token
+#' @param intID InterviewId (GUID)
+#' @param path Destination file path for saving the PDF. If NULL, saves to tempdir.
+#'
+#' @return The file path where the PDF was saved.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' pdf_path <- suso_getInterviewPDF(intID = "11111111-2222-3333-4444-555555555555")
+#' }
+suso_getInterviewPDF <- function(server = suso_get_api_key("susoServer"),
+                                 apiUser = suso_get_api_key("susoUser"),
+                                 apiPass = suso_get_api_key("susoPass"),
+                                 workspace = suso_get_api_key("workspace"),
+                                 token = NULL,
+                                 intID = "",
+                                 path = NULL) {
+  workspace <- .ws_default(ws = workspace)
+  .check_basics(token, server, apiUser, apiPass)
+  .checkUUIDFormat(intID[1])
+
+  if (is.null(path)) {
+    path <- file.path(tempdir(), paste0("interview_", intID, ".pdf"))
+  }
+
+  if (!is.null(token)) {
+    url <- .baseurl_token(server, workspace, token, "interviews")
+  } else {
+    url <- .baseurl_baseauth(server, workspace, apiUser, apiPass, "interviews")
+  }
+
+  url <- url |> req_url_path_append(intID, "pdf")
+
+  tryCatch({
+    resp <- req_perform(url, path = path)
+    return(path)
+  }, error = function(e) .http_error_handler(e, "ass"))
+}
 
 
+#' Assign interview to interviewer or supervisor
+#'
+#' Reassigns an interview to a specified interviewer or supervisor.
+#'
+#' @param server Survey Solutions server address
+#' @param apiUser Survey Solutions API user
+#' @param apiPass Survey Solutions API password
+#' @param workspace server workspace name
+#' @param token API token
+#' @param intID InterviewId (GUID)
+#' @param userId User GUID of responsible person
+#' @param userName Name of responsible person (optional)
+#' @param supervisor If TRUE assigns to a supervisor, otherwise assigns to an interviewer
+#'
+#' @return A data.table indicating the assignment status.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' suso_assignInterview(
+#'   intID = "11111111-2222-3333-4444-555555555555",
+#'   userName = "interviewer01"
+#' )
+#' }
+suso_assignInterview <- function(server = suso_get_api_key("susoServer"),
+                                 apiUser = suso_get_api_key("susoUser"),
+                                 apiPass = suso_get_api_key("susoPass"),
+                                 workspace = suso_get_api_key("workspace"),
+                                 token = NULL,
+                                 intID = "",
+                                 userId = NULL,
+                                 userName = NULL,
+                                 supervisor = FALSE) {
+  workspace <- .ws_default(ws = workspace)
+  .check_basics(token, server, apiUser, apiPass)
+  .checkUUIDFormat(intID[1])
+  if (is.null(userId) && is.null(userName)) {
+    cli::cli_abort("Please provide either userId or userName.")
+  }
+
+  action <- ifelse(supervisor, "assignsupervisor", "assign")
+
+  if (!is.null(token)) {
+    url <- .baseurl_token(server, workspace, token, "interviews")
+  } else {
+    url <- .baseurl_baseauth(server, workspace, apiUser, apiPass, "interviews")
+  }
+
+  body <- list()
+  if (!is.null(userId)) body$UserId <- jsonlite::unbox(userId)
+  if (!is.null(userName)) body$UserName <- jsonlite::unbox(userName)
+
+  url <- url |>
+    req_url_path_append(intID, action) |>
+    req_method("PATCH") |>
+    req_body_json(body)
+
+  tryCatch({
+    resp <- req_perform(url)
+    return(data.table::data.table(resp_status = 200, intID = intID, action = action, description = "success"))
+  }, error = function(e) .http_error_handler(e, "ass"))
+}
 
 
+#' Leave a comment on a question in an interview
+#'
+#' Leaves a comment on a question using either the questionId or the questionnaire variable name.
+#'
+#' @param server Survey Solutions server address
+#' @param apiUser Survey Solutions API user
+#' @param apiPass Survey Solutions API password
+#' @param workspace server workspace name
+#' @param token API token
+#' @param intID InterviewId (GUID)
+#' @param comment The comment text to leave
+#' @param questionId The question GUID (optional if variable is provided)
+#' @param variable Variable name of question (optional if questionId is provided)
+#' @param rosterVector Integer vector specifying roster indices (e.g. c(0, 1))
+#'
+#' @return A data.table indicating the comment status.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' suso_commentInterview(
+#'   intID = "11111111-2222-3333-4444-555555555555",
+#'   variable = "age",
+#'   comment = "Please verify respondent age."
+#' )
+#' }
+suso_commentInterview <- function(server = suso_get_api_key("susoServer"),
+                                  apiUser = suso_get_api_key("susoUser"),
+                                  apiPass = suso_get_api_key("susoPass"),
+                                  workspace = suso_get_api_key("workspace"),
+                                  token = NULL,
+                                  intID = "",
+                                  comment = "",
+                                  questionId = NULL,
+                                  variable = NULL,
+                                  rosterVector = NULL) {
+  workspace <- .ws_default(ws = workspace)
+  .check_basics(token, server, apiUser, apiPass)
+  .checkUUIDFormat(intID[1])
 
+  if (is.null(questionId) && is.null(variable)) {
+    cli::cli_abort("Please provide either questionId or variable.")
+  }
 
+  if (!is.null(token)) {
+    url <- .baseurl_token(server, workspace, token, "interviews")
+  } else {
+    url <- .baseurl_baseauth(server, workspace, apiUser, apiPass, "interviews")
+  }
 
+  if (!is.null(questionId)) {
+    url <- url |>
+      req_url_path_append(intID, "comment", questionId) |>
+      req_url_query(comment = comment) |>
+      req_method("POST")
+  } else {
+    url <- url |>
+      req_url_path_append(intID, "comment-by-variable", variable) |>
+      req_url_query(comment = comment) |>
+      req_method("POST")
+    if (!is.null(rosterVector)) {
+      url <- url |> req_url_query(rosterVector = paste(rosterVector, collapse = ","))
+    }
+  }
 
-
-
+  tryCatch({
+    resp <- req_perform(url)
+    return(data.table::data.table(resp_status = 200, intID = intID, comment = comment, description = "success"))
+  }, error = function(e) .http_error_handler(e, "ass"))
+}

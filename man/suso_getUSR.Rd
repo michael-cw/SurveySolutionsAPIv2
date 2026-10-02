@@ -33,6 +33,9 @@ no workspace is provided defaults to primary workspace.}
 
 \item{token}{If Survey Solutions server token is provided \emph{usr} and \emph{pass} will be ignored}
 }
+\value{
+A data.table containing user details.
+}
 \description{
 Get any user's info, by either providing the user id, email, or the user name
 }
@@ -40,7 +43,7 @@ Get any user's info, by either providing the user id, email, or the user name
 \dontrun{
 suso_getUSR(
           workspace = "myworkspace",
-          uid = "xxxx-xxxx-xxxx-xxx"
+          user_id = "xxxx-xxxx-xxxx-xxx"
           )
 }
 

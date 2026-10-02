@@ -32,6 +32,9 @@ suso_mapassign(
 
 \item{assignUser}{if TRUE user will be assigned to map, if FALSE user will be removed from map}
 }
+\value{
+A data.table containing the map assignment details (file name, user name, shape type, and import timestamp).
+}
 \description{
 Allows the user to assign/unassign a map to an interviewer to be used in CAPI data collection.
 }

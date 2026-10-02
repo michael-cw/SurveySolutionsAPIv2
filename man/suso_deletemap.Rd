@@ -26,14 +26,18 @@ suso_deletemap(
 
 \item{fileName}{the name of the map file on the server}
 }
+\value{
+A data.table containing the deleted map details (file name, shape type, and import timestamp).
+}
 \description{
 Allows the user to delete maps stored on the server.
 }
 \examples{
 \dontrun{
-suso_mapassign(workspace = "myworkspace",
-              fileName = "Lat9264Lon625_ALL.tif",
-              userName = "INT0004")
+suso_deletemap(
+  workspace = "myworkspace",
+  fileName = "Lat9264Lon625_ALL.tif"
+)
 }
 
 }

@@ -9,9 +9,19 @@ suso_set_maxpar_req(max_req = 100)
 \arguments{
 \item{max_req}{set the number of parallel requests for all functions which}
 }
+\value{
+Invisible NULL.
+}
 \description{
 This function allows to modify the maximum number of parallel requests \option{suso.maxpar.req}
 in a single call. It also checks the maximum number of parallel connections, and if lower than
 the number of requests \code{max_req} then also sets the \option{suso.maxpar.con} option to
 \code{max_req}.
+}
+\examples{
+# Set maximum parallel requests to 50
+suso_set_maxpar_req(50)
+# Reset back to default
+suso_set_maxpar_req(100)
+
 }

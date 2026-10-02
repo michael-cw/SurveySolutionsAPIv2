@@ -31,6 +31,9 @@ no workspace is provided defaults to primary workspace.}
 \item{bigTeam}{(only if sv_id=NULL) if TRUE, requests will be performed sequential, and individual teams can be bigger than 100 if FALSE
 requests will be performed in parallel, but do not allow for teams larger 100 interviewers.}
 }
+\value{
+An object of class UserClass (inheriting from data.table) containing the interviewers.
+}
 \description{
 Get list of all interviewers by supervisor id, or a list of all interviewers in the workspace.
 }

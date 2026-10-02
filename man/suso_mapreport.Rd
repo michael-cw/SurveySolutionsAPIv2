@@ -71,14 +71,20 @@ suso_mapreport(
 
 \item{notAnsweredCount}{number of unanswered questions}
 }
+\value{
+A list containing the map report result.
+}
 \description{
 Allows the user to create a map report with pre-specified parameters.
 }
 \examples{
 \dontrun{
-suso_mapassign(workspace = "myworkspace",
-              fileName = "Lat9264Lon625_ALL.tif",
-              userName = "INT0004")
+suso_mapreport(
+  workspace = "myworkspace",
+  questID = "11111111-2222-3333-4444-555555555555",
+  version = 1,
+  variable = "gps_loc"
+)
 }
 
 }

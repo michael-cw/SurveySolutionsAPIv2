@@ -3,67 +3,38 @@
 %   R/as_user_class.R
 \name{getinfo}
 \alias{getinfo}
+\alias{getinfo.assignmentClass}
+\alias{getinfo.exportClass}
+\alias{getinfo.UserClass}
 \title{assignmentClass methods}
 \usage{
 getinfo(obj, arg)
 
-getinfo(obj, arg)
+\method{getinfo}{assignmentClass}(obj, arg)
 
-getinfo(obj, arg)
+\method{getinfo}{exportClass}(obj, arg)
+
+\method{getinfo}{UserClass}(obj, arg)
 }
 \arguments{
-\item{obj}{object of UserClass}
+\item{obj}{object of assignmentClass}
 
 \item{arg}{name of attribute, if \code{arg="arglist"} then it returns all available arguments}
 }
 \value{
 the specific attribute
-
-the specific attribute
-
-the specific attribute
 }
 \description{
 \code{getinfo} allows you to retrieve relevant additional information from the \code{assignmentClass},
 object depending on the api endpoint.
-
-\code{getinfo} allows you to retrieve relevant additional information from the \code{ExportClass},
-object depending on the api endpoint.
-
-\code{getinfo} allows you to retrieve relevant additional information from the \code{UserClass},
-object depending on the api endpoint.
 }
 \details{
-To retrieve all availalbe arguments use \code{arg="arglist"}
-
-To retrieve all availalbe arguments use \code{arg="arglist"}
-
 To retrieve all availalbe arguments use \code{arg="arglist"}
 }
 \examples{
 \dontrun{
 
 # retrieve the uid of the person responsible after retrieving details for specific assignment
-getinfo(asslist, "responsibleid")
-
-# see all available attribute names
-getinfo(asslist, "arglist")
-
-}
-
-\dontrun{
-
-# retrieve the uid of the person responsible after retrieving details for specific User
-getinfo(asslist, "responsibleid")
-
-# see all available attribute names
-getinfo(asslist, "arglist")
-
-}
-
-\dontrun{
-
-# retrieve the uid of the person responsible after retrieving details for specific User
 getinfo(asslist, "responsibleid")
 
 # see all available attribute names

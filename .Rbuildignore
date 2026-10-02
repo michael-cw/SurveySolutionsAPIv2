@@ -4,4 +4,8 @@
 ^LICENSE\.md$
 ^README\.Rmd$
 ^CODE_OF_CONDUCT\.md$
-^warning\.svg$
+^scratch$
+^_pkgdown\.yml$
+^docs$
+^\.github$
+^cran-comments\.md$

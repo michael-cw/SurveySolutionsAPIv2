@@ -29,31 +29,44 @@
     options(suso.maxpar.con = min(100, getOption("suso.maxpar.req")))
   }
 
-  #mili seconds
-  options(digits.secs = 3)
-
-  # paradata breaks (in seconds--> used for durationNOBREAK)
-  options(suso.para.break = 120)
+  # package specific options
+  if(is.null(getOption("suso.para.break"))) {
+    options(suso.para.break = 120)
+  }
   # tz defaults to system tz
-  options(suso.para.tz = Sys.timezone())
+  if(is.null(getOption("suso.para.tz"))) {
+    options(suso.para.tz = Sys.timezone())
+  }
 
   # number of cores for parallel processing
-  options(suso.para.maxcore = (.detectCores()-2))
+  if(is.null(getOption("suso.para.maxcore"))) {
+    detected <- tryCatch(parallel::detectCores(), error = function(e) 2L)
+    if (is.na(detected) || is.null(detected)) detected <- 2L
+    cores <- max(1L, as.integer(detected - 2L))
+    if (identical(Sys.getenv("_R_CHECK_LIMIT_CORES_"), "TRUE")) {
+      cores <- min(cores, 2L)
+    }
+    options(suso.para.maxcore = cores)
+  }
 
   # type of parallel i.e. multisession, sequential multicore
-  options(suso.para.plan = "multisession")
+  if(is.null(getOption("suso.para.plan"))) {
+    options(suso.para.plan = "multisession")
+  }
 
   # option to use shiny features (i.e. showNotification)
-  options(suso.useshiny = TRUE)
-  options(suso.progressbar.message = "Creating new export file")
-  options(suso.pwcheck.message_succ = "Credentials are correct and a successful
-                              request\n was performed in workspace %s")
-  options(suso.pwcheck.message_fail = "Credentials are incorrect and a failed
-                              request\n was performed in workspace %s")
-
-  # cli progress bar delay-->longer delay as api response is 0 when completed immediately.
-  # oldoptclipgb<-getOption("cli.progress_show_after")
-  # on.exit(options(cli.progress_show_after = oldoptclipgb))
-  options(cli.progress_show_after = 4)
-
+  if(is.null(getOption("suso.useshiny"))) {
+    options(suso.useshiny = TRUE)
+  }
+  if(is.null(getOption("suso.progressbar.message"))) {
+    options(suso.progressbar.message = "Creating new export file")
+  }
+  if(is.null(getOption("suso.pwcheck.message_succ"))) {
+    options(suso.pwcheck.message_succ = "Credentials are correct and a successful
+                                request\n was performed in workspace %s")
+  }
+  if(is.null(getOption("suso.pwcheck.message_fail"))) {
+    options(suso.pwcheck.message_fail = "Credentials are incorrect and a failed
+                                request\n was performed in workspace %s")
+  }
 }

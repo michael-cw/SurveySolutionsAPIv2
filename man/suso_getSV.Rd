@@ -24,6 +24,9 @@ no workspace is provided defaults to primary workspace.}
 
 \item{token}{If Survey Solutions server token is provided \emph{apiUser} and \emph{apiPass} will be ignored}
 }
+\value{
+An object of class \code{UserClass} (inheriting from data.table) containing the list of supervisors.
+}
 \description{
 Gets list of supervisors
 }
@@ -32,6 +35,5 @@ Gets list of supervisors
 # receive all supervisors in the workspace
 suso_getSV()
 }
-
 
 }

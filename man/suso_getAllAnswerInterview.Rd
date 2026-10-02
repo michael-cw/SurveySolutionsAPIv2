@@ -26,6 +26,9 @@ suso_getAllAnswerInterview(
 
 \item{intID}{the \emph{InterviewId} of the interview. To get a list of all interview for a specific questionnaire, execute \code{suso_getAllInterviewQuestionnaire}}
 }
+\value{
+A data.table containing all answers for the given interview.
+}
 \description{
 Returns all responses for a specific interview
 }
@@ -37,6 +40,5 @@ suso_getAllAnswerInterview(
           )
 
 }
-
 
 }

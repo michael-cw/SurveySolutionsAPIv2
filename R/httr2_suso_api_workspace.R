@@ -28,7 +28,7 @@
 #'           status = T)
 #' }
 #'
-#'
+#' @return A data.table containing workspace information or status.
 #' @export
 
 
@@ -130,6 +130,7 @@ suso_getWorkspace <- function(server = suso_get_api_key("susoServer"),
 #' }
 #'
 #'
+#' @return A data.table containing the created workspace information.
 #' @export
 
 
@@ -230,21 +231,21 @@ suso_createWorkspace <- function(server = suso_get_api_key("susoServer"),
 #'           )
 #'
 #' # Assign all supervisors from on workspace to a new one, keep old one
-#' allsv<-suso_getSV(workspace = old)
+#' allsv<-suso_getSV(workspace = "old")
 #' suso_assignWorkspace(
 #'           assign_workspace = "new",
-#'           uid = "allsv$UserId,
+#'           uid = allsv$UserId,
 #'           sv_id = allsv$UserId,
 #'           apiUser = "xxxxxx",
 #'           apiPass = "xxxxxx",
 #'           keep_old_workspace = TRUE
 #'           )
 #'
-#' # Assign all interviewers from on workspace to a new one, keep old one
-#' allint<-suso_getINT(workspace = old)
+#' # Assign all interviewers from one workspace to a new one, keep old one
+#' allint<-suso_getINT(workspace = "old")
 #' suso_assignWorkspace(
 #'           assign_workspace = "new",
-#'           uid = "allint$UserId,
+#'           uid = allint$UserId,
 #'           sv_id = allint$sv_id,
 #'           apiUser = "xxxxxx",
 #'           apiPass = "xxxxxx",
@@ -253,7 +254,7 @@ suso_createWorkspace <- function(server = suso_get_api_key("susoServer"),
 #'
 #' }
 #'
-#'
+#' @return A data.table containing the assignment update status.
 #' @export
 
 
@@ -429,15 +430,138 @@ suso_assignWorkspace <- function(server = suso_get_api_key("susoServer"),
 }
 
 
+#' Update workspace details
+#'
+#' Updates the display name of a workspace. Accessible only to administrator.
+#'
+#' @param server Survey Solutions server address
+#' @param apiUser Survey Solutions API user
+#' @param apiPass Survey Solutions API password
+#' @param token API token
+#' @param workspace Name of the workspace to update
+#' @param displayName New display name for the workspace
+#'
+#' @return A data.table indicating the update status.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' suso_updateWorkspace(workspace = "my_ws", displayName = "Renamed Workspace")
+#' }
+suso_updateWorkspace <- function(server = suso_get_api_key("susoServer"),
+                                 apiUser = suso_get_api_key("susoUser"),
+                                 apiPass = suso_get_api_key("susoPass"),
+                                 token = NULL,
+                                 workspace = NULL,
+                                 displayName = NULL) {
+  .check_basics(token, server, apiUser, apiPass)
+  if (is.null(workspace)) cli::cli_abort("Please provide the workspace name.")
+  if (is.null(displayName)) cli::cli_abort("Please provide a new displayName.")
+
+  if (!is.null(token)) {
+    url <- .baseurl_token(server, NULL, token, "workspaces")
+  } else {
+    url <- .baseurl_baseauth(server, NULL, apiUser, apiPass, "workspaces")
+  }
+
+  url <- url |>
+    req_url_path_append(workspace) |>
+    req_method("PATCH") |>
+    req_body_json(list(DisplayName = jsonlite::unbox(displayName)))
+
+  tryCatch({
+    resp <- req_perform(url)
+    return(data.table::data.table(workspace = workspace, displayName = displayName, status = "updated"))
+  }, error = function(e) .http_error_handler(e, "wsp"))
+}
 
 
+#' Delete a workspace
+#'
+#' Deletes a specified workspace. Accessible only to administrator.
+#'
+#' @param server Survey Solutions server address
+#' @param apiUser Survey Solutions API user
+#' @param apiPass Survey Solutions API password
+#' @param token API token
+#' @param workspace Name of the workspace to delete
+#'
+#' @return A data.table indicating the deletion status.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' suso_deleteWorkspace(workspace = "old_ws")
+#' }
+suso_deleteWorkspace <- function(server = suso_get_api_key("susoServer"),
+                                 apiUser = suso_get_api_key("susoUser"),
+                                 apiPass = suso_get_api_key("susoPass"),
+                                 token = NULL,
+                                 workspace = NULL) {
+  .check_basics(token, server, apiUser, apiPass)
+  if (is.null(workspace)) cli::cli_abort("Please provide the workspace name to delete.")
+
+  if (!is.null(token)) {
+    url <- .baseurl_token(server, NULL, token, "workspaces")
+  } else {
+    url <- .baseurl_baseauth(server, NULL, apiUser, apiPass, "workspaces")
+  }
+
+  url <- url |>
+    req_url_path_append(workspace) |>
+    req_method("DELETE")
+
+  tryCatch({
+    resp <- req_perform(url)
+    return(data.table::data.table(workspace = workspace, status = "deleted"))
+  }, error = function(e) .http_error_handler(e, "wsp"))
+}
 
 
+#' Enable or disable a workspace
+#'
+#' Enables or disables access to a specified workspace. Accessible only to administrator.
+#'
+#' @param server Survey Solutions server address
+#' @param apiUser Survey Solutions API user
+#' @param apiPass Survey Solutions API password
+#' @param token API token
+#' @param workspace Name of the workspace
+#' @param enable Logical, if TRUE enables the workspace, if FALSE disables it. Default is TRUE.
+#'
+#' @return A data.table indicating the enable/disable status.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Enable workspace
+#' suso_enableWorkspace(workspace = "my_ws", enable = TRUE)
+#' # Disable workspace
+#' suso_enableWorkspace(workspace = "my_ws", enable = FALSE)
+#' }
+suso_enableWorkspace <- function(server = suso_get_api_key("susoServer"),
+                                 apiUser = suso_get_api_key("susoUser"),
+                                 apiPass = suso_get_api_key("susoPass"),
+                                 token = NULL,
+                                 workspace = NULL,
+                                 enable = TRUE) {
+  .check_basics(token, server, apiUser, apiPass)
+  if (is.null(workspace)) cli::cli_abort("Please provide the workspace name.")
 
+  action <- if (enable) "enable" else "disable"
 
+  if (!is.null(token)) {
+    url <- .baseurl_token(server, NULL, token, "workspaces")
+  } else {
+    url <- .baseurl_baseauth(server, NULL, apiUser, apiPass, "workspaces")
+  }
 
+  url <- url |>
+    req_url_path_append(workspace, action) |>
+    req_method("POST")
 
-
-
-
-
+  tryCatch({
+    resp <- req_perform(url)
+    return(data.table::data.table(workspace = workspace, action = action, status = "success"))
+  }, error = function(e) .http_error_handler(e, "wsp"))
+}

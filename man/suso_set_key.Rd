@@ -23,6 +23,9 @@ suso_set_key(
 
 \item{suso_token}{If Survey Solutions server token is provided \emph{suso_user} and \emph{suso_password} will be ignored}
 }
+\value{
+Invisible NULL.
+}
 \description{
 Sets API credentials so it's available for all API calls. See details
 }
@@ -36,4 +39,15 @@ we do not recommend unencrypted connections.
 
 In case \emph{suso_token} is provided, only token authentication will be attempted. For details on token authentication
 in Survey Solutions please see \url{https://docs.mysurvey.solutions/headquarters/accounts/token-based-authentication/}.
+}
+\examples{
+\dontrun{
+suso_set_key(
+  suso_server = "https://demo.mysurvey.solutions",
+  suso_user = "api_user",
+  suso_password = "password123",
+  workspace = "primary"
+)
+}
+
 }

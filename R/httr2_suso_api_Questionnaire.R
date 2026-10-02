@@ -15,6 +15,7 @@
 #' \emph{statuses} a vector of all questionnaire statuses. If \emph{structure} is specified, it returns a list
 #' containing all questions, rosters etc. of the specific questionnaire, as well as all validations.
 #' If \emph{interviews} is specified, all interviews for a specific questionnaire. See details bellow.
+#' @param include_raw logical; if \code{TRUE}, retains the raw JSON list column (\code{..JSON}) in the question table when \code{operation.type = "structure"}. Default is \code{FALSE} for clean, flat data tables.
 #' @param AssId Assignment ID (only required if operations.type is\emph{interviews})
 #' @param InterviewKey Interview key (only required if operations.type is\emph{interviews})
 #' @param errorsCount desired number of errors (only required if operations.type is\emph{interviews})
@@ -39,19 +40,39 @@
 #'
 #' If statuses is selected, a list of all available questionnaire statuses is returned (deprecated).
 #'
-#' In case structure is chosen the return value is a list with two data.table elements:
+#' In case structure is chosen the return value is a list with four data.table elements:
 #' \itemize{
-#'   \item List element \emph{q} contains all questions, rosters etc.
-#'   \item List element \emph{val} contains all validations
+#'   \item List element \emph{q} contains all questions, rosters etc. with full metadata.
+#'   \item List element \emph{val} contains all validations.
+#'   \item List element \emph{v} is an alias for \emph{val} for backward compatibility.
+#'   \item List element \emph{answers} contains categorical answer options, codes, and linked questions.
 #' }
-#' In this way it is straightforward to use the returen value for questionnaire manuals and the likes.
+#' In this way it is straightforward to use the return value for questionnaire manuals and the likes.
 #'
 #' In case interviews is selected, a list of all interviews for the specific questionnaire is returned.
 #'
+#' @return Depending on \code{operation.type}:
+#' \describe{
+#'   \item{list}{A data.table listing all questionnaires on the server.}
+#'   \item{statuses}{A character vector of questionnaire statuses.}
+#'   \item{structure}{A list with four data.tables: \code{q} (questions/rosters metadata), \code{val} (validations), \code{v} (alias for \code{val}), and \code{answers} (categorical answer options and codes).}
+#'   \item{interviews}{A data.table listing interviews for the specified questionnaire.}
+#' }
 #' @export
 #'
+#' @examples
+#' \dontrun{
+#' # List all questionnaires on the server
+#' q_list <- suso_getQuestDetails(operation.type = "list")
 #'
-
+#' # Get questionnaire structure (questions, validations, answers)
+#' q_struct <- suso_getQuestDetails(
+#'   questID = q_list$QuestionnaireId[1],
+#'   version = q_list$Version[1],
+#'   operation.type = "structure"
+#' )
+#' }
+#'
 suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
                                  apiUser = suso_get_api_key("susoUser"),
                                  apiPass = suso_get_api_key("susoPass"),
@@ -59,6 +80,7 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
                                  token = NULL,
                                  questID = NULL, version = NULL,
                                  operation.type = c("list", "statuses", "structure", "interviews"),
+                                 include_raw = FALSE,
                                  AssId = NULL,
                                  InterviewKey = NULL,
                                  errorsCount = NULL, errosCountFilter = c("lower", "higher", "equal"),
@@ -221,17 +243,21 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
       if(resp_has_body(resp)){
         # get body by content type
         if(resp_content_type(resp) == "application/json") {
-          test_json <- tidyjson::read_json(aJsonFile)
-          test_json <- .suso_transform_fullValid_q(test_json)
+          test_json <- .suso_transform_fullValid_q(aJsonFile, include_raw = include_raw)
           
           # Variable Format
-          if(nrow(test_json$q)>0) {
+          if(nrow(test_json$q)>0 && "LastEntryDate" %in% names(test_json$q)) {
             test_json$q[,LastEntryDate:=lubridate::as_datetime(LastEntryDate)][]
           }
         }
       } else {
         # return empty if no body
-        test_json<-list(q = NULL, v = NULL)
+        test_json<-list(
+          q = data.table::data.table(),
+          val = data.table::data.table(),
+          v = data.table::data.table(),
+          answers = data.table::data.table()
+        )
       }
       },
       error = function(e) .http_error_handler(e, "ass")
@@ -368,4 +394,182 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
   }
   
   ##############################################
+}
+
+
+#' Survey Solutions API call for questionnaire criticality level setting
+#'
+#' Gets or sets the criticality level setting for a specific questionnaire.
+#'
+#' @param server Survey Solutions server address
+#' @param apiUser Survey Solutions API user
+#' @param apiPass Survey Solutions API password
+#' @param workspace server workspace, if nothing provided, defaults to primary
+#' @param token If Survey Solutions server token is provided \emph{apiUser} and \emph{apiPass} will be ignored
+#' @param questID Questionnaire ID (GUID)
+#' @param version Questionnaire version (numeric)
+#' @param level Criticality level to set: \code{"Unknown"}, \code{"Ignore"}, \code{"Warn"}, or \code{"Block"}.
+#'   If \code{NULL} (default), gets the current criticality level setting.
+#'
+#' @return When \code{level = NULL}, returns the current criticality level setting.
+#'   When \code{level} is provided, returns \code{TRUE} invisibly upon successful update.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Get current criticality level
+#' suso_questCriticalityLevel(
+#'   questID = "11111111-2222-3333-4444-555555555555",
+#'   version = 1
+#' )
+#' # Set criticality level to Warn
+#' suso_questCriticalityLevel(
+#'   questID = "11111111-2222-3333-4444-555555555555",
+#'   version = 1,
+#'   level = "Warn"
+#' )
+#' }
+suso_questCriticalityLevel <- function(server = suso_get_api_key("susoServer"),
+                                       apiUser = suso_get_api_key("susoUser"),
+                                       apiPass = suso_get_api_key("susoPass"),
+                                       workspace = suso_get_api_key("workspace"),
+                                       token = NULL,
+                                       questID = NULL,
+                                       version = NULL,
+                                       level = NULL) {
+  workspace <- .ws_default(ws = workspace)
+  .check_basics(token, server, apiUser, apiPass)
+
+  if (is.null(questID) || is.null(version)) {
+    cli::cli_abort(c("x" = "Both 'questID' and 'version' must be provided."))
+  }
+  .checkUUIDFormat(questID)
+  .checkNum(version)
+
+  if (!is.null(token)) {
+    url <- .baseurl_token(server, workspace, token, "questionnaires", version = "v1")
+  } else {
+    url <- .baseurl_baseauth(server, workspace, apiUser, apiPass, "questionnaires", version = "v1")
+  }
+  url <- httr2::req_url_path_append(url, questID, version, "criticalityLevel")
+
+  if (is.null(level)) {
+    url <- httr2::req_method(url, "GET")
+    resp <- tryCatch(
+      httr2::req_perform(url),
+      error = function(e) .http_error_handler(e, "ass")
+    )
+    if (httr2::resp_has_body(resp)) {
+      return(httr2::resp_body_json(resp, simplifyVector = TRUE))
+    }
+    return(NULL)
+  } else {
+    level <- match.arg(level, c("Unknown", "Ignore", "Warn", "Block"))
+    url <- url |>
+      httr2::req_method("POST") |>
+      httr2::req_body_json(list(CriticalityLevel = level))
+
+    resp <- tryCatch(
+      httr2::req_perform(url),
+      error = function(e) .http_error_handler(e, "ass")
+    )
+    if (httr2::resp_status(resp) == 204) {
+      if (interactive()) {
+        cli::cli_alert_success("Criticality level updated to {level}.")
+      }
+      return(invisible(TRUE))
+    }
+    return(invisible(FALSE))
+  }
+}
+
+
+#' Survey Solutions API call for questionnaire audio recording setting
+#'
+#' Gets or sets the audio recording setting for a specific questionnaire.
+#'
+#' @param server Survey Solutions server address
+#' @param apiUser Survey Solutions API user
+#' @param apiPass Survey Solutions API password
+#' @param workspace server workspace, if nothing provided, defaults to primary
+#' @param token If Survey Solutions server token is provided \emph{apiUser} and \emph{apiPass} will be ignored
+#' @param questID Questionnaire ID (GUID)
+#' @param version Questionnaire version (numeric)
+#' @param enabled Logical. If provided (\code{TRUE} or \code{FALSE}), updates the audio recording setting.
+#'   If \code{NULL} (default), retrieves the current audio recording setting.
+#'
+#' @return When \code{enabled = NULL}, returns a list with \code{Enabled} (logical) and \code{AudioAuditScope} (character vector).
+#'   When \code{enabled} is provided, returns \code{TRUE} invisibly upon successful update.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Get current audio recording setting
+#' suso_questRecordAudio(
+#'   questID = "11111111-2222-3333-4444-555555555555",
+#'   version = 1
+#' )
+#' # Enable audio recording
+#' suso_questRecordAudio(
+#'   questID = "11111111-2222-3333-4444-555555555555",
+#'   version = 1,
+#'   enabled = TRUE
+#' )
+#' }
+suso_questRecordAudio <- function(server = suso_get_api_key("susoServer"),
+                                  apiUser = suso_get_api_key("susoUser"),
+                                  apiPass = suso_get_api_key("susoPass"),
+                                  workspace = suso_get_api_key("workspace"),
+                                  token = NULL,
+                                  questID = NULL,
+                                  version = NULL,
+                                  enabled = NULL) {
+  workspace <- .ws_default(ws = workspace)
+  .check_basics(token, server, apiUser, apiPass)
+
+  if (is.null(questID) || is.null(version)) {
+    cli::cli_abort(c("x" = "Both 'questID' and 'version' must be provided."))
+  }
+  .checkUUIDFormat(questID)
+  .checkNum(version)
+
+  if (!is.null(token)) {
+    url <- .baseurl_token(server, workspace, token, "questionnaires", version = "v1")
+  } else {
+    url <- .baseurl_baseauth(server, workspace, apiUser, apiPass, "questionnaires", version = "v1")
+  }
+  url <- httr2::req_url_path_append(url, questID, version, "recordAudio")
+
+  if (is.null(enabled)) {
+    url <- httr2::req_method(url, "GET")
+    resp <- tryCatch(
+      httr2::req_perform(url),
+      error = function(e) .http_error_handler(e, "ass")
+    )
+    if (httr2::resp_has_body(resp)) {
+      return(httr2::resp_body_json(resp, simplifyVector = TRUE))
+    }
+    return(NULL)
+  } else {
+    if (!is.logical(enabled) || length(enabled) != 1) {
+      cli::cli_abort(c("x" = "'enabled' must be a single logical value (TRUE or FALSE)."))
+    }
+    url <- url |>
+      httr2::req_method("POST") |>
+      httr2::req_body_json(list(Enabled = enabled))
+
+    resp <- tryCatch(
+      httr2::req_perform(url),
+      error = function(e) .http_error_handler(e, "ass")
+    )
+    if (httr2::resp_status(resp) == 204) {
+      if (interactive()) {
+        cli::cli_alert_success("Audio recording setting updated to {enabled}.")
+      }
+      return(invisible(TRUE))
+    }
+    return(invisible(FALSE))
+  }
 }

@@ -29,6 +29,9 @@ suso_createUSER(
 
 \item{showUser}{userName in console}
 }
+\value{
+A data.table containing the user information and HTTP response status code for each created user.
+}
 \description{
 Creates Survey Solutions users (observers, interviewers or supervisors).
 }
@@ -38,4 +41,16 @@ for user creation which are: Role, UserName, Password and Supervisor (in case of
 optional you can also provide FullName, PhoneNumber and Email. Return value is a data.table, which includes
 the user information as well as the response's status code. Important is also that the UserName and Password are
 provided in the required format.
+}
+\examples{
+\dontrun{
+new_users <- data.frame(
+  Role = "Interviewer",
+  UserName = "interviewer01",
+  Password = "Password123!",
+  Supervisor = "supervisor01"
+)
+suso_createUSER(userlist = new_users)
+}
+
 }

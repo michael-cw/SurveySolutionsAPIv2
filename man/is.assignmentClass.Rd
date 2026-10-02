@@ -15,3 +15,8 @@ TRUE if object is of class assignmentClass
 \description{
 Function to check if an object is of class assignmentClass
 }
+\examples{
+ac <- assignmentClass(list(Assignments = data.frame(Id = 1)))
+is.assignmentClass(ac)
+is.assignmentClass(data.frame())
+}

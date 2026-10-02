@@ -35,6 +35,9 @@ suso_patchRejectInterview(
 
 \item{comment}{comment which should be sent with the questionnaire}
 }
+\value{
+A data.table containing the status of the rejection operation.
+}
 \description{
 Allows you to reject interviews in supervisor or headquarters role
 as well as to provide a comment (i.e. reason) for the rejection.

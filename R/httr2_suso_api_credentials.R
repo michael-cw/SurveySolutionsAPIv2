@@ -6,9 +6,13 @@
 #' an excellent package to use google geo-spatial API)
 #' Retrieves the list of Survey Solutions credentials that have been set.
 #'
+#' @return A list of class suso_api containing current Survey Solutions credentials.
 #' @export
 #' @import readr
 #' @import stringr
+#'
+#' @examples
+#' suso_keys()
 suso_keys <- function() getOption("SurveySolutionsAPI")
 
 
@@ -50,8 +54,18 @@ suso_keys <- function() getOption("SurveySolutionsAPI")
 #' in Survey Solutions please see \url{https://docs.mysurvey.solutions/headquarters/accounts/token-based-authentication/}.
 #'
 #'
-#'
+#' @return Invisible NULL.
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' suso_set_key(
+#'   suso_server = "https://demo.mysurvey.solutions",
+#'   suso_user = "api_user",
+#'   suso_password = "password123",
+#'   workspace = "primary"
+#' )
+#' }
 #'
 suso_set_key <- function(
   suso_server = "",
@@ -147,7 +161,11 @@ suso_set_workspace <- function(
 #'
 #' Clears all the API credentials
 #'
+#' @return Invisible NULL.
 #' @export
+#'
+#' @examples
+#' suso_clear_keys()
 suso_clear_keys <- function() {
 
   options <- list(
@@ -175,9 +193,14 @@ suso_clear_keys <- function() {
 #'
 #' @param api one of susoServer, susoUser, susoPass, or workspace
 #'
+#' @return Character string of the requested credential, or NA if not set.
 #' @import data.table
 #'
 #' @export
+#'
+#' @examples
+#' suso_get_api_key("susoServer")
+#' suso_get_api_key("workspace")
 #'
 suso_get_api_key <- function(api = c("susoServer", "susoUser", "susoPass", "workspace")) {
 
@@ -195,7 +218,13 @@ suso_get_api_key <- function(api = c("susoServer", "susoUser", "susoPass", "work
 #'
 #' @param api one of susoServer, susoUser, susoPass, or workspace
 #'
+#' @return Character string of the requested credential, or throws error if not set.
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' suso_get_default_key("susoServer")
+#' }
 suso_get_default_key <- function(api = c("susoServer", "susoUser", "susoPass", "workspace")) {
   rlang::arg_match(api)
   key <- getOption("SurveySolutionsAPI")[['suso']][[api]]
@@ -227,6 +256,15 @@ suso_get_default_key <- function(api = c("susoServer", "susoUser", "susoPass", "
 #'
 #'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' suso_PwCheck(
+#'   server = "https://demo.mysurvey.solutions",
+#'   apiUser = "api_user",
+#'   apiPass = "password123"
+#' )
+#' }
 suso_PwCheck<-function(server=suso_get_api_key("susoServer"),
                        apiUser=suso_get_api_key("susoUser"),
                        apiPass=suso_get_api_key("susoPass"),

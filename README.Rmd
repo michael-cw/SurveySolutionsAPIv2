@@ -16,281 +16,154 @@ knitr::opts_chunk$set(
 # SurveySolutionsAPIv2
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![CRAN status](https://www.r-pkg.org/badges/version/SurveySolutionsAPIv2)](https://CRAN.R-project.org/package=SurveySolutionsAPIv2)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 <!-- badges: end -->
 
+**`SurveySolutionsAPIv2`** is a comprehensive, production-ready R interface to the World Bank's [Survey Solutions](https://mysurvey.solutions) Computer-Assisted Personal Interviewing (CAPI) and Computer-Assisted Web Interviewing (CAWI) platform.
 
-<p float="center">
-    <img src="warning.svg" width="100%" />
-</p
+Built on modern [`httr2`](https://httr2.r-lib.org/), this package supersedes the previous `httr`-based implementation (`SurveySolutionsAPI`). It covers the full current REST API (v1 and v2) as well as complementary GraphQL queries and mutations, providing a robust foundation for survey operations, quality control dashboards, and automated data pipelines.
 
+---
 
-<div align="justify">
+## Key Features
 
+- **Modern `httr2` Architecture**: Fast, resilient HTTP communications with structured error handling via `cli` and automatic retries for transient server errors.
+- **High Concurrency & Scalability**: Built-in support for parallel asynchronous requests, dramatically reducing processing time when creating thousands of assignments or querying census-scale staff rosters.
+- **Recursive Questionnaire Parser**: High-performance tree traversal (extracts 900+ questions in ~0.1s) capturing question hierarchy, static text, calculated variables, routing expressions (`ConditionExpression`), Designer validations (`val`), and categorical answer options (`answers`).
+- **Clean Flat Tables**: Default `include_raw = FALSE` produces pure atomic `data.table` outputs that serialize cleanly with `data.table::fwrite()`, with an opt-in `include_raw = TRUE` to retain raw JSON nodes.
+- **Automated Data Export Pipelines**: End-to-end management of server-side export jobs (Tabular, Stata, SPSS, Parquet) with automatic polling, ZIP extraction, variable labeling, and multi-language translation merging (`exportClass`).
+- **Field & Workspace Administration**: Multi-tenant workspace management, bulk staff creation from data frames (`suso_createUSER()`), preloaded sample assignments, and offline basemap management.
+- **Quality Control & Paradata**: Interview workflow tracking, question-level commenting, supervisor approval/rejection, response rate distributions, and enriched paradata (active duration, pause detection, spatial GPS event traces).
+- **R Shiny Ready**: Native progress bars, customizable user notifications, and interactive display methods via `DT` and `plotly`.
 
-This is a (beta - release[^1]) new edition of the [Survey Solutions R API package](https://docs.mysurvey.solutions/headquarters/api/api-r-package/), based on the recently (as stable) released [httr2](https://httr2.r-lib.org/index.html) package. Most of the syntax is the same as in the existing httr based [SurveySolutionsAPI](https://github.com/michael-cw/SurveySolutionsAPI) package, and therefore it should be easy to integrate it in your existing workflow, if you have used the previous edition so far. 
-
-But besides a few syntax changes as well as several other updates like more meaningful error messages using the [cli](https://cli.r-lib.org/) and the [rlang](https://rlang.r-lib.org/) packages there are also quite a bunch of new features. Therefore, i decided to release this package as a completely new one, such that users who do not want to switch to the new package or make use of the new features, can still work with the old package as usual. Nevertheless, a transition to the new package is recommended.
-
-Additionally, the package also seeks a deeper integration with the updated [susographql](https://github.com/michael-cw/susographql) package, which now also is purely based on the httr2 package.
-
-#### New features in this package specific to one or several functions are:
-
-- **suso_get_stats_interview, suso_get_assignments, suso_createUSER, suso_createASS, suso_getSV** and **suso_getINT** with potentially long running queries now use httr2's parallel request feature, which reduces processing time substantially. For example, 10k assignments (*suso_createASS*) can now be created in about 3 minutes, a list of all interviewers (*suso_getINT*) in a workspace for 18K interviewers and 5k supervisors now only takes around 1.5 minutes. In particular in large scale surveys and censuses, this feature may facilitate working with the API considerably.
-- **suso_set_key:** workspace can now be set as an environment variable, like it was already the case for server, user, and password.
-- **suso_export:** now has the option to merge all the data export files into a single data table and also add survey weights, for analysis-ready data sets.
-- **suso_export:** of spatial ([Survey Solutions Geography Questions](https://docs.mysurvey.solutions/questionnaire-designer/questions/geography-question/)) data (i.e. polygons, point locations, lines) can be processed into [sf (simple feature)](https://r-spatial.github.io/sf/articles/sf1.html) objects directly, by setting *process_mapquestions = TRUE*. For example a type polygons question, collected manually or automatic, will result in an sf polygon, which can be stored directly as a shape file with [st_write](https://r-spatial.github.io/sf/reference/st_write.html).
-- **suso_export:** now also processes available value labels and applies them to categorical variables, as well as variable labels without using the STATA export (and therefore the haven/readstata13 package are not required any longer). In case you have one or several translations for your questionnaire, these can be applied as well, such that the labels appear are in the desired language. The (ExportClass) specific methods, subsequently make use of these additional attributes, resulting in publication-ready tables and graphs.
-- **suso_export_paradata:** now uses milliseconds for all time based calculations, and also adds comprehensive questionnaire information to the data, like i.e. question type.
-- **suso_export_paradata:** now also identifies GPS variable in your questionnaire, and uses it, to add GPS location data to the paradata, which facilitates spatial analysis of paradata considerably.
-- **suso_mapupload, suso_mapassign, suso_mapinfo, suso_mapreport** and **suso_deletemap** now also integrates complete map management into a single package using a harmonized syntax and returning the same output types[^2].
-- **suso_assignWorkspace:** now also supports workspace assignment of multiple supervisors and interviewers in one go. In addition it has the argument *keep_old_workspace*. If *TRUE*, then the existing workspaces the user is already assigned to are automatically added. With this new feature, all users from one workspace can be assigned to a new workspace with a single function call[^3].
-
-#### New general features in this package are:
-
-- New classes and methods, i.e.: AssignmentClass, ExportClass, UserClass, and methods like summaryTable.exportClass (DT based) or boxplot_summary.exportClass (ggplot2 based).
-- Http error messages are translated into R errors and use the error codes (and messages) as provided by the Survey Solutions API response), which makes debugging easier.
-- Several options, which allows the user to customize processing to their environment, like: *suso.maxpar.req* for the maximum number of parallel requests, *suso.para.break* for customizing breaks when calculating paradata response times, *suso.para.tz* for setting the time zone or *suso.para.maxcore* for the number of cores used in parallel processing.
-- Several functions also includes notifications and progress bars when running in a shiny app, text content of these messages can be modified through several global options, such that the UI can be customized to the user language. In case you don't need any of these notifications, you can also deactivate them globally.
-- Handling of transient http errors (500), which are sometimes returned by the Survey Solutions API, through an automatic retry after a short delay, and a maximum number of 2 retry attempts.
-
-This is just a very rough overview of the most prominent features, for details please see the individual functions' documentation. An extensive documentation is still in preparation and will follow over the next weeks, as well as some more class specific methods. For now, until the new documentation (i.e vignettes, gihub.io website) is released please use the original [SurveySolutionsAPI package documentation](https://michael-cw.github.io/SurveySolutionsAPI/), which is still valid for most of the functions. 
-
-##### Further details on the package philospy
-
-Again, and even more than the previous httr based API package, this package is more than just a simple wrapper around the Survey Solutions REST API (or GraphQL) endpoints. The main intention of this package though, is to be integrated into your own data collection workflow, either through a shiny application or just through a simple script without a lot of additional data wrangling and adjustments. As such, the package allows you to build your own workflows with your own customized user interfaces for your Survey Solutions data collection operations, no matter if you are dealing with a small scale impact evaluation or a large scale census. For this reason, the API calls return easy to process data tables, and in some cases, like paradata, even add additional variables useful for further processing. For example the outputs of the newly added *summaryTable.exportClass* and *boxplot_summary.exportClass* can be used in a shiny application right away, by either using *renderDT* from the R [DT](https://rstudio.github.io/DT/shiny.html) package, or *renderPlotly.* from the R [plotly](https://plotly-r.com/) package.
-
-Important to note here is, that the package also makes extensive use of the **data.table** package, which allows for fast (multi-core) processing of large data sets. The individual functions either return a data.table, or a specific S3 extension of data.table, with individual methods defined. In case you are not familiar with it yet, you should probably have a look a this [introduction](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html).
-
-Nevertheless, in case you don't require the capacities offered by data.table, you can still treat the return objects like a data frame or even continue with it in the tidyverse. A package which combines both worlds is the [dtplyr](https://github.com/tidyverse/dtplyr) package, and for a comparison between the dplyr package and the data.table package see [here](https://atrebas.github.io/post/2019-03-03-datatable-dplyr/). 
-
+---
 
 ## Installation
 
-The package is not on CRAN yet, so you have to install it by using
+### From CRAN (once published)
 
-``` r
-
-devtools::install_github("michael-cw/SurveySolutionsAPIv2", build_vignettes = T)
-
+```r
+install.packages("SurveySolutionsAPIv2")
 ```
 
-The included vignettes also contain different examples and further explanations. Bellow you can find a few examples. 
+### Development Version from GitHub
 
+You can install the latest release directly from GitHub:
 
-## Examples
+```r
+# install.packages("remotes")
+remotes::install_github("michael-cw/SurveySolutionsAPIv2")
+```
 
-### Credentials Management
+---
 
+## Quickstart
 
-To use the API you first need to set-up the API user on your Survey Solutions server. See [here](https://support.mysurvey.solutions/headquarters/api/) for details. After this done, you can use the *suso_set_key()* function, to provide your credentials.
+### 1. Configure Credentials
 
+Configure your Survey Solutions server credentials securely using `suso_set_key()`. Credentials can be supplied directly or loaded from environment variables:
 
 ```r
 library(SurveySolutionsAPIv2)
-suso_clear_keys()
-suso_set_key("https://xxx.mysurvey.solutions", "xxxxxx", "xxxxxxx", "test")
-suso_keys()
-#> $suso
-#> $suso$susoServer
-#> [1] "https://xxx.mysurvey.solutions"
-#> 
-#> $suso$susoUser
-#> [1] "xxxxxx"
-#> 
-#> $suso$susoPass
-#> [1] "xxxxxxx"
-#> 
-#> $suso$workspace
-#> [1] "test"
-#> 
-#> 
-#> attr(,"class")
-#> [1] "suso_api"
+
+# Set credentials for the active session
+suso_set_key(
+  suso_server   = Sys.getenv("SUSO_SERVER", "https://your-server.mysurvey.solutions"),
+  suso_user     = Sys.getenv("SUSO_USER", "api_user"),
+  suso_password = Sys.getenv("SUSO_PASSWORD", "secret_pass"),
+  workspace     = "primary"
+)
+
+# Test connectivity (returns HTTP 200 on success)
+suso_PwCheck()
 ```
 
+### 2. Inspect Deployed Questionnaires
 
-### Workspace Management
-
-You can also manage your workspaces through the API. In particular, you can
-
-- request a list of all workspaces the API user has access to, as well as
-- create new workspaces
-- and assign users to a particular workspace.
-
-However for the latter two operations you require ADMIN credentials. Standard API user credentials would not work.
-
-To receive a list of workspaces to which the current API user has access to, you can just run:
-
+Retrieve all questionnaires available in the active workspace:
 
 ```r
-ws <- suso_getWorkspace()
-print(head(ws))
-#>       Name       DisplayName DisabledAtUtc
-#> 1: primary Default Workspace            NA
-#> 2:    test              test            NA
-#> 3:   test2             test2            NA
+# List questionnaires
+quest_list <- suso_getQuestDetails(operation.type = "list")
+print(quest_list[, .(Title, Variable, Version, QuestionnaireId)])
 ```
 
-### User Management
+### 3. Extract Questionnaire Structure and Codebooks
 
-These functions are particularly useful for survey management, and more details can be found in the corresponding vignette on survey management. Lets start with getting a list of all supervisors on the server.
-
+Parse the entire questionnaire into four structured `data.table` components:
 
 ```r
-sv <- suso_getSV()
-print(head(sv))
-#>    IsLocked        CreationDate                               UserId   UserName
-#> 1:    FALSE 2023-02-07 17:33:40 00d21677-0331-4698-ae7b-908aeac14dd6 somesvuser
-#> 2:    FALSE 2023-02-04 19:05:10 ded27a4a-716d-4bf2-8d54-aedc31fc164b     SV0001
-#> 3:    FALSE 2023-02-04 19:36:03 5753ddde-3c7d-438f-9934-43fdf18fa802     SV0002
-#> 4:    FALSE 2023-02-04 19:36:03 72196c84-8f2f-488a-8d61-f23b8b998d43     SV0003
-#> 5:    FALSE 2023-02-04 19:36:03 1a9d4b10-c92d-401d-af69-2a7d0a391fe6     SV0004
-#> 6:    FALSE 2023-02-04 19:36:03 97e9e4ff-22e1-492f-a102-03c2115903e7     SV0005
+# Extract questionnaire metadata
+q_struct <- suso_getQuestDetails(
+  questID        = quest_list$QuestionnaireId[1],
+  version        = quest_list$Version[1],
+  operation.type = "structure",
+  include_raw    = FALSE  # Clean flat tables, ready for data.table::fwrite
+)
+
+# Access questions, validations, and answer options
+questions <- q_struct$q
+validations <- q_struct$val
+codebook <- q_struct$answers
 ```
 
-### Questionnaire Management
+### 4. Create Sample Assignments in Bulk
 
-The basic questionnaire API calls are handled through the *suso_getQuestDetails* function.
-
-If no input is provided, the function returns a list of all questionnaires on the server:
-
+Distribute assignments to field enumerators with preloaded sample data:
 
 ```r
-questlist <- suso_getQuestDetails()
-# print(questlist)
+suso_set_assignments(
+  questID     = quest_list$QuestionnaireId[1],
+  version     = quest_list$Version[1],
+  responsible = "interviewer01",
+  quantity    = 10,
+  prefill     = list(cluster_id = 101, region = "North")
+)
 ```
 
-Specifying *operation.type = status*, you receive a list of statuses.
+### 5. Automated Data Export
 
+Trigger, monitor, download, and parse export data with a single function:
 
 ```r
-statlist <- suso_getQuestDetails(operation.type = "statuses")
-print(statlist)
-#>  [1] "Restored"               "Created"                "SupervisorAssigned"     "InterviewerAssigned"    "RejectedBySupervisor"   "ReadyForInterview"      "SentToCapi"            
-#>  [8] "Restarted"              "Completed"              "ApprovedBySupervisor"   "RejectedByHeadquarters" "ApprovedByHeadquarters" "Deleted"
+# Export all approved interviews as Tabular data
+survey_data <- suso_export(
+  questID        = quest_list$QuestionnaireId[1],
+  version        = quest_list$Version[1],
+  type           = "Tabular",
+  workStatus     = "ApprovedByHeadquarters",
+  addTranslation = TRUE
+)
+
+# The returned exportClass object contains labeled data tables
+summary(survey_data)
 ```
 
-By taking a particular *QuestionnaireId* and specifying the *operation.type *you can execute further requests. For example,
+---
 
-### Data Export
+## Documentation & Vignettes
 
-To export the data collected in Survey Solutions, you use *suso_export*.
+Comprehensive documentation and tutorials are available on the [companion pkgdown website](https://michael-cw.github.io/SurveySolutionsAPIv2/):
 
+1. **[Quickstart: Connecting and Exploring Your Server](https://michael-cw.github.io/SurveySolutionsAPIv2/articles/quickstart.html)**: Authentication, connectivity, and workspace navigation.
+2. **[Questionnaires, Structure, and Codebooks](https://michael-cw.github.io/SurveySolutionsAPIv2/articles/questionnaires.html)**: Parsing question hierarchy, routing logic, validation rules, and generating codebooks.
+3. **[Field Operations, Users, and Assignments](https://michael-cw.github.io/SurveySolutionsAPIv2/articles/survey_management.html)**: Workspace administration, batch user provisioning, assignments, and map management.
+4. **[Interview Monitoring, Paradata, and Quality Control](https://michael-cw.github.io/SurveySolutionsAPIv2/articles/interview_monitoring.html)**: Interview tracking, question commenting, approvals/rejections, and paradata analytics.
+5. **[Data Export and Processing Pipelines](https://michael-cw.github.io/SurveySolutionsAPIv2/articles/data_export.html)**: The v2 Export API, job polling, `exportClass` attributes, and parallel processing.
 
-```
-#> The last file has been created 0.06833 hours ago.
-#> FileName: assignment__actions 
-#> Nesting Level: 0 
-#> ****
-#> 
-#> FileName: households 
-#> Nesting Level: 1 
-#> ****
-#> 
-#> FileName: interview__actions 
-#> Nesting Level: 0 
-#> ****
-#> 
-#> FileName: interview__diagnostics 
-#> Nesting Level: 0 
-#> ****
-#> 
-#> FileName: interview__errors 
-#> Nesting Level: 0 
-#> ****
-```
+---
 
-Its return value is a list with the following elements: main, R1, R2, R3, with
+## Community and Support
 
-- **main** containing the files: interview__comments, kasai_listing1
-- **R1** containing all rosters at the first level
-- **R2** containing all rosters at the second level
-- **R3** containing all rosters at the third level
+- **Bug Reports & Feature Requests**: [GitHub Issues](https://github.com/michael-cw/SurveySolutionsAPIv2/issues)
+- **Survey Solutions Official Documentation**: [Support Documentation](https://support.mysurvey.solutions/)
+- **User Community Forum**: [Survey Solutions User Forum](https://forum.mysurvey.solutions/)
+- **API Reference**: [Swagger API Documentation](https://demo.mysurvey.solutions/primary/apidocs/index.html#)
 
-through the harmonized ID, main and roster files can easily be put together. More on this in the specific vignette.
+---
 
-## Paradata Export
+## License
 
-To retrieve the paradata for a particular interview you use *suso_export_paradata*
-
-```r
-system.time(para1 <- suso_export_paradata(questID = questlist[1, QuestionnaireId], version = questlist[1, Version], reloadTimeDiff = 24, onlyActiveEvents = F, allResponses = T))
-#> 
-#> The last file has been created 1 hours ago.
-#> 
-#> Starting download & file extraction. 
-#> 
-#> 
-#> Calculating Response Timings.
-#> 
-#> Extracting GPS variable.
-#> Processing: 
-#> 	AnswerSet
-#> 
-#> 	AnswerRemoved
-#> 
-#> 	ApproveByHeadquarter
-#> 
-#> 	Restarted
-#> 
-#> 	Reject
-#> 
-#> 	QuestionDeclaredInvalid
-#> 
-#> 	QuestionDeclaredValid
-#> 
-#> Export & Transformation finished.
-#>    user  system elapsed 
-#>   0.536   0.036   0.820
-```
-### Map management
-
-Since recently, it is now also possible, to handle maps through the API. This is implemented through the lately introduced GraphQL API.
-
-To upload a map, you can just use the **suso_mapupload** function like this:
-
-
-```r
-suso_mapupload(path_to_zip = mapPath)
-#>    xMaxVal yMaxVal xMinVal yMinVal wkid             fileName  size maxScale minScale shapeType       importDateUtc                           uploadedBy     users
-#> 1:  -78.39    26.8  -78.62   26.55 4326 checkshapesimple.shp 20467        0        0   Polygon 2023-02-16 17:24:47 961d073f-f316-4353-9e7e-1f00899cb837 <list[0]>
-```
-
-To assign a map you can use the **suso_mapassign** function:
-
-
-```r
-suso_mapassign(fileName = "checkshapesimple.shp", userName = "INT0004")
-#>                fileName    user shapeType       importDateUtc
-#> 1: checkshapesimple.shp INT0004   Polygon 2023-02-16 17:24:47
-```
-
-
-## Further information
-
-To find information on the World Bank's Survey Solutions CASS have a look on these pages:
-
-- Survey Solutions Support Page: https://support.mysurvey.solutions/
-
-- Survey Solutions Server request: https://mysurvey.solutions/
-
-To find information on the API syntax, visit your own servers API documentation or got to:
-
-- https://demo.mysurvey.solutions/primary/apidocs/index.html#
-
-And to find more information on the package, check out the package vignettes.
-
-## Feature requests and bug reports
-
-
-Since this is a beta release, feedback, bug reports and feature requests are very welcome. You can either use the standard GitHub approach by filing a bug report/feature request [here](https://github.com/michael-cw/SurveySolutionsAPIv2/issues) or you use the Survey Solutions user forum [here](https://forum.mysurvey.solutions/c/api/13).
-
-[^1]: The package is still under testing and also development of some features, therefore it is only recommended for experienced users.
-
-[^2]: All functions use the susographql functions, but are adjusted to the syntax of this package.
-
-[^3]: Be aware, that workspace assignment requires admin credentials. Regular API user credentials would not work.
-
-
-</div>
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.

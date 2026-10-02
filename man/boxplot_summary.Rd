@@ -2,9 +2,12 @@
 % Please edit documentation in R/as_export_class.R
 \name{boxplot_summary}
 \alias{boxplot_summary}
+\alias{boxplot_summary.exportClass}
 \title{S3 method to create a box plot of numeric variables for an exportClass object}
 \usage{
 boxplot_summary(x, useGGplot2 = FALSE, ...)
+
+\method{boxplot_summary}{exportClass}(x, useGGplot2 = FALSE, ...)
 }
 \arguments{
 \item{x}{A summaryTable object.}
@@ -16,6 +19,8 @@ a base R boxplot is returned.}
 }
 \value{
 A box plot visualizing the numeric variables.
+
+A ggplot2 plot object if useGGplot2 is TRUE, or a base R boxplot list invisibly otherwise
 }
 \description{
 This function generates a box plot for the numeric variables in a exportClass

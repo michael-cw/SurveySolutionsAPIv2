@@ -12,6 +12,7 @@ suso_patchApproveInterview(
   token = NULL,
   intID = "",
   HQ = FALSE,
+  hqunapprove = FALSE,
   comment = "Well done!"
 )
 }
@@ -28,13 +29,18 @@ suso_patchApproveInterview(
 
 \item{intID}{the \emph{InterviewId} of the interview.}
 
-\item{HQ}{if FALSE, approve as supervisor, if TRUE rejected as headquarters}
+\item{HQ}{if FALSE, approve as supervisor, if TRUE approve as headquarters}
+
+\item{hqunapprove}{if TRUE, unapprove from headquarters status (hqunapprove)}
 
 \item{comment}{comment which should be sent with the questionnaire}
 }
+\value{
+A data.table containing the status of the approval operation.
+}
 \description{
-Allows you to approve interviews in supervisor or headquarters role
-as well as to provide a comment (i.e. reason) for the approval.
+Allows you to approve interviews in supervisor or headquarters role,
+unapprove from headquarters status, as well as to provide a comment (i.e. reason).
 }
 \details{
 For details please see:
@@ -53,13 +59,6 @@ suso_patchApproveInterview(
           intID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea",
           HQ = TRUE
           )
-# approve the interview and provide a comment
-suso_patchApproveInterview(
-          workspace = "myworkspace",
-          intID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea",
-          comment = "Well done!"
-          )
-
 }
 
 }

@@ -11,7 +11,14 @@
 #' @param type one of main or para, if main returns exportClass object for the main data,
 #' if para, returns an exportClass object for the paradata.
 #'
+#' @return An object of class exportClass (inheriting from data.table)
 #' @export
+#'
+#' @examples
+#' dt <- data.table::data.table(q1 = 1:5)
+#' vlabs <- data.table::data.table(VariableName = "q1", QuestionText = "Question 1")
+#' ec <- exportClass(dt, varLabels = vlabs)
+#' is.exportClass(ec)
 
 
 ######################################################################################
@@ -36,7 +43,6 @@ exportClass<-function(x, varLabels, ..., type = "main") {
       base_vars <- base_vars[base_vars %in% labs]
       if (length(base_vars) > 0) {
         # wide format
-        # print(base_vars); print("****") ;print(labs); print("****") ;print(names(x))
         # first the wide
         for(attr in base_vars) {
           # get the pattern
@@ -97,6 +103,9 @@ exportClass<-function(x, varLabels, ..., type = "main") {
     if("paradata" %in% nx) {
       iddt<-data.table::data.table(x$paradata)
       attrloop<-names(x)[names(x)!="paradata"]
+    } else {
+      iddt<-data.table::data.table()
+      attrloop<-names(x)
     }
     ## define new class with data.table
     data.table::setattr(iddt, "class", base::union("exportClass", class(iddt)))
@@ -105,9 +114,10 @@ exportClass<-function(x, varLabels, ..., type = "main") {
       data.table::setattr(iddt, tolower(attr), x[[attr]])
     }
     # ... must be non empty named list-->Contains all arguments passed to the function EXPLICITLY
-    if(!is.null(...) && is.list(...) && length(...) > 0) {
-      for(attr in names(...)) {
-        data.table::setattr(iddt, tolower(attr), eval(...[[attr]]))
+    dots <- list(...)
+    if(length(dots) > 0) {
+      for(attr in names(dots)) {
+        data.table::setattr(iddt, tolower(attr), eval(dots[[attr]]))
       }
     }
     # set paradata tag attribute to true
@@ -118,37 +128,7 @@ exportClass<-function(x, varLabels, ..., type = "main") {
 
 }
 
-#' exportClass methods
-#'
-#' \code{getinfo} allows you to retrieve relevant additional information from the \code{ExportClass},
-#' object depending on the api endpoint.
-#'
-#' @details To retrieve all availalbe arguments use \code{arg="arglist"}
-#'
-#'
-#' @param obj object of exportClass
-#' @param arg name of attribute, if \code{arg="arglist"} then it returns all available arguments
-#'
-#' @return the specific attribute
-#'
-#'
-#' @examples
-#' \dontrun{
-#'
-#' # retrieve the uid of the person responsible after retrieving details for specific User
-#' getinfo(asslist, "responsibleid")
-#'
-#' # see all available attribute names
-#' getinfo(asslist, "arglist")
-#'
-#' }
-#'
-#' @export
-#'
-getinfo <- function(obj, arg) {
-  UseMethod("getinfo")
-}
-
+#' @rdname getinfo
 #' @export
 getinfo.exportClass <- function(obj, arg) {
   if(arg=="arglist"){
@@ -167,6 +147,13 @@ getinfo.exportClass <- function(obj, arg) {
 #' @return TRUE if object is of class exportClass
 #'
 #' @export
+#'
+#' @examples
+#' dt <- data.table::data.table(q1 = 1:5)
+#' vlabs <- data.table::data.table(VariableName = "q1", QuestionText = "Question 1")
+#' ec <- exportClass(dt, varLabels = vlabs)
+#' is.exportClass(ec)
+#' is.exportClass(dt)
 
 is.exportClass<-function(x) {
   inherits(x, "exportClass")
@@ -687,12 +674,14 @@ summaryTable.paradata <- function(x, ... ,useDT = TRUE, DTstyle = TRUE) {
 #' boxplot_summary
 #' }
 #'
+#' @return A ggplot2 plot object if useGGplot2 is TRUE, or a base R boxplot list invisibly otherwise
 #' @export
 boxplot_summary <- function(x, useGGplot2 = FALSE, ...) {
   UseMethod("boxplot_summary")
 }
 
 
+#' @rdname boxplot_summary
 #' @export
 boxplot_summary.exportClass <- function(x, useGGplot2 = FALSE,...) {
   # check if x is of class exportClass

@@ -28,6 +28,15 @@
 #'   }
 #' }
 #'
+#' @return No return value, called for documentation on package configuration options.
+#'
+#' @examples
+#' # Inspect the current maximum parallel requests option
+#' getOption("suso.maxpar.req", default = 100)
+#'
+#' # Inspect the timezone option
+#' getOption("suso.para.tz", default = Sys.timezone())
+#'
 #' @name suso.options
 #'
 NULL
@@ -43,7 +52,14 @@ NULL
 #'
 #' @param max_req set the number of parallel requests for all functions which
 #'
+#' @return Invisible NULL.
 #' @export
+#'
+#' @examples
+#' # Set maximum parallel requests to 50
+#' suso_set_maxpar_req(50)
+#' # Reset back to default
+#' suso_set_maxpar_req(100)
 #'
 suso_set_maxpar_req <- function(max_req = 100) {
   options(suso.maxpar.req = as.integer(max_req))
@@ -71,6 +87,11 @@ suso_set_maxpar_req <- function(max_req = 100) {
 #' @family suso-customization-options
 #'
 #' @export
+#'
+#' @examples
+#' # Set custom notification messages for shiny app
+#' suso_set_pwcheck_mess(mess_succ = "Connected successfully!", mess_fail = "Authentication failed!")
+#' suso_set_prog_mess(mess = "Downloading data, please wait...")
 #'
 suso_set_pwcheck_mess<-function(mess_succ = NULL, mess_fail = NULL) {
 

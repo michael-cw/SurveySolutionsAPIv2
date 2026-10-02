@@ -16,239 +16,221 @@
 #' @noRd
 #'
 
-.suso_transform_fullValid_q <- function(input = NULL) {
-  ##########################################
-  ## v2.1 with validations
-  ## IDs:
-  ##    L0 = Section, L1=position inside section,
-  ##    L2 = Roster/Subsection Nr, (when missing no roster)
-  ##    L3 = position inside Roster/Subsection,
-  ##    L4 = Roster/Subsection (when missing no roster)
-  qfinal <-bind_rows(
-    ######################################################
-    ## first
-    input |> spread_values(
-      Id = jstring("Id"),
-      LastEntryDate = jstring("LastEntryDate")
-    ) |> enter_object("Children") |> gather_array("L0") |>
-      spread_values(
-        type = jstring("$type"),
-        PublicKey = jstring("PublicKey"),
-        Title = jstring("Title")
-      ),
-    ## second
-    input |> enter_object("Children") |> gather_array("L0") |>
-      enter_object("Children") |> gather_array("L1") |>
-      spread_values(
-        type = jstring("$type"),
-        PublicKey = jstring("PublicKey"),
-        Title = jstring("Title"),
-        VariableName = jstring("VariableName"),
-        QuestionScope = jnumber("QuestionScope"),
-        QuestionText = jstring("QuestionText"),
-        Featured = jlogical("Featured")
-
-      ),
-    ## third
-    input |> enter_object("Children") |> gather_array("L0") |>
-      enter_object("Children") |> gather_array("L1") |>
-      enter_object("Children") |> gather_array("L2") |>
-      spread_values(
-        type = jstring("$type"),
-        PublicKey = jstring("PublicKey"),
-        Title = jstring("Title"),
-        VariableName = jstring("VariableName"),
-        QuestionScope = jnumber("QuestionScope"),
-        QuestionText = jstring("QuestionText"),
-        Featured = jlogical("Featured")
-      ),
-    ## fourth
-    input |> enter_object("Children") |> gather_array("L0") |>
-      enter_object("Children") |> gather_array("L1") |>
-      enter_object("Children") |> gather_array("L2") |>
-      enter_object("Children") |> gather_array("L3") |>
-      spread_values(
-        type = jstring("$type"),
-        PublicKey = jstring("PublicKey"),
-        Title = jstring("Title"),
-        VariableName = jstring("VariableName"),
-        QuestionScope = jnumber("QuestionScope"),
-        QuestionText = jstring("QuestionText"),
-        Featured = jlogical("Featured")
-      ),
-    ## fifth
-    input |> enter_object("Children") |> gather_array("L0") |>
-      enter_object("Children") |> gather_array("L1") |>
-      enter_object("Children") |> gather_array("L2") |>
-      enter_object("Children") |> gather_array("L3") |>
-      enter_object("Children") |> gather_array("L4") |>
-      spread_values(
-        type = jstring("$type"),
-        PublicKey = jstring("PublicKey"),
-        Title = jstring("Title"),
-        VariableName = jstring("VariableName"),
-        QuestionScope = jnumber("QuestionScope"),
-        QuestionText = jstring("QuestionText"),
-        Featured = jlogical("Featured")
-      ),
-    ## sixth
-    input |> enter_object("Children") |> gather_array("L0") |>
-      enter_object("Children") |> gather_array("L1") |>
-      enter_object("Children") |> gather_array("L2") |>
-      enter_object("Children") |> gather_array("L3") |>
-      enter_object("Children") |> gather_array("L4") |>
-      enter_object("Children") |> gather_array("L5") |>
-      spread_values(
-        type = jstring("$type"),
-        PublicKey = jstring("PublicKey"),
-        Title = jstring("Title"),
-        VariableName = jstring("VariableName"),
-        QuestionScope = jnumber("QuestionScope"),
-        QuestionText = jstring("QuestionText"),
-        Featured = jlogical("Featured")
-      ),
-    ## seventh
-    input |> enter_object("Children") |> gather_array("L0") |>
-      enter_object("Children") |> gather_array("L1") |>
-      enter_object("Children") |> gather_array("L2") |>
-      enter_object("Children") |> gather_array("L3") |>
-      enter_object("Children") |> gather_array("L4") |>
-      enter_object("Children") |> gather_array("L5") |>
-      enter_object("Children") |> gather_array("L6") |>
-      spread_values(
-        type = jstring("$type"),
-        PublicKey = jstring("PublicKey"),
-        Title = jstring("Title"),
-        VariableName = jstring("VariableName"),
-        QuestionScope = jnumber("QuestionScope"),
-        QuestionText = jstring("QuestionText"),
-        Featured = jlogical("Featured")
-      ),
-    ## eight
-    input |> enter_object("Children") |> gather_array("L0") |>
-      enter_object("Children") |> gather_array("L1") |>
-      enter_object("Children") |> gather_array("L2") |>
-      enter_object("Children") |> gather_array("L3") |>
-      enter_object("Children") |> gather_array("L4") |>
-      enter_object("Children") |> gather_array("L5") |>
-      enter_object("Children") |> gather_array("L6") |>
-      enter_object("Children") |> gather_array("L7") |>
-      spread_values(
-        type = jstring("$type"),
-        PublicKey = jstring("PublicKey"),
-        Title = jstring("Title"),
-        VariableName = jstring("VariableName"),
-        QuestionScope = jnumber("QuestionScope"),
-        QuestionText = jstring("QuestionText"),
-        Featured = jlogical("Featured")
-      )
-    ###########################################################
-  ) |> dplyr::select_if(.col_selector)
-  qfinal<-data.table(qfinal)
-  ###########################
-  ## dynamic use of sprintf
-  ##  - do.call and eval
-  allSections<-names(qfinal)[grepl("^L[0-7]$", names(qfinal))]
-  sprExpr<-paste(rep("%02d", length(allSections)), collapse = "")
-  allSections<-paste0(".(", paste(allSections, collapse = ","), ")")
-  qfinal[,intID:=do.call(sprintf, c(list(sprExpr), qfinal[,eval(parse(text = allSections))]))]
-  qfinal<-qfinal[,document.id:=NULL][]
-  ## Get Validations
-  valfinal_1<-.suso_transform_fullValid_val(input = input)
-  if(!is.null(valfinal_1)){
-    ###########################
-    ## dynamic use of sprintf
-    ##  - do.call and eval
-    ##  - to harmonize ID, ID var is created here!!!
-    allSections<-names(valfinal_1)[grepl("^L[0-7]$", names(valfinal_1))]
-    sprExpr<-paste(rep("%02d", length(allSections)), collapse = "")
-    allSections<-paste0(".(", paste(allSections, collapse = ","), ")")
-    ## ID for validations
-    valfinal_1[,intID:=do.call(sprintf, c(list(sprExpr), valfinal_1[,eval(parse(text = allSections))]))]
-    ## ID for questionnaire
-    qfinal[,intID:=do.call(sprintf, c(list(sprExpr), qfinal[,eval(parse(text = allSections))]))]
-    qVar<-qfinal[,.(intID, VariableName)]
-    valfinal_1<-valfinal_1[,.(intID, Expression, Message, Severity)][]
-    setkeyv(valfinal_1, "intID"); setkeyv(qVar, "intID")
-    valfinal_1<-valfinal_1[qVar, nomatch=0]
+.suso_transform_fullValid_q <- function(input = NULL, include_raw = FALSE) {
+  if (is.null(input)) {
+    return(list(
+      q = data.table::data.table(),
+      val = data.table::data.table(),
+      v = data.table::data.table(),
+      answers = data.table::data.table()
+    ))
   }
-  q_final<-list(q=qfinal, val=valfinal_1)
-  return(q_final)
-}
 
-#' @keywords internal
-#' @noRd
-#'
-.suso_transform_fullValid_val <- function(input = NULL) {
-  valfinal <-bind_rows(
-    ######################################################
-    ## VALIDATIONS (Start with L0)
-    ######################################################
-    input |> enter_object("Children") |> gather_array("L0") |>
-      enter_object("Children") |> gather_array("L1") |>
-      enter_object("ValidationConditions") |> gather_array("val1") |>
-      spread_all(),
-    ## third
-    input |> enter_object("Children") |> gather_array("L0") |>
-      enter_object("Children") |> gather_array("L1") |>
-      enter_object("Children") |> gather_array("L2") |>
-      enter_object("ValidationConditions") |> gather_array("val1") |>
-      spread_all(),
-    ## fourth
-    input |> enter_object("Children") |> gather_array("L0") |>
-      enter_object("Children") |> gather_array("L1") |>
-      enter_object("Children") |> gather_array("L2") |>
-      enter_object("Children") |> gather_array("L3") |>
-      enter_object("ValidationConditions") |> gather_array("val1") |>
-      spread_all(),
-    ## fifth
-    input |> enter_object("Children") |> gather_array("L0") |>
-      enter_object("Children") |> gather_array("L1") |>
-      enter_object("Children") |> gather_array("L2") |>
-      enter_object("Children") |> gather_array("L3") |>
-      enter_object("Children") |> gather_array("L4") |>
-      enter_object("ValidationConditions") |> gather_array("val1") |>
-      spread_all(),
-    ## sixth
-    input |> enter_object("Children") |> gather_array("L0") |>
-      enter_object("Children") |> gather_array("L1") |>
-      enter_object("Children") |> gather_array("L2") |>
-      enter_object("Children") |> gather_array("L3") |>
-      enter_object("Children") |> gather_array("L4") |>
-      enter_object("Children") |> gather_array("L5") |>
-      enter_object("ValidationConditions") |> gather_array("val1") |>
-      spread_all(),
-    ## seventh
-    input |> enter_object("Children") |> gather_array("L0") |>
-      enter_object("Children") |> gather_array("L1") |>
-      enter_object("Children") |> gather_array("L2") |>
-      enter_object("Children") |> gather_array("L3") |>
-      enter_object("Children") |> gather_array("L4") |>
-      enter_object("Children") |> gather_array("L5") |>
-      enter_object("Children") |> gather_array("L6") |>
-      enter_object("ValidationConditions") |> gather_array("val1") |>
-      spread_all(),
-    ## eight
-    input |> enter_object("Children") |> gather_array("L0") |>
-      enter_object("Children") |> gather_array("L1") |>
-      enter_object("Children") |> gather_array("L2") |>
-      enter_object("Children") |> gather_array("L3") |>
-      enter_object("Children") |> gather_array("L4") |>
-      enter_object("Children") |> gather_array("L5") |>
-      enter_object("Children") |> gather_array("L6") |>
-      enter_object("Children") |> gather_array("L7") |>
-      enter_object("ValidationConditions") |> gather_array("val1") |>
-      spread_all()
-    ###########################################################
-  ) |> dplyr::select_if(.col_selector)
-
-
-  valfinal<-data.table(valfinal)
-  if(nrow(valfinal)==0) {
-    return(NULL)
+  if (inherits(input, "tbl_json")) {
+    doc <- input$..JSON[[1]]
+  } else if (is.character(input)) {
+    if (file.exists(input)) {
+      doc <- jsonlite::fromJSON(input, simplifyVector = FALSE)
+    } else {
+      doc <- jsonlite::fromJSON(input, simplifyVector = FALSE)
+    }
+  } else if (is.list(input) && "Children" %in% names(input)) {
+    doc <- input
+  } else if (is.list(input) && "$type" %in% names(input)) {
+    doc <- input
   } else {
-    return(valfinal)
+    cli::cli_abort(c("x" = "Invalid input format for questionnaire document."))
   }
+
+  quest_id <- doc$Id %||% NA_character_
+  last_entry <- doc$LastEntryDate %||% NA_character_
+
+  cat_map <- list()
+  if (!is.null(doc$Categories)) {
+    for (cat in doc$Categories) {
+      if (!is.null(cat$Id) && !is.null(cat$Name)) {
+        cat_map[[cat$Id]] <- cat$Name
+      }
+    }
+  }
+
+  q_list <- list()
+  val_list <- list()
+  ans_list <- list()
+  max_depth <- 0
+
+  traverse <- function(node, indices = integer(0), cur_section = NA_character_,
+                       cur_roster_var = NA_character_, cur_roster_title = NA_character_) {
+    depth <- length(indices)
+    if (depth > max_depth) max_depth <<- depth
+
+    t <- node[["$type"]] %||% "Unknown"
+    is_roster <- isTRUE(node[["IsRoster"]])
+    title <- node[["Title"]] %||% NA_character_
+    var_name <- node[["VariableName"]] %||% node[["Name"]] %||% NA_character_
+
+    # Update hierarchy context
+    if (depth == 1) {
+      cur_section <- title
+    }
+    if (is_roster) {
+      cur_roster_var <- var_name
+      cur_roster_title <- title
+    }
+
+    # Clean intID without literal "NA"
+    int_id <- paste(sprintf("%02d", indices), collapse = ".")
+
+    # Question text (StaticText uses Text)
+    q_text <- if (t == "StaticText") {
+      node[["Text"]] %||% NA_character_
+    } else {
+      node[["QuestionText"]] %||% NA_character_
+    }
+
+    # Variable fields
+    expr <- if (t == "Variable") node[["Expression"]] %||% NA_character_ else NA_character_
+    var_type <- if (t == "Variable") node[["Type"]] %||% NA_integer_ else NA_integer_
+    var_label <- node[["VariableLabel"]] %||% node[["Label"]] %||% NA_character_
+    do_not_export <- if (t == "Variable") isTRUE(node[["DoNotExport"]]) else NA
+
+    row_data <- list(
+      Id = quest_id,
+      LastEntryDate = last_entry,
+      intID = int_id,
+      indices = indices,
+      type = t,
+      PublicKey = node[["PublicKey"]] %||% NA_character_,
+      VariableName = var_name,
+      Title = title,
+      QuestionText = q_text,
+      QuestionScope = node[["QuestionScope"]] %||% NA_integer_,
+      Featured = isTRUE(node[["Featured"]]),
+      Instructions = node[["Instructions"]] %||% NA_character_,
+      ConditionExpression = node[["ConditionExpression"]] %||% NA_character_,
+      HideIfDisabled = isTRUE(node[["HideIfDisabled"]]),
+      VariableLabel = var_label,
+      StataExportCaption = node[["StataExportCaption"]] %||% NA_character_,
+      IsRoster = is_roster,
+      RosterSizeSource = node[["RosterSizeSource"]] %||% NA_integer_,
+      RosterSizeQuestionId = node[["RosterSizeQuestionId"]] %||% NA_character_,
+      SectionTitle = cur_section,
+      RosterVariable = cur_roster_var,
+      RosterTitle = cur_roster_title,
+      Expression = expr,
+      VariableType = var_type,
+      DoNotExport = do_not_export,
+      GeometryType = if (!is.null(node[["Properties"]][["GeometryType"]])) as.integer(node[["Properties"]][["GeometryType"]]) else NA_integer_
+    )
+
+    if (include_raw) {
+      row_data$..JSON <- list(node)
+    }
+
+    q_list[[length(q_list) + 1]] <<- row_data
+
+    # Validations
+    vcs <- node[["ValidationConditions"]]
+    if (length(vcs) > 0) {
+      for (vc in vcs) {
+        val_list[[length(val_list) + 1]] <<- list(
+          intID = int_id,
+          PublicKey = node[["PublicKey"]] %||% NA_character_,
+          VariableName = var_name,
+          QuestionText = q_text,
+          SectionTitle = cur_section,
+          RosterVariable = cur_roster_var,
+          Expression = vc[["Expression"]] %||% NA_character_,
+          Message = vc[["Message"]] %||% NA_character_,
+          Severity = vc[["Severity"]] %||% 0L,
+          SeverityLabel = if (identical(vc[["Severity"]], 1L) || identical(vc[["Severity"]], 1)) "Warning" else "Error"
+        )
+      }
+    }
+
+    # Answers
+    answers <- node[["Answers"]]
+    cat_id <- node[["CategoriesId"]]
+    linked_q <- node[["LinkedToQuestionId"]]
+
+    if (length(answers) > 0) {
+      for (ans in answers) {
+        ans_list[[length(ans_list) + 1]] <<- list(
+          VariableName = var_name,
+          PublicKey = node[["PublicKey"]] %||% NA_character_,
+          AnswerValue = as.character(ans[["AnswerValue"]] %||% ""),
+          AnswerText = ans[["AnswerText"]] %||% "",
+          AnswerCode = ans[["AnswerCode"]] %||% NA_real_,
+          isLinked = FALSE,
+          CategoriesId = NA_character_,
+          CategoryName = NA_character_
+        )
+      }
+    } else if (!is.null(cat_id) && nchar(cat_id) > 0) {
+      ans_list[[length(ans_list) + 1]] <<- list(
+        VariableName = var_name,
+        PublicKey = node[["PublicKey"]] %||% NA_character_,
+        AnswerValue = NA_character_,
+        AnswerText = NA_character_,
+        AnswerCode = NA_real_,
+        isLinked = FALSE,
+        CategoriesId = cat_id,
+        CategoryName = cat_map[[cat_id]] %||% NA_character_
+      )
+    } else if (!is.null(linked_q) && nchar(linked_q) > 0) {
+      ans_list[[length(ans_list) + 1]] <<- list(
+        VariableName = var_name,
+        PublicKey = node[["PublicKey"]] %||% NA_character_,
+        AnswerValue = NA_character_,
+        AnswerText = NA_character_,
+        AnswerCode = NA_real_,
+        isLinked = TRUE,
+        CategoriesId = NA_character_,
+        CategoryName = NA_character_
+      )
+    }
+
+    # Traverse children
+    children <- node[["Children"]]
+    if (length(children) > 0) {
+      for (i in seq_along(children)) {
+        traverse(children[[i]], c(indices, i), cur_section, cur_roster_var, cur_roster_title)
+      }
+    }
+  }
+
+  if (!is.null(doc$Children) && length(doc$Children) > 0) {
+    for (i in seq_along(doc$Children)) {
+      traverse(doc$Children[[i]], c(i), NA_character_, NA_character_, NA_character_)
+    }
+  }
+
+  if (length(q_list) == 0) {
+    return(list(
+      q = data.table::data.table(),
+      val = data.table::data.table(),
+      v = data.table::data.table(),
+      answers = data.table::data.table()
+    ))
+  }
+
+  # Build L0, L1, ... coordinate columns
+  idx_mat <- matrix(NA_integer_, nrow = length(q_list), ncol = max_depth)
+  for (r in seq_along(q_list)) {
+    idx <- q_list[[r]]$indices
+    idx_mat[r, seq_along(idx)] <- idx
+    q_list[[r]]$indices <- NULL
+  }
+
+  dt_q <- data.table::rbindlist(q_list, fill = TRUE)
+  for (d in seq_len(max_depth)) {
+    dt_q[, (paste0("L", d - 1)) := idx_mat[, d]]
+  }
+
+  dt_val <- if (length(val_list) > 0) data.table::rbindlist(val_list, fill = TRUE) else data.table::data.table()
+  dt_ans <- if (length(ans_list) > 0) data.table::rbindlist(ans_list, fill = TRUE) else data.table::data.table()
+
+  list(q = dt_q, val = dt_val, v = dt_val, answers = dt_ans)
 }
 
 # get all questions from questionnaire
@@ -258,33 +240,31 @@
     stop("The 'type' column does not exist in the data table.")
   }
 
-  # Identify rows where 'type' contains 'Gps'
+  # Identify rows where 'type' contains 'Gps' or 'AreaQuestion'
   rows_with_question <- dt[grepl("Gps", type) | grepl("AreaQuestion", type), ]
-  # if none returne nrow 0 dt
-  if(nrow(rows_with_question)==0) return(data.table(NULL))
+  # if none return nrow 0 dt
+  if(nrow(rows_with_question) == 0) return(data.table::data.table(NULL))
   # create type1 with gps/map area/map point
-  rows_with_question[,type1:=character(.N)]
+  rows_with_question[, type1 := character(.N)]
   # gps
-  rows_with_question[grepl("Gps", type), type1:="GPS"]
-  # map area (!!ADD MULTIPOINT & LINE)
-  for(i in 1:nrow(rows_with_question)) {
-    if(grepl("AreaQuestion", rows_with_question[i, type])) {
-      if(rows_with_question$..JSON[[i]]$Properties$GeometryType == 0) {
-        rows_with_question[i, type1:="POLY"]
-      } else if(rows_with_question$..JSON[[i]]$Properties$GeometryType == 1) {
-        rows_with_question[i, type1:="LINE"]
-      } else if(rows_with_question$..JSON[[i]]$Properties$GeometryType == 2) {
-        rows_with_question[i, type1:="POINT"]
-      } else if(rows_with_question$..JSON[[i]]$Properties$GeometryType == 3) {
-        rows_with_question[i, type1:="POINT"]
+  rows_with_question[grepl("Gps", type), type1 := "GPS"]
+  # map area (polygon, line, point)
+  if ("GeometryType" %in% names(rows_with_question)) {
+    rows_with_question[grepl("AreaQuestion", type) & GeometryType == 0L, type1 := "POLY"]
+    rows_with_question[grepl("AreaQuestion", type) & GeometryType == 1L, type1 := "LINE"]
+    rows_with_question[grepl("AreaQuestion", type) & GeometryType %in% c(2L, 3L), type1 := "POINT"]
+  } else if ("..JSON" %in% names(rows_with_question)) {
+    for(i in 1:nrow(rows_with_question)) {
+      if(grepl("AreaQuestion", rows_with_question[i, type])) {
+        geom <- rows_with_question$..JSON[[i]]$Properties$GeometryType
+        if (!is.null(geom)) {
+          if(geom == 0) rows_with_question[i, type1 := "POLY"]
+          else if(geom == 1) rows_with_question[i, type1 := "LINE"]
+          else if(geom %in% c(2, 3)) rows_with_question[i, type1 := "POINT"]
+        }
       }
     }
   }
-  # rows_with_question[grepl("AreaQuestion", type) && ..JSON[[]]$Properties$GeometryType == 0, type1:="POLY"]
-  # rows_with_question[grepl("AreaQuestion", type) && ..JSON[[]]$Properties$GeometryType == 3, type1:="POINT"]
-
-  # mark type of area with quest$q$..JSON[[22]]$Properties$GeometryType
-  # 0 for polygon, 3 for single point
 
   return(rows_with_question[])
 }

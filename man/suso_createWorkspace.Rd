@@ -27,6 +27,9 @@ under \url{https://docs.mysurvey.solutions/headquarters/accounts/workspaces/}}
 
 \item{displayName}{The name visible to the users}
 }
+\value{
+A data.table containing the created workspace information.
+}
 \description{
 \code{suso_createWorkspace} Allows you to create a workspace with a specific system name and display name.
 For more details please read \url{https://docs.mysurvey.solutions/headquarters/accounts/workspaces/}. To run this command

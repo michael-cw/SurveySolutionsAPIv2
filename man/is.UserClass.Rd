@@ -15,3 +15,8 @@ TRUE if object is of class UserClass
 \description{
 Function to check if an object is of class UserClass
 }
+\examples{
+uc <- UserClass(list(Users = data.frame(UserName = "interviewer1")))
+is.UserClass(uc)
+is.UserClass(data.frame())
+}

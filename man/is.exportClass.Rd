@@ -15,3 +15,10 @@ TRUE if object is of class exportClass
 \description{
 Function to check if an object is of class exportClass
 }
+\examples{
+dt <- data.table::data.table(q1 = 1:5)
+vlabs <- data.table::data.table(VariableName = "q1", QuestionText = "Question 1")
+ec <- exportClass(dt, varLabels = vlabs)
+is.exportClass(ec)
+is.exportClass(dt)
+}

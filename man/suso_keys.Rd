@@ -6,9 +6,15 @@
 \usage{
 suso_keys()
 }
+\value{
+A list of class suso_api containing current Survey Solutions credentials.
+}
 \description{
 (this function has been inspired by the googleway package
 \url{https://github.com/SymbolixAU/googleway},
 an excellent package to use google geo-spatial API)
 Retrieves the list of Survey Solutions credentials that have been set.
+}
+\examples{
+suso_keys()
 }

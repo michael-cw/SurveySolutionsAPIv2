@@ -37,6 +37,9 @@ RejectedBySupervisor,ReadyForInterview,
 SentToCapi,Restarted,Completed,ApprovedBySupervisor,
 RejectedByHeadquarters,ApprovedByHeadquarters,Deleted}), if NULL only completed interviews will be shown.}
 }
+\value{
+A data.table listing all interviews matching the specified questionnaire and status filter.
+}
 \description{
 Returns all interviews for the specified questionnaire and the selected status.
 }
@@ -61,6 +64,5 @@ To get all interviews for a specific questionnaire and a specific status
               )
 
 }
-
 
 }

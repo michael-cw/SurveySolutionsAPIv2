@@ -11,6 +11,14 @@ UserClass(x, ...)
 
 \item{...}{additional attributes to be added to the assignmentClass}
 }
+\value{
+An object of class UserClass (inheriting from data.table)
+}
 \description{
 Users class extends the data.table class to include relevant methods
+}
+\examples{
+usr_list <- list(Users = data.frame(UserName = "interviewer1", Role = "Interviewer"))
+uc <- UserClass(usr_list)
+is.UserClass(uc)
 }

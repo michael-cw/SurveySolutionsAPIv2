@@ -23,6 +23,12 @@
 #' @param operations.type specifies the desired operation, one of assignmentQuantitySettings, history, or recordAudio,
 #' if specified, requires also \emph{AssId} to be specified.
 #'
+#' @param searchBy Filter result by custom search query
+#' @param supervisorId Filter assignments by supervisor ID
+#' @param status Filter assignments by status (e.g. NotAssigned, Assigned, Closed, Archived, Deleted, Completed)
+#' @param start start index for history query (only with operations.type = "history")
+#' @param length page length for history query (only with operations.type = "history")
+#'
 #' @return Returns an S3 object of assignmentClass. If you select any of the operations types, then no data.frame is returned,
 #' the data.table will be NULL, however any information returned from the API can be retrieved by using the \code{getinfo()}
 #' function with the corresponding arguments.
@@ -75,6 +81,11 @@ suso_get_assignments<-function(server = suso_get_api_key("susoServer"),
                                AssId=NULL,
                                version= NULL,
                                responsibleID = NULL,
+                               supervisorId = NULL,
+                               searchBy = NULL,
+                               status = NULL,
+                               start = NULL,
+                               length = NULL,
                                ShowArchive = FALSE,
                                order.by=c("Id ASC", "Id DESC", "ResponsibleName DESC", "ResponsibleName ASC",
                                           "InterviewsCount DESC", "InterviewsCount ASC", "Quantity DESC",
@@ -132,6 +143,21 @@ suso_get_assignments<-function(server = suso_get_api_key("susoServer"),
     # add responsibleID if not null
     if(!is.null(responsibleID)){
       url<-.addQuery(url, Responsible = responsibleID)
+    }
+
+    # add supervisorId if not null
+    if(!is.null(supervisorId)){
+      url<-.addQuery(url, SupervisorId = supervisorId)
+    }
+
+    # add searchBy if not null
+    if(!is.null(searchBy)){
+      url<-.addQuery(url, SearchBy = searchBy)
+    }
+
+    # add status if not null
+    if(!is.null(status)){
+      url<-.addQuery(url, Status = status)
     }
 
     # add ShowArchive if TRUE
@@ -311,9 +337,10 @@ suso_get_assignments<-function(server = suso_get_api_key("susoServer"),
 
     } else if(operations.type=="history") {
       # get the history
-      # Change the quantity
       .checkNum(x = AssId)
       url<-req_url_path_append(url, AssId, "history")
+      if(!is.null(start)) url <- .addQuery(url, start = start)
+      if(!is.null(length)) url <- .addQuery(url, length = length)
       tryCatch(
         { resp<-url |>
           httr2::req_perform()
@@ -376,7 +403,7 @@ suso_get_assignments<-function(server = suso_get_api_key("susoServer"),
 #' Survey Solutions API call for assignment manipulation
 #'
 #' \code{suso_set_assignments} allows to (re-)assign, change limits or audio
-#' recording settings, as well as archiving/unarchive and close assignments.
+#' recording settings, as well as archiving/unarchive, downsizing, changing status/target area, and closing assignments.
 #'
 #' @param server Survey Solutions server address
 #' @param apiUser Survey Solutions API user
@@ -384,14 +411,16 @@ suso_get_assignments<-function(server = suso_get_api_key("susoServer"),
 #' @param token If Survey Solutions server token is provided \emph{apiUser} and \emph{apiPass} will be ignored
 #' @param workspace If workspace name is provide requests are made regarding this specific workspace
 #' @param AssId the assignment id for which the change is required
-#' @param payload requirements depend on the operations type. See details bellow.
-#' @param operations.type specifies the desired operation, one of recordAudio, archive/unarchive, (re-)assign
-#' changeQuantity, or close, if specified, requires in some case also \emph{pauyload} to be specified. See details bellow.
+#' @param payload requirements depend on the operations type. See details below.
+#' @param operations.type specifies the desired operation, one of recordAudio, archive, unarchive, assign,
+#' changeQuantity, close, downsize, changeStatus, changeTargetArea.
 #'
-#' @details If operations.type is \emph{recordAudio}, \code{TRUE/FALSE} is required as payload, if it is \emph{archive} or \emph{unarchive},
-#' no payload is required, if it is \emph{assign} the payload must be the uid of the new responsible, if it is \emph{changeQuantity} the payload
-#' must be the new integer number of assignments, if it is \emph{close} no payload is required.
-#'
+#' @details If operations.type is \emph{recordAudio}, \code{TRUE/FALSE} is required as payload.
+#' If it is \emph{archive}, \emph{unarchive}, \emph{close}, or \emph{downsize}, no payload is required.
+#' If it is \emph{assign} the payload must be the uid of the new responsible person.
+#' If it is \emph{changeQuantity} the payload must be the new integer number of assignments (-1 for unlimited).
+#' If it is \emph{changeStatus} the payload must be the new status string (e.g. "Closed", "Deleted") or a named list with Status and optional Comment.
+#' If it is \emph{changeTargetArea} the payload must be the new target area string.
 #'
 #' @return Returns an S3 object of assignmentClass
 #'
@@ -405,22 +434,12 @@ suso_get_assignments<-function(server = suso_get_api_key("susoServer"),
 #'                    payload = "43f3d2bd-7959-4706-97ae-2653b5685c9e",
 #'                    operations.type = "assign"
 #'                    )
-#' # get all assignment for specific responsible
+#' # downsize assignment
 #' asslist<-suso_set_assignments(
 #'                    workspace = "myworkspace",
-#'                    responsibleID = "a67d2b82-bf28-40cf-bd1a-7901225c0885"
+#'                    AssId = 10,
+#'                    operations.type = "downsize"
 #'                    )
-#' # get the overall count
-#' getinfo(asslist, "totalcount")
-#'
-#' #get all single assignment details
-#' asslist<-suso_set_assignments(
-#'                    workspace = "myworkspace",
-#'                    AssId = 1
-#'                    )
-#' # retrieve the uid of the person responsible
-#' getinfo(asslist, "responsibleid")
-#'
 #' }
 #'
 #' @export
@@ -438,7 +457,10 @@ suso_set_assignments<-function(server = suso_get_api_key("susoServer"),
                                                    "assign",
                                                    "changeQuantity",
                                                    "close",
-                                                   "unarchive")) {
+                                                   "unarchive",
+                                                   "downsize",
+                                                   "changeStatus",
+                                                   "changeTargetArea")) {
 
 
   # workspace default
@@ -453,43 +475,34 @@ suso_set_assignments<-function(server = suso_get_api_key("susoServer"),
   # check AssId
   .checkNum(x = AssId)
 
-  # operation type payload:
-  # rec audio requires payload, returns 204 if success
-  # archive requires no payload, returns identifying data
-  # assign requires payload, returns identifying data
-  # changeQuantity requires simple payload, returns identifying data
-  # close requires no payload, returns identifying data
-  # unarchive requires no payload, returns identifying data
-
   # check payload by operations type
-  # recordAudio requires TRUE/FALSE
   if(operations.type=="recordAudio") {
     if(!is.logical(payload)) {
-      stop("payload must be TRUE/FALSE")
+      cli::cli_abort("payload must be TRUE/FALSE")
     }
-  }
-  # change quantity requires positive integer or -1
-  if(operations.type=="changeQuantity") {
+    js_ch <- list(Enabled = jsonlite::unbox(payload))
+  } else if(operations.type=="changeQuantity") {
     if(!is.numeric(payload)) {
-      stop("payload must be numeric")
+      cli::cli_abort("payload must be numeric")
     }
-    if(!(payload==-1|payload>0)) {
-      stop("payload must be positive integer or -1")
+    if(!(payload == -1 || payload > 0)) {
+      cli::cli_abort("payload must be positive integer or -1")
     }
-    # transform to integer
-    payload<-as.integer(payload)
-  }
-
-  # assign requires uuid
-  if(operations.type=="assign") {
+    js_ch <- as.integer(payload)
+  } else if(operations.type=="assign") {
     .checkUUIDFormat(payload)
+    js_ch <- list(Responsible = jsonlite::unbox(payload))
+  } else if(operations.type %in% c("close", "archive", "unarchive", "downsize")) {
+    js_ch <- NULL
+  } else if(operations.type == "changeStatus") {
+    if (is.list(payload)) {
+      js_ch <- payload
+    } else {
+      js_ch <- list(Status = jsonlite::unbox(as.character(payload)))
+    }
+  } else if(operations.type == "changeTargetArea") {
+    js_ch <- jsonlite::unbox(as.character(payload))
   }
-
-  # unbox payload
-  if(operations.type=="recordAudio") js_ch<-list(Enabled=unbox(payload))
-  if(operations.type=="assign") js_ch<-list(Responsible=unbox(payload))
-  if(operations.type=="changeQuantity") js_ch<-as.character(payload)
-  if(operations.type=="close" | operations.type=="archive" | operations.type=="unarchive") js_ch<-NULL
 
   # Build the URL, first for token, then for base auth
   if(!is.null(token)){
@@ -498,17 +511,22 @@ suso_set_assignments<-function(server = suso_get_api_key("susoServer"),
     url<-.baseurl_baseauth(server, workspace, apiUser, apiPass, "assignments")
   }
 
-  # add PATCH to method
+  # determine HTTP method
+  http_method <- ifelse(operations.type %in% c("changeStatus", "changeTargetArea"), "POST", "PATCH")
+
+  # add method to url
   url<-url |>
-    httr2::req_method("PATCH")
+    httr2::req_method(http_method)
 
   # add AssId and operations.type to path
   url<-url |>
     httr2::req_url_path_append(AssId, operations.type)
 
-  # add payload to body
-  url<-url |>
-    httr2::req_body_json(js_ch)
+  # add payload to body if not null
+  if(!is.null(js_ch)) {
+    url<-url |>
+      httr2::req_body_json(js_ch)
+  }
 
   # get argument for class
   args<-.getargsforclass(workspace = workspace)
@@ -538,4 +556,5 @@ suso_set_assignments<-function(server = suso_get_api_key("susoServer"),
   )
 
 }
+
 

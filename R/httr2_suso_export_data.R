@@ -358,13 +358,15 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
     jobid<-exlist1$JobId[1]
     status<-exlist1$ExportStatus[1]
     prog<-1 #exlist1$Progress[1]
-    # remove json body
-    url$body<-NULL
-    # update path for details request
-    url<-url |>
-      req_method("GET") |>
-      req_url_path_append(jobid)
-    
+    # create new request for status polling
+    if(!is.null(token)){
+      status_url<-.baseurl_token(server, workspace, token, "export", version = "v2") |>
+        req_url_path_append(jobid)
+    } else {
+      status_url<-.baseurl_baseauth(server, workspace, apiUser, apiPass, "export", version = "v2") |>
+        req_url_path_append(jobid)
+    }
+
     # perform request in while loop until file is ready
     # i. add progress bar
     bar<-cli::cli_progress_bar(getOption("suso.progressbar.message"), total = 150, type = "iterator")
@@ -372,11 +374,12 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
     # on.exit(cli::cli_progress_done())
     # ii. add while loop
     while(status != "Completed"){
+      Sys.sleep(1)
       # get status
       tryCatch(
-        { resp<-url |>
+        { resp<-status_url |>
           httr2::req_perform()
-        
+
         # get the response data
         if(resp_has_body(resp)){
           # get body by content type
@@ -389,6 +392,10 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
         },
         error = function(e) .http_error_handler(e, "exp")
       )
+      if (status %in% c("Fail", "Canceled")) {
+        cli::cli_progress_done(id = bar)
+        cli::cli_abort(c("x" = "Export process failed or was canceled (status: {status})."))
+      }
       # update progress bar -->SuSo not always reports correctly. if status is completed, set to 100
       prog<-ifelse(prog>progresp, prog+1, progresp)
       prog<-ifelse(status=="Completed", 98, prog)
@@ -400,7 +407,7 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
       }
     }
     # when finished get file
-    url<-url |>
+    url<-status_url |>
       req_method("GET") |>
       req_url_path_append("file") |>
       # add curl options (automatic redirect does not work!)
@@ -452,9 +459,9 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
   # i. unpack the json
   zip::unzip(file.path(tmpdir, "Questionnaire", "content.zip"), exdir = file.path(tmpdir, "Questionnaire"))
   # ii. read the json
-  ajson<-tidyjson::read_json(file.path(tmpdir, "Questionnaire", "document.json"))
+  ajson<-file.path(tmpdir, "Questionnaire", "document.json")
   # iii. created list with questions and validations
-  allcontent<-.suso_transform_fullValid_q(ajson)
+  allcontent<-.suso_transform_fullValid_q(ajson, include_raw = TRUE)
   allquestions<-allcontent$q
   # iv. read translations if folder exist
   if(addTranslation) {
@@ -1268,3 +1275,218 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
   
   ############################################################################################################
 }
+
+
+#' Survey Solutions API call to list export processes
+#'
+#' Retrieves a list of export processes matching specified filters.
+#'
+#' @param server Survey Solutions server address
+#' @param apiUser Survey Solutions API user
+#' @param apiPass Survey Solutions API password
+#' @param token If Survey Solutions server token is provided \emph{apiUser} and \emph{apiPass} will be ignored
+#' @param workspace server workspace, if nothing provided, defaults to primary
+#' @param exportType Format of export data: \code{"Tabular"}, \code{"STATA"}, \code{"SPSS"}, \code{"Binary"}, \code{"DDI"}, \code{"Parquet"}
+#' @param interviewStatus Status of exported interviews: \code{"All"}, \code{"SupervisorAssigned"}, \code{"InterviewerAssigned"},
+#'   \code{"RejectedBySupervisor"}, \code{"Completed"}, \code{"ApprovedBySupervisor"}, \code{"RejectedByHeadquarters"}, \code{"ApprovedByHeadquarters"}
+#' @param questID Questionnaire ID (GUID)
+#' @param version Questionnaire version
+#' @param exportStatus Status of export process: \code{"Created"}, \code{"Running"}, \code{"Completed"}, \code{"Fail"}, \code{"Canceled"}
+#' @param hasFile Logical, whether the export process has a file ready to download
+#' @param limit Maximum number of records to return
+#' @param offset Number of records to skip
+#'
+#' @return A data.table containing the list of export processes.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # List all export processes in workspace
+#' exp_list <- suso_getExportList()
+#' }
+suso_getExportList <- function(server = suso_get_api_key("susoServer"),
+                               apiUser = suso_get_api_key("susoUser"),
+                               apiPass = suso_get_api_key("susoPass"),
+                               token = NULL,
+                               workspace = suso_get_api_key("workspace"),
+                               exportType = NULL,
+                               interviewStatus = NULL,
+                               questID = NULL,
+                               version = NULL,
+                               exportStatus = NULL,
+                               hasFile = NULL,
+                               limit = NULL,
+                               offset = NULL) {
+  workspace <- .ws_default(ws = workspace)
+  .check_basics(token, server, apiUser, apiPass)
+
+  if (!is.null(token)) {
+    url <- .baseurl_token(server, workspace, token, "export", version = "v2")
+  } else {
+    url <- .baseurl_baseauth(server, workspace, apiUser, apiPass, "export", version = "v2")
+  }
+
+  qid <- NULL
+  if (!is.null(questID) && !is.null(version)) {
+    .checkUUIDFormat(questID)
+    .checkNum(version)
+    qid <- paste0(stringr::str_remove_all(questID, "-"), "$", version)
+  } else if (!is.null(questID) && grepl("\\$", questID)) {
+    qid <- questID
+  }
+
+  if (!is.null(exportType)) {
+    exportType <- match.arg(exportType, c("Tabular", "STATA", "SPSS", "Binary", "DDI", "Parquet"))
+  }
+  if (!is.null(interviewStatus)) {
+    interviewStatus <- match.arg(interviewStatus, c("All", "SupervisorAssigned", "InterviewerAssigned",
+                                                   "RejectedBySupervisor", "Completed",
+                                                   "ApprovedBySupervisor",
+                                                   "RejectedByHeadquarters",
+                                                   "ApprovedByHeadquarters"))
+  }
+  if (!is.null(exportStatus)) {
+    exportStatus <- match.arg(exportStatus, c("Created", "Running", "Completed", "Fail", "Canceled"))
+  }
+
+  q_params <- list(
+    exportType = exportType,
+    interviewStatus = interviewStatus,
+    questionnaireIdentity = qid,
+    exportStatus = exportStatus,
+    hasFile = hasFile,
+    limit = limit,
+    offset = offset
+  )
+  # Filter out NULLs
+  q_params <- q_params[!vapply(q_params, is.null, logical(1))]
+
+  if (length(q_params) > 0) {
+    url <- do.call(httr2::req_url_query, c(list(url), q_params))
+  }
+
+  resp <- tryCatch(
+    httr2::req_perform(url),
+    error = function(e) .http_error_handler(e, "exp")
+  )
+
+  if (httr2::resp_has_body(resp) && httr2::resp_content_type(resp) == "application/json") {
+    res <- httr2::resp_body_json(resp, simplifyVector = TRUE)
+    return(data.table::as.data.table(res))
+  } else {
+    return(data.table::data.table())
+  }
+}
+
+
+#' Survey Solutions API call to get detailed information about an export process
+#'
+#' Retrieves status and details of a single export process by its ID.
+#'
+#' @param server Survey Solutions server address
+#' @param apiUser Survey Solutions API user
+#' @param apiPass Survey Solutions API password
+#' @param token If Survey Solutions server token is provided \emph{apiUser} and \emph{apiPass} will be ignored
+#' @param workspace server workspace, if nothing provided, defaults to primary
+#' @param jobid Export process ID (integer)
+#'
+#' @return A data.table containing export process details.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Get status of export process by jobid
+#' proc_info <- suso_getExportProcess(jobid = 123)
+#' }
+suso_getExportProcess <- function(server = suso_get_api_key("susoServer"),
+                                  apiUser = suso_get_api_key("susoUser"),
+                                  apiPass = suso_get_api_key("susoPass"),
+                                  token = NULL,
+                                  workspace = suso_get_api_key("workspace"),
+                                  jobid = NULL) {
+  workspace <- .ws_default(ws = workspace)
+  .check_basics(token, server, apiUser, apiPass)
+
+  if (is.null(jobid)) {
+    cli::cli_abort(c("x" = "Please provide an export process 'jobid'."))
+  }
+  .checkNum(jobid)
+
+  if (!is.null(token)) {
+    url <- .baseurl_token(server, workspace, token, "export", version = "v2")
+  } else {
+    url <- .baseurl_baseauth(server, workspace, apiUser, apiPass, "export", version = "v2")
+  }
+  url <- httr2::req_url_path_append(url, jobid)
+
+  resp <- tryCatch(
+    httr2::req_perform(url),
+    error = function(e) .http_error_handler(e, "exp")
+  )
+
+  if (httr2::resp_has_body(resp) && httr2::resp_content_type(resp) == "application/json") {
+    res <- httr2::resp_body_json(resp, simplifyVector = TRUE)
+    return(data.table::as.data.table(res))
+  } else {
+    return(data.table::data.table())
+  }
+}
+
+
+#' Survey Solutions API call to cancel an export process
+#'
+#' Cancels an ongoing export process or deletes an export process by ID.
+#'
+#' @param server Survey Solutions server address
+#' @param apiUser Survey Solutions API user
+#' @param apiPass Survey Solutions API password
+#' @param token If Survey Solutions server token is provided \emph{apiUser} and \emph{apiPass} will be ignored
+#' @param workspace server workspace, if nothing provided, defaults to primary
+#' @param jobid Export process ID (integer)
+#'
+#' @return A data.table containing the canceled export process information.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Cancel an ongoing export process
+#' suso_cancelExport(jobid = 123)
+#' }
+suso_cancelExport <- function(server = suso_get_api_key("susoServer"),
+                              apiUser = suso_get_api_key("susoUser"),
+                              apiPass = suso_get_api_key("susoPass"),
+                              token = NULL,
+                              workspace = suso_get_api_key("workspace"),
+                              jobid = NULL) {
+  workspace <- .ws_default(ws = workspace)
+  .check_basics(token, server, apiUser, apiPass)
+
+  if (is.null(jobid)) {
+    cli::cli_abort(c("x" = "Please provide an export process 'jobid'."))
+  }
+  .checkNum(jobid)
+
+  if (!is.null(token)) {
+    url <- .baseurl_token(server, workspace, token, "export", version = "v2")
+  } else {
+    url <- .baseurl_baseauth(server, workspace, apiUser, apiPass, "export", version = "v2")
+  }
+  url <- httr2::req_url_path_append(url, jobid) |>
+    httr2::req_method("DELETE")
+
+  resp <- tryCatch(
+    httr2::req_perform(url),
+    error = function(e) .http_error_handler(e, "exp")
+  )
+
+  if (httr2::resp_has_body(resp)) {
+    res <- httr2::resp_body_json(resp, simplifyVector = TRUE)
+    if (interactive()) {
+      cli::cli_alert_success("Export process {jobid} canceled.")
+    }
+    return(data.table::as.data.table(res))
+  } else {
+    return(invisible(TRUE))
+  }
+}
+

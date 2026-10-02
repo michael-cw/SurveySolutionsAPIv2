@@ -1,0 +1,167 @@
+url: https://michael-cw.github.io/SurveySolutionsAPIv2/
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+home:
+  title: Comprehensive API Access to Your Survey Solutions Server Using 'httr2'
+  description: >
+    SurveySolutionsAPIv2 provides a modern, robust, and complete R interface to the
+    World Bank's Survey Solutions platform. It supports all current REST endpoints,
+    GraphQL queries, questionnaire parsing, assignment workflows, paradata analytics,
+    and automated data export pipelines.
+
+navbar:
+  structure:
+    left: [intro, articles, reference, news]
+    right: [search, github]
+  components:
+    intro:
+      text: Get Started
+      href: articles/quickstart.html
+    articles:
+      text: Articles
+      menu:
+        - text: "Getting Started"
+        - text: "Quickstart: Connecting and Exploring"
+          href: articles/quickstart.html
+        - text: "---"
+        - text: "Survey Design"
+        - text: "Questionnaires, Structure, and Codebooks"
+          href: articles/questionnaires.html
+        - text: "---"
+        - text: "Field Operations"
+        - text: "Field Operations, Users, and Assignments"
+          href: articles/survey_management.html
+        - text: "---"
+        - text: "Quality Control"
+        - text: "Interview Monitoring, Paradata, and QC"
+          href: articles/interview_monitoring.html
+        - text: "---"
+        - text: "Data Pipelines"
+        - text: "Data Export and Processing Pipelines"
+          href: articles/data_export.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    news:
+      text: Changelog
+      href: news/index.html
+    github:
+      icon: fa-github fa-lg
+      href: https://github.com/michael-cw/SurveySolutionsAPIv2
+      aria-label: GitHub repository
+
+reference:
+  - title: "Authentication & Credentials"
+    desc: "Functions for setting, checking, and managing Survey Solutions credentials."
+    contents:
+      - suso_set_key
+      - suso_get_api_key
+      - suso_get_default_key
+      - suso_clear_keys
+      - suso_keys
+      - suso_PwCheck
+      - suso_set_workspace
+
+  - title: "Workspace Administration"
+    desc: "Create, inspect, update, and enable/disable multi-tenant workspaces."
+    contents:
+      - suso_getWorkspace
+      - suso_createWorkspace
+      - suso_updateWorkspace
+      - suso_deleteWorkspace
+      - suso_enableWorkspace
+      - suso_assignWorkspace
+
+  - title: "Questionnaires & Survey Design"
+    desc: "Inspect questionnaire specifications, routing, validation rules, codebooks, and settings."
+    contents:
+      - suso_getQuestDetails
+      - suso_questRecordAudio
+      - suso_questCriticalityLevel
+
+  - title: "User & Field Staff Management"
+    desc: "Create, query, and manage supervisors, interviewers, and headquarters staff."
+    contents:
+      - suso_createUSER
+      - suso_getUSR
+      - suso_getSV
+      - suso_getSV_info
+      - suso_archUSR
+
+  - title: "Assignment Operations"
+    desc: "Create, query, and reassign sample assignments with preloaded data."
+    contents:
+      - suso_set_assignments
+      - suso_get_assignments
+      - suso_createASS
+
+  - title: "Interview Workflow & Quality Control"
+    desc: "Track interviews, approve/reject, leave comments, reassign, and download PDF transcripts."
+    contents:
+      - suso_getAllInterviewQuestionnaire
+      - suso_getINT
+      - suso_getINT_info
+      - suso_getAllAnswerInterview
+      - suso_getAllHistoryInterview
+      - suso_assignInterview
+      - suso_commentInterview
+      - suso_patchApproveInterview
+      - suso_patchRejectInterview
+      - suso_deleteInterview
+      - suso_getInterviewPDF
+      - calendarevent
+
+  - title: "Data Export (v2 API)"
+    desc: "End-to-end export pipelines, progress monitoring, and archive handling."
+    contents:
+      - suso_export
+      - suso_getExportList
+      - suso_getExportProcess
+      - suso_cancelExport
+
+  - title: "Paradata Processing"
+    desc: "Export, parse, and analyze event paradata, pauses, and spatial traces."
+    contents:
+      - suso_export_paradata
+
+  - title: "Maps & Spatial Management"
+    desc: "Upload offline basemaps, assign maps to interviewers, and generate spatial reports."
+    contents:
+      - suso_mapupload
+      - suso_mapinfo
+      - suso_mapassign
+      - suso_deletemap
+      - suso_mapreport
+
+  - title: "Statistics & Server Settings"
+    desc: "Question response statistics and global headquarters notices."
+    contents:
+      - suso_get_stats
+      - suso_getStatsQuestionnaires
+      - suso_getQuestionsQuestionnaire
+      - suso_get_stats_interview
+      - suso_globalNotice
+
+  - title: "Classes & S3 Methods"
+    desc: "Custom data classes extending data.table with rich survey metadata."
+    contents:
+      - UserClass
+      - is.UserClass
+      - assignmentClass
+      - is.assignmentClass
+      - exportClass
+      - is.exportClass
+      - getinfo
+      - summaryTable
+      - summaryTable.UserClass
+      - boxplot_summary
+
+  - title: "Package Options & Shiny Helpers"
+    desc: "Configuration options for parallel processing and Shiny notifications."
+    contents:
+      - suso.options
+      - suso_set_maxpar_req
+      - suso_set_pwcheck_mess
+      - suso_set_prog_mess

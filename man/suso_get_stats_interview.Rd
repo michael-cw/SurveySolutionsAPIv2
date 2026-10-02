@@ -26,6 +26,9 @@ suso_get_stats_interview(
 
 \item{intID}{a single or multiple \emph{InterviewId}.}
 }
+\value{
+A data.table containing statistics for the requested interview(s).
+}
 \description{
 Fetch statistics for a specific interview, vectorized over interview id (int_id)
 }

@@ -10,12 +10,15 @@
 
 .check_response <- function(response, status = 200){
   if (inherits(response, "httr2_response")) {
-    if (resp_status(response)!=status) {
-      stop("Invalid request! Please check your input parameters.", call. = F)
+    if (resp_status(response) != status) {
+      cli::cli_abort("Invalid request! Status: {resp_status(response)}. Please check your input parameters.", call. = FALSE)
     }
   } else if (inherits(response, "list")) {
-    # !! CHECK how to handle multiple responses
-    print("TBA")
+    for (r in response) {
+      if (inherits(r, "httr2_response") && resp_status(r) != status) {
+        cli::cli_abort("Invalid request in response list! Status: {resp_status(r)}.", call. = FALSE)
+      }
+    }
   }
 }
 
@@ -37,9 +40,9 @@
     req_url_path_append("api") |>
     req_url_path_append(version) |>
     req_url_path_append(api) |>
-    req_headers(`User-Agent` = "r_surveysolutionsapi_v2") |>
+    req_headers(`User-Agent` = "SurveySolutionsAPIv2 (https://github.com/worldbank/SurveySolutionsAPIv2)") |>
     req_auth_basic(apiUser, apiPass) |>
-    # when 500 return, retry
+    # when 429, 500, 503 return, retry
     req_retry(is_transient = \(resp) resp_status(resp) %in% c(429, 500, 503), max_tries = 2)
   return(url)
 }
@@ -52,9 +55,9 @@
     req_url_path_append("api") |>
     req_url_path_append(version) |>
     req_url_path_append(api) |>
-    req_headers(`User-Agent` = "r_surveysolutionsapi_v2") |>
+    req_headers(`User-Agent` = "SurveySolutionsAPIv2 (https://github.com/worldbank/SurveySolutionsAPIv2)") |>
     req_auth_bearer_token(token)|>
-    # when 500 return, retry
+    # when 429, 500, 503 return, retry
     req_retry(is_transient = \(resp) resp_status(resp) %in% c(429, 500, 503), max_tries = 2)
   return(url)
 }
@@ -187,6 +190,40 @@
 .http_error_handler <- function(error_condition, type = "ass") {
   # Use a switch or if-else to handle different types of errors
   error_type <- class(error_condition)[1]
+
+  # Try to extract server error message if available
+  server_msg <- NULL
+  if (!is.null(error_condition$resp) && resp_has_body(error_condition$resp)) {
+    tryCatch({
+      body <- resp_body_json(error_condition$resp)
+      if (is.character(body$Message)) {
+        server_msg <- body$Message
+      } else if (is.character(body$message)) {
+        server_msg <- body$message
+      } else if (is.character(body$error)) {
+        server_msg <- body$error
+      } else if (is.character(body$title)) {
+        server_msg <- body$title
+      }
+      if (is.list(body$errors) && length(body$errors) > 0) {
+        err_details <- paste(names(body$errors), sapply(body$errors, paste, collapse = ", "), sep = ": ", collapse = "; ")
+        if (!is.null(server_msg)) {
+          server_msg <- paste0(server_msg, " (", err_details, ")")
+        } else {
+          server_msg <- err_details
+        }
+      }
+    }, error = function(e) NULL)
+  }
+
+  append_server_msg <- function(m) {
+    if (!is.null(server_msg) && nzchar(server_msg)) {
+      c(m, "i" = paste("Server message:", server_msg))
+    } else {
+      m
+    }
+  }
+
   # error messages
   msg404<-switch(type,
                  "ass" = c("x" = "Questionnaire/Assignment/Assignee not found."),
@@ -225,46 +262,46 @@
     switch(error_type,
            "httr2_http_404" = {
              cli::cli_abort(
-               message = msg404,
-               call = NULL,
+               message = append_server_msg(msg404),
+               call = NULL
              )
            },
            "httr2_http_406" = {
              cli::cli_abort(
-               message = msg406,
-               call = NULL,
+               message = append_server_msg(msg406),
+               call = NULL
              )
            },
            "httr2_http_400" = {
              cli::cli_abort(
-               message = msg400,
-               call = NULL,
+               message = append_server_msg(msg400),
+               call = NULL
              )
            },
            "httr2_http_401" = {
              cli::cli_abort(
-               message = msg401,
-               call = NULL,
+               message = append_server_msg(msg401),
+               call = NULL
              )
            },
            "httr2_http_403" = {
              cli::cli_abort(
-               message = msg403,
-               call = NULL,
+               message = append_server_msg(msg403),
+               call = NULL
              )
            },
            "httr2_http_409" = {
              cli::cli_abort(
-               message = msg409,
-               call = NULL,
+               message = append_server_msg(msg409),
+               call = NULL
              )
            },
            # Default case if the error type is not handled above
            cli::cli_abort(
-             message = "The following other error occured:",
+             message = append_server_msg(c("x" = "The following other error occurred:")),
              call = NULL,
              parent = error_condition,
-             .internal = T
+             .internal = TRUE
            )
     )
   )

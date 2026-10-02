@@ -4,4 +4,6 @@
 .Ruserdata
 dev
 SurveySolutionsAPIv2.Rproj
-
+docs/
+scratch/
+*.tar.gz

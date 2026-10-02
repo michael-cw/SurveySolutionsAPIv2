@@ -15,6 +15,11 @@
 #'
 #'
 #' @export
+#'
+#' @examples
+#' ass_list <- list(Assignments = data.frame(Id = 1, ResponsibleName = "interviewer1"))
+#' ac <- assignmentClass(ass_list)
+#' is.assignmentClass(ac)
 
 assignmentClass<-function(x, ...) {
   nx<-names(x)
@@ -24,6 +29,9 @@ assignmentClass<-function(x, ...) {
   } else if("IdentifyingData" %in% nx) {
     iddt<-data.table::data.table(x$IdentifyingData)
     attrloop<-names(x)[names(x)!="IdentifyingData"]
+  } else {
+    iddt<-data.table::data.table()
+    attrloop<-names(x)
   }
   ## define new class with data.table
   data.table::setattr(iddt, "class", base::union("assignmentClass", class(iddt)))
@@ -33,9 +41,10 @@ assignmentClass<-function(x, ...) {
   }
 
   # ... must be non empty named list-->Contains all arguments passed to the function EXPLICITLY
-  if(!is.null(...) && is.list(...) && length(...) > 0) {
-    for(attr in names(...)) {
-      data.table::setattr(iddt, tolower(attr), ...[[attr]])
+  dots <- list(...)
+  if(length(dots) > 0) {
+    for(attr in names(dots)) {
+      data.table::setattr(iddt, tolower(attr), dots[[attr]])
     }
   }
   invisible(iddt)
@@ -72,6 +81,7 @@ getinfo <- function(obj, arg) {
   UseMethod("getinfo")
 }
 
+#' @rdname getinfo
 #' @export
 getinfo.assignmentClass <- function(obj, arg) {
   if(arg=="arglist"){
@@ -92,6 +102,10 @@ getinfo.assignmentClass <- function(obj, arg) {
 #'
 #' @export
 #'
+#' @examples
+#' ac <- assignmentClass(list(Assignments = data.frame(Id = 1)))
+#' is.assignmentClass(ac)
+#' is.assignmentClass(data.frame())
 
 is.assignmentClass <- function(x) {
   inherits(x, "assignmentClass")

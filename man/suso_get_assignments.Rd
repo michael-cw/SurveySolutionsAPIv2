@@ -14,6 +14,11 @@ suso_get_assignments(
   AssId = NULL,
   version = NULL,
   responsibleID = NULL,
+  supervisorId = NULL,
+  searchBy = NULL,
+  status = NULL,
+  start = NULL,
+  length = NULL,
   ShowArchive = FALSE,
   order.by = c("Id ASC", "Id DESC", "ResponsibleName DESC", "ResponsibleName ASC",
     "InterviewsCount DESC", "InterviewsCount ASC", "Quantity DESC", "Quantity ASC",
@@ -42,6 +47,16 @@ the assignment details for a specific assignment ID}
 
 \item{responsibleID}{the ID of the responsible user (Supervisor or Interviewer).
 Retrieves all assignments for this user.}
+
+\item{supervisorId}{Filter assignments by supervisor ID}
+
+\item{searchBy}{Filter result by custom search query}
+
+\item{status}{Filter assignments by status (e.g. NotAssigned, Assigned, Closed, Archived, Deleted, Completed)}
+
+\item{start}{start index for history query (only with operations.type = "history")}
+
+\item{length}{page length for history query (only with operations.type = "history")}
 
 \item{ShowArchive}{if TRUE, only archived assignments are included in the list}
 

@@ -11,6 +11,14 @@ suso_get_default_key(
 \arguments{
 \item{api}{one of susoServer, susoUser, susoPass, or workspace}
 }
+\value{
+Character string of the requested credential, or throws error if not set.
+}
 \description{
 Helper function
+}
+\examples{
+\dontrun{
+suso_get_default_key("susoServer")
+}
 }

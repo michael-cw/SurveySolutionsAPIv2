@@ -27,6 +27,9 @@ suso_getWorkspace(
 \item{status}{if status is \emph{TRUE} worskpace must be not NULL and status information about a specific
 workspace is requested}
 }
+\value{
+A data.table containing workspace information or status.
+}
 \description{
 \code{suso_getWorkspace} allows you to get the list of workspaces, information about individual workspace names
 as well as workspace statuses. Workspaces as well as Workspaces information can only be accessed, if credentials
@@ -46,6 +49,5 @@ suso_getWorkspace(
           workspace = "myworkspace",
           status = T)
 }
-
 
 }

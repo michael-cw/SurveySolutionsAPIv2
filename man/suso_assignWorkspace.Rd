@@ -35,6 +35,8 @@ as in \emph{uid}. Must be the same length as \code{uid}}
 }
 \value{
 If successful, returns a data.table with the details as well as the Status message \code{workspace list updated}.
+
+A data.table containing the assignment update status.
 }
 \description{
 \code{suso_assignWorkspace} Allows you to assign a workspace to a specific user or a group of users.
@@ -71,21 +73,21 @@ suso_assignWorkspace(
           )
 
 # Assign all supervisors from on workspace to a new one, keep old one
-allsv<-suso_getSV(workspace = old)
+allsv<-suso_getSV(workspace = "old")
 suso_assignWorkspace(
           assign_workspace = "new",
-          uid = "allsv$UserId,
+          uid = allsv$UserId,
           sv_id = allsv$UserId,
           apiUser = "xxxxxx",
           apiPass = "xxxxxx",
           keep_old_workspace = TRUE
           )
 
-# Assign all interviewers from on workspace to a new one, keep old one
-allint<-suso_getINT(workspace = old)
+# Assign all interviewers from one workspace to a new one, keep old one
+allint<-suso_getINT(workspace = "old")
 suso_assignWorkspace(
           assign_workspace = "new",
-          uid = "allint$UserId,
+          uid = allint$UserId,
           sv_id = allint$sv_id,
           apiUser = "xxxxxx",
           apiPass = "xxxxxx",
@@ -93,6 +95,5 @@ suso_assignWorkspace(
           )
 
 }
-
 
 }

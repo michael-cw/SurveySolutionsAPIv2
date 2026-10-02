@@ -9,9 +9,17 @@ suso_get_api_key(api = c("susoServer", "susoUser", "susoPass", "workspace"))
 \arguments{
 \item{api}{one of susoServer, susoUser, susoPass, or workspace}
 }
+\value{
+Character string of the requested credential, or NA if not set.
+}
 \description{
 Get API credentials
 }
 \details{
 Get credentials, used as input in API calls
+}
+\examples{
+suso_get_api_key("susoServer")
+suso_get_api_key("workspace")
+
 }

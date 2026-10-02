@@ -79,35 +79,50 @@ suso_createASS <- function(df = NULL,
   quid <- paste0(questID, "$", version)
 
   # G. Transform input df
-  respname<-df$ResponsibleName
-  quant<-df$Quantity
+  respname <- df$ResponsibleName
+  quant <- df$Quantity
   df[, `:=`(ResponsibleName, NULL)][, `:=`(Quantity, NULL)]
-  df<-as.data.frame(df)
+
+  # Check for optional metadata columns
+  meta_cols <- intersect(names(df), c("Email", "Password", "WebMode", "IsAudioRecordingEnabled", "Comments", "TargetArea"))
+  meta_data <- if (length(meta_cols) > 0) df[, meta_cols, with = FALSE] else NULL
+  if (length(meta_cols) > 0) {
+    df[, (meta_cols) := NULL]
+  }
+
+  df <- as.data.frame(df)
 
   # put warning when no identification data
-  if(interactive()) {
+  if(interactive() && ncol(df) == 0) {
     cli::cli_alert_warning("Assignment creation without identifying data.")
   }
 
   # H. Request
   # H.1. Function to generate requests
-  genrequests<- function(i, base_url, respname, quant, quid, df) {
-    if(nrow(df)>0) {
-      js_ch <- list(
-        Responsible = unbox(respname[i]),
-        Quantity = unbox(quant[i]),
-        QuestionnaireId = unbox(quid),
-        IdentifyingData = data.frame(Variable = c(names(df)),
-                                     Identity = rep("", length(names(df))),
-                                     Answer = c(unlist(df[i,], use.names = FALSE)))
-      )
-    } else {
-      js_ch <- list(
-        Responsible = unbox(respname[i]),
-        Quantity = unbox(quant[i]),
-        QuestionnaireId = unbox(quid)
+  genrequests<- function(i, base_url, respname, quant, quid, df, meta_data) {
+    js_ch <- list(
+      Responsible = jsonlite::unbox(respname[i]),
+      Quantity = jsonlite::unbox(quant[i]),
+      QuestionnaireId = jsonlite::unbox(quid)
+    )
+
+    if(ncol(df) > 0) {
+      js_ch$IdentifyingData <- data.frame(
+        Variable = c(names(df)),
+        Identity = rep("", length(names(df))),
+        Answer = c(unlist(df[i,], use.names = FALSE))
       )
     }
+
+    if (!is.null(meta_data)) {
+      for (col in names(meta_data)) {
+        val <- meta_data[[col]][i]
+        if (!is.na(val) && !is.null(val)) {
+          js_ch[[col]] <- jsonlite::unbox(val)
+        }
+      }
+    }
+
     req <- base_url  |>
       req_body_json(js_ch)  |>
       req_method("POST")
@@ -115,13 +130,12 @@ suso_createASS <- function(df = NULL,
     return(req)
   }
   # H.2. Execute request generation
-  # requests <- lapply(1:nrow(df), genrequests)
 
   requests<-.gen_lapply_with_progress(
     seq_along(respname),
     genrequests,
     "requests", "assignment", workspace,
-    base_url, respname, quant, quid, df
+    base_url, respname, quant, quid, df, meta_data
   )
 
   # H.3. Perform requests in parallel
@@ -131,12 +145,11 @@ suso_createASS <- function(df = NULL,
     on_error = "continue"
   )
 
-  # if(FALSE) return(responses)
   # I. Response
-  # I.1. Get faild responses
-  failed<-responses %>% httr2::resps_failures()
+  # I.1. Get failed responses
+  failed <- responses |> httr2::resps_failures()
   # I.2. Get successful responses
-  responses<-responses %>% resps_successes()
+  responses <- responses |> httr2::resps_successes()
   # I.2.1. Check if there are any successful responses and stop if not
   if(length(responses)==0){
     cli::cli_abort(c("x" = "No successful responses"), call = NULL)
@@ -146,8 +159,8 @@ suso_createASS <- function(df = NULL,
   transformresponse<-function(i, allresp) {
     # i. Convert to json
     resp<-allresp[[i]]
-    respfull <-resp %>%
-      resp_body_json(simplifyVector = T, flatten = TRUE)
+    respfull <- resp |>
+      resp_body_json(simplifyVector = TRUE, flatten = TRUE)
 
     # ii. Get identifying data
     # transform to wide format

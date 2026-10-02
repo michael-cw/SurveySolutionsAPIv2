@@ -13,6 +13,7 @@ suso_getQuestDetails(
   questID = NULL,
   version = NULL,
   operation.type = c("list", "statuses", "structure", "interviews"),
+  include_raw = FALSE,
   AssId = NULL,
   InterviewKey = NULL,
   errorsCount = NULL,
@@ -49,6 +50,8 @@ suso_getQuestDetails(
 containing all questions, rosters etc. of the specific questionnaire, as well as all validations.
 If \emph{interviews} is specified, all interviews for a specific questionnaire. See details bellow.}
 
+\item{include_raw}{logical; if \code{TRUE}, retains the raw JSON list column (\code{..JSON}) in the question table when \code{operation.type = "structure"}. Default is \code{FALSE} for clean, flat data tables.}
+
 \item{AssId}{Assignment ID (only required if operations.type is\emph{interviews})}
 
 \item{InterviewKey}{Interview key (only required if operations.type is\emph{interviews})}
@@ -77,6 +80,15 @@ the number specified in \code{notAnsweredCount}, if not supplied defaults to low
 
 \item{supervisorName}{Name of the supervisor of the responsible user (only required if operations.type is\emph{interviews})}
 }
+\value{
+Depending on \code{operation.type}:
+\describe{
+\item{list}{A data.table listing all questionnaires on the server.}
+\item{statuses}{A character vector of questionnaire statuses.}
+\item{structure}{A list with four data.tables: \code{q} (questions/rosters metadata), \code{val} (validations), \code{v} (alias for \code{val}), and \code{answers} (categorical answer options and codes).}
+\item{interviews}{A data.table listing interviews for the specified questionnaire.}
+}
+}
 \description{
 \code{suso_getQuestDetails} implements all Questionnaire related API commands. It allows for different operation types,
 see details bellow for further clarification.
@@ -86,12 +98,28 @@ If list is selected, then list of questionnaires is returned.
 
 If statuses is selected, a list of all available questionnaire statuses is returned (deprecated).
 
-In case structure is chosen the return value is a list with two data.table elements:
+In case structure is chosen the return value is a list with four data.table elements:
 \itemize{
-\item List element \emph{q} contains all questions, rosters etc.
-\item List element \emph{val} contains all validations
+\item List element \emph{q} contains all questions, rosters etc. with full metadata.
+\item List element \emph{val} contains all validations.
+\item List element \emph{v} is an alias for \emph{val} for backward compatibility.
+\item List element \emph{answers} contains categorical answer options, codes, and linked questions.
 }
-In this way it is straightforward to use the returen value for questionnaire manuals and the likes.
+In this way it is straightforward to use the return value for questionnaire manuals and the likes.
 
 In case interviews is selected, a list of all interviews for the specific questionnaire is returned.
+}
+\examples{
+\dontrun{
+# List all questionnaires on the server
+q_list <- suso_getQuestDetails(operation.type = "list")
+
+# Get questionnaire structure (questions, validations, answers)
+q_struct <- suso_getQuestDetails(
+  questID = q_list$QuestionnaireId[1],
+  version = q_list$Version[1],
+  operation.type = "structure"
+)
+}
+
 }

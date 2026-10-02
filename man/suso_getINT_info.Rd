@@ -39,6 +39,9 @@ YYYY-MM-DD, and will start at 00:00.00 server time of the specified day}
 YYYY-MM-DD, and will end at 23:59:59 server time of the specified day. If not end date is provided, the current
 date will be used}
 }
+\value{
+A data.table containing interviewer details or audit logs.
+}
 \description{
 Get details of a single interviewer or retrieve the action log
 }

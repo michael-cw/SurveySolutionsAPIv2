@@ -10,10 +10,11 @@ suso_get_stats(
   apiPass = suso_get_api_key("susoPass"),
   workspace = suso_get_api_key("workspace"),
   token = NULL,
-  questID = "",
-  version = "",
+  questID = NULL,
+  version = NULL,
   qQuest = "",
-  byTeam = TRUE
+  byTeam = TRUE,
+  exportType = c("Csv", "Json")
 )
 }
 \arguments{
@@ -27,15 +28,29 @@ suso_get_stats(
 
 \item{token}{If Survey Solutions server token is provided \emph{apiUser} and \emph{apiPass} will be ignored}
 
-\item{questID}{only assignments for \emph{QuestionnaireId} are returned, requires \code{version} being not NULL}
+\item{questID}{Questionnaire ID (GUID)}
 
-\item{version}{version of the questionnaire, only required with \code{questID}}
+\item{version}{Version of the questionnaire (numeric)}
 
-\item{qQuest}{provide \emph{QuestionnaireId} and \emph{version} to receive all questions and responses for a specific questionnaire}
+\item{qQuest}{Question variable name or UUID}
 
-\item{byTeam}{should the table contain reports by team}
+\item{byTeam}{Logical, whether the table should contain reports by team (default: \code{TRUE})}
+
+\item{exportType}{Report format: \code{"Csv"} (default) or \code{"Json"}}
+}
+\value{
+A data.table containing the summary statistics for the question.
 }
 \description{
-ATTENTION: CURRENTLY 500 ERROR, PROBLEM ON SURVEY SOLUTIONS API SIDE, OTHERWISE: Returns summary tables for individual questions.
-If no responses had been provided, an empty table will be returned
+Returns summary tables for individual questions from Survey Solutions statistics.
+If no responses have been provided, an empty table will be returned.
+}
+\examples{
+\dontrun{
+suso_get_stats(
+  questID = "11111111-2222-3333-4444-555555555555",
+  version = 1,
+  qQuest = "age"
+)
+}
 }

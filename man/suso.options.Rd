@@ -3,6 +3,9 @@
 \name{suso.options}
 \alias{suso.options}
 \title{Configuration options used for the SurveySolutionsAPIv2 package}
+\value{
+No return value, called for documentation on package configuration options.
+}
 \description{
 Below are the options and environment variables, that are used by the \pkg{SurveySolutionsAPIv2} package.
 }
@@ -33,3 +36,11 @@ be modified.
 }
 }
 
+\examples{
+# Inspect the current maximum parallel requests option
+getOption("suso.maxpar.req", default = 100)
+
+# Inspect the timezone option
+getOption("suso.para.tz", default = Sys.timezone())
+
+}

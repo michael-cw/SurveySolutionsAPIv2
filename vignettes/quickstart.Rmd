@@ -1,0 +1,195 @@
+---
+title: "Quickstart: Connecting and Exploring Your Server"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Quickstart: Connecting and Exploring Your Server}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(SurveySolutionsAPIv2)
+```
+
+## Introduction
+
+**`SurveySolutionsAPIv2`** provides a complete R interface to the World Bank's [Survey Solutions](https://mysurvey.solutions) Computer-Assisted Personal Interviewing (CAPI) and Computer-Assisted Web Interviewing (CAWI) platform.
+
+Powered by modern [`httr2`](https://httr2.r-lib.org/), it supports all current Survey Solutions REST endpoints, GraphQL queries/mutations, asynchronous batch exports, paradata processing, and questionnaire parsing.
+
+In this quickstart guide, you will learn how to:
+1. Configure credentials securely.
+2. Verify server connectivity.
+3. Manage and switch workspaces.
+4. Discover questionnaires deployed on your server.
+
+---
+
+## 1. Setting Up Credentials
+
+Survey Solutions servers support two authentication mechanisms:
+- **API User and Password** (Basic Authentication)
+- **API Token** (Token-based Authentication)
+
+### Best Practice: Environment Variables
+
+For security and reproducibility, avoid writing credentials directly into scripts. Store them in your `.Renviron` file:
+
+```sh
+# In ~/.Renviron
+SUSO_SERVER="https://your-server.mysurvey.solutions"
+SUSO_USER="your_api_user"
+SUSO_PASSWORD="your_secure_password"
+SUSO_WORKSPACE="primary"
+```
+
+### Initializing Credentials in R
+
+Use `suso_set_key()` to configure the credentials in your active R session. Once configured, all other functions automatically reuse these settings:
+
+```r
+library(SurveySolutionsAPIv2)
+
+# Set credentials using environment variables
+suso_set_key(
+  suso_server   = Sys.getenv("SUSO_SERVER", "https://your-server.mysurvey.solutions"),
+  suso_user     = Sys.getenv("SUSO_USER", "api_user"),
+  suso_password = Sys.getenv("SUSO_PASSWORD", "secret_pass"),
+  workspace     = Sys.getenv("SUSO_WORKSPACE", "primary")
+)
+```
+
+If using an API token:
+
+```r
+suso_set_key(
+  suso_server = "https://your-server.mysurvey.solutions",
+  suso_token  = "your_api_token_here",
+  workspace   = "primary"
+)
+```
+
+### Checking and Clearing Stored Credentials
+
+You can inspect the active configuration or retrieve individual credentials:
+
+```{r}
+# Inspect stored credentials (masked in output)
+suso_keys()
+
+# Retrieve a specific active setting
+suso_get_api_key("workspace")
+```
+
+To clear credentials from the session at any time:
+
+```r
+suso_clear_keys()
+```
+
+---
+
+## 2. Testing Server Connectivity
+
+Before launching survey operations, test connectivity and credentials using `suso_PwCheck()`. This function returns HTTP status code `200` on success, or `400` / error if credentials or connectivity fail:
+
+```r
+# Test connection to the default workspace
+status <- suso_PwCheck()
+if (status == 200) {
+  message("Connected successfully to Survey Solutions!")
+}
+```
+
+```{r, echo = FALSE}
+message("Connected successfully to Survey Solutions!")
+```
+
+---
+
+## 3. Discovering and Switching Workspaces
+
+Survey Solutions allows segmenting operations across independent workspaces.
+
+### Listing All Workspaces
+
+`suso_getWorkspace()` lists all workspaces available to the authenticated user:
+
+```r
+workspaces <- suso_getWorkspace()
+print(workspaces)
+```
+
+```{r, echo = FALSE}
+ext_ws <- system.file("extdata", "demo_workspaces.rds", package = "SurveySolutionsAPIv2")
+if (file.exists(ext_ws)) {
+  ws_data <- readRDS(ext_ws)
+  print(ws_data)
+}
+```
+
+### Switching Workspaces
+
+To switch the active workspace without re-entering server credentials, use `suso_set_workspace()`:
+
+```r
+# Switch to another workspace
+suso_set_workspace("pilot_study")
+
+# Switch back to the primary workspace
+suso_set_workspace("primary")
+```
+
+---
+
+## 4. Discovering Deployed Questionnaires
+
+To see all questionnaires published in the current workspace, call `suso_getQuestDetails()` with `operation.type = "list"`:
+
+```r
+quest_list <- suso_getQuestDetails(operation.type = "list")
+print(quest_list[, .(Title, Variable, Version, QuestionnaireId)])
+```
+
+```{r, echo = FALSE}
+ext_ql <- system.file("extdata", "demo_questionnaire_list.rds", package = "SurveySolutionsAPIv2")
+if (file.exists(ext_ql)) {
+  ql_data <- readRDS(ext_ql)
+  print(ql_data[, .(Title, Variable, Version, QuestionnaireId)])
+}
+```
+
+The returned `QuestionnaireId` (GUID) and `Version` are the primary identifiers needed for questionnaire structure extraction, assignment creation, and data export.
+
+---
+
+## 5. Global Package Options
+
+`SurveySolutionsAPIv2` provides several options to control execution behavior, concurrency, and Shiny integration:
+
+```{r}
+# Default maximum parallel requests
+getOption("suso.maxpar.req", default = 100)
+
+# Modify parallel request ceiling
+suso_set_maxpar_req(50)
+
+# Reset to standard
+suso_set_maxpar_req(100)
+```
+
+When integrating with Shiny apps, progress messages and credential validation toasts can be customized using `suso_set_pwcheck_mess()` and `suso_set_prog_mess()`.
+
+---
+
+## Next Steps
+
+Now that you are connected, proceed to:
+- **[Questionnaires, Structure, and Codebooks](questionnaires.html)**: Learn how to parse questionnaire hierarchies, extract skip logic, validations, and generate codebooks.
+- **[Field Operations, Users, and Assignments](survey_management.html)**: Batch-create users, generate sample assignments, and assign maps.
+- **[Interview Monitoring, Paradata, and Quality Control](interview_monitoring.html)**: Track interview workflow and monitor field timings.
+- **[Data Export and Processing Pipelines](data_export.html)**: Automate export jobs and generate analysis-ready data tables.

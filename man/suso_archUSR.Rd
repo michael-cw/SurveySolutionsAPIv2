@@ -30,6 +30,9 @@ no workspace is provided defaults to primary workspace.}
 
 \item{token}{If Survey Solutions server token is provided \emph{usr} and \emph{pass} will be ignored}
 }
+\value{
+A data.table containing the user ID, archive timestamp, and archive status.
+}
 \description{
 (Un-)Archive user
 }
@@ -38,13 +41,13 @@ no workspace is provided defaults to primary workspace.}
 # you can archive a user by archive=T
 suso_archUSR(
           workspace = "myworkspace",
-          uid = "xxxx-xxxx-xxxx-xxx",
+          user_id = "xxxx-xxxx-xxxx-xxx",
           archive = TRUE
           )
 # and unarchive a user by archive=F
 suso_archUSR(
           workspace = "myworkspace",
-          uid = "xxxx-xxxx-xxxx-xxx",
+          user_id = "xxxx-xxxx-xxxx-xxx",
           archive = FALSE
           )
 }

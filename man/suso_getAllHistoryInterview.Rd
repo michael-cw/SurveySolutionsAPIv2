@@ -26,6 +26,9 @@ suso_getAllHistoryInterview(
 
 \item{intID}{the \emph{InterviewId} of the interview.}
 }
+\value{
+A data.table containing the history records for the interview.
+}
 \description{
 Get all history for a specific interview
 }

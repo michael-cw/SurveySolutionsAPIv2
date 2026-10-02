@@ -17,6 +17,15 @@ exportClass(x, varLabels, ..., type = "main")
 \item{type}{one of main or para, if main returns exportClass object for the main data,
 if para, returns an exportClass object for the paradata.}
 }
+\value{
+An object of class exportClass (inheriting from data.table)
+}
 \description{
 Export class extends the data.table class to include relevant methods
+}
+\examples{
+dt <- data.table::data.table(q1 = 1:5)
+vlabs <- data.table::data.table(VariableName = "q1", QuestionText = "Question 1")
+ec <- exportClass(dt, varLabels = vlabs)
+is.exportClass(ec)
 }

@@ -21,3 +21,8 @@ Assignments class extends the data.table class to include relevant methods
 The assignmentClass is a data.table extended with additional attributes and methods, depending
 on the api endpoint. The assignmentClass is used as input for the \code{getinfo} function.
 }
+\examples{
+ass_list <- list(Assignments = data.frame(Id = 1, ResponsibleName = "interviewer1"))
+ac <- assignmentClass(ass_list)
+is.assignmentClass(ac)
+}

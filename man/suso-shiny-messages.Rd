@@ -22,4 +22,10 @@ always invisible \code{TRUE}.
 \description{
 These functions allow the user to customize certain notifications and messages when used in shiny apps.
 }
+\examples{
+# Set custom notification messages for shiny app
+suso_set_pwcheck_mess(mess_succ = "Connected successfully!", mess_fail = "Authentication failed!")
+suso_set_prog_mess(mess = "Downloading data, please wait...")
+
+}
 \concept{suso-customization-options}

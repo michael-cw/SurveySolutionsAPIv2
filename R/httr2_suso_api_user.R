@@ -15,6 +15,7 @@
 #' suso_getSV()
 #' }
 #'
+#' @return An object of class \code{UserClass} (inheriting from data.table) containing the list of supervisors.
 #'
 #' @export
 
@@ -163,6 +164,7 @@ suso_getSV <- function(server = suso_get_api_key("susoServer"),
 #'
 #' }
 #'
+#' @return An object of class UserClass (inheriting from data.table) containing the interviewers.
 #' @export
 suso_getINT <- function(server=suso_get_api_key("susoServer"),
                         apiUser = suso_get_api_key("susoUser"),
@@ -402,6 +404,7 @@ suso_getINT <- function(server=suso_get_api_key("susoServer"),
 #'           )
 #' }
 #'
+#' @return A data.table containing interviewer details or audit logs.
 #' @export
 suso_getINT_info<-function(server=suso_get_api_key("susoServer"), apiUser = suso_get_api_key("susoUser"), apiPass = suso_get_api_key("susoPass"),
                            int_id = NULL, workspace = suso_get_api_key("workspace"), token = NULL, log = FALSE, startDate = NULL, endDate = NULL) {
@@ -495,6 +498,60 @@ suso_getINT_info<-function(server=suso_get_api_key("susoServer"), apiUser = suso
 }
 
 
+#' Survey Solutions API call for supervisor info
+#'
+#' Gets detailed info about a single supervisor by supervisor ID.
+#'
+#' @param server Survey Solutions server address
+#' @param apiUser Survey Solutions API user
+#' @param apiPass Survey Solutions API password
+#' @param sv_id supervisor ID (GUID)
+#' @param workspace server workspace name
+#' @param token API token
+#'
+#' @examples
+#' \dontrun{
+#' suso_getSV_info(
+#'   workspace = "myworkspace",
+#'   sv_id = "xxxx-xxxx-xxxx-xxx"
+#' )
+#' }
+#'
+#' @return A data.table containing supervisor details.
+#' @export
+suso_getSV_info <- function(server = suso_get_api_key("susoServer"),
+                            apiUser = suso_get_api_key("susoUser"),
+                            apiPass = suso_get_api_key("susoPass"),
+                            sv_id = NULL,
+                            workspace = suso_get_api_key("workspace"),
+                            token = NULL) {
+  workspace <- .ws_default(ws = workspace)
+  .check_basics(token, server, apiUser, apiPass)
+  .checkUUIDFormat(sv_id)
+
+  if (!is.null(token)) {
+    url <- .baseurl_token(server, workspace, token, "supervisors")
+  } else {
+    url <- .baseurl_baseauth(server, workspace, apiUser, apiPass, "supervisors")
+  }
+
+  url <- url |> req_url_path_append(sv_id)
+
+  tryCatch({
+    resp <- req_perform(url)
+    if (resp_has_body(resp) && resp_content_type(resp) == "application/json") {
+      test_json <- resp_body_json(resp, simplifyVector = TRUE)
+      test_json <- data.table::data.table(t(unlist(test_json)))
+      if (nrow(test_json) > 0 && "CreationDate" %in% names(test_json)) {
+        test_json[, CreationDate := lubridate::as_datetime(CreationDate)][]
+      }
+      return(test_json)
+    }
+    return(data.table::data.table())
+  }, error = function(e) .http_error_handler(e, "usr"))
+}
+
+
 #' Survey Solutions API call for info on any user
 #'
 #'
@@ -514,10 +571,11 @@ suso_getINT_info<-function(server=suso_get_api_key("susoServer"), apiUser = suso
 #' \dontrun{
 #' suso_getUSR(
 #'           workspace = "myworkspace",
-#'           uid = "xxxx-xxxx-xxxx-xxx"
+#'           user_id = "xxxx-xxxx-xxxx-xxx"
 #'           )
 #' }
 #'
+#' @return A data.table containing user details.
 #' @export
 #'
 suso_getUSR<-function(server=suso_get_api_key("susoServer"), apiUser = suso_get_api_key("susoUser"), apiPass = suso_get_api_key("susoPass"),
@@ -599,17 +657,18 @@ suso_getUSR<-function(server=suso_get_api_key("susoServer"), apiUser = suso_get_
 #' # you can archive a user by archive=T
 #' suso_archUSR(
 #'           workspace = "myworkspace",
-#'           uid = "xxxx-xxxx-xxxx-xxx",
+#'           user_id = "xxxx-xxxx-xxxx-xxx",
 #'           archive = TRUE
 #'           )
 #' # and unarchive a user by archive=F
 #' suso_archUSR(
 #'           workspace = "myworkspace",
-#'           uid = "xxxx-xxxx-xxxx-xxx",
+#'           user_id = "xxxx-xxxx-xxxx-xxx",
 #'           archive = FALSE
 #'           )
 #' }
 #'
+#' @return A data.table containing the user ID, archive timestamp, and archive status.
 #' @export
 #'
 suso_archUSR<-function(server=suso_get_api_key("susoServer"), apiUser = suso_get_api_key("susoUser"), apiPass = suso_get_api_key("susoPass"),

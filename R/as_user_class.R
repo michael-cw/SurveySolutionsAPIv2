@@ -7,7 +7,13 @@
 #' @param x list returned by api call
 #' @param ... additional attributes to be added to the assignmentClass
 #'
+#' @return An object of class UserClass (inheriting from data.table)
 #' @export
+#'
+#' @examples
+#' usr_list <- list(Users = data.frame(UserName = "interviewer1", Role = "Interviewer"))
+#' uc <- UserClass(usr_list)
+#' is.UserClass(uc)
 
 UserClass<-function(x, ...) {
   nx<-names(x)
@@ -17,6 +23,9 @@ UserClass<-function(x, ...) {
   } else if("IdentifyingData" %in% nx) {
     iddt<-data.table::data.table(x$IdentifyingData)
     attrloop<-names(x)[names(x)!="IdentifyingData"]
+  } else {
+    iddt<-data.table::data.table()
+    attrloop<-names(x)
   }
   ## define new class with data.table
   data.table::setattr(iddt, "class", base::union("UserClass", class(iddt)))
@@ -25,45 +34,16 @@ UserClass<-function(x, ...) {
     data.table::setattr(iddt, tolower(attr), x[[attr]])
   }
   # ... must be non empty named list-->Contains all arguments passed to the function EXPLICITLY
-  if(!is.null(...) && is.list(...) && length(...) > 0) {
-    for(attr in names(...)) {
-      data.table::setattr(iddt, tolower(attr), ...[[attr]])
+  dots <- list(...)
+  if(length(dots) > 0) {
+    for(attr in names(dots)) {
+      data.table::setattr(iddt, tolower(attr), dots[[attr]])
     }
   }
   invisible(iddt)
 }
 
-#' UserClass methods
-#'
-#' \code{getinfo} allows you to retrieve relevant additional information from the \code{UserClass},
-#' object depending on the api endpoint.
-#'
-#' @details To retrieve all availalbe arguments use \code{arg="arglist"}
-#'
-#'
-#' @param obj object of UserClass
-#' @param arg name of attribute, if \code{arg="arglist"} then it returns all available arguments
-#'
-#' @return the specific attribute
-#'
-#'
-#' @examples
-#' \dontrun{
-#'
-#' # retrieve the uid of the person responsible after retrieving details for specific User
-#' getinfo(asslist, "responsibleid")
-#'
-#' # see all available attribute names
-#' getinfo(asslist, "arglist")
-#'
-#' }
-#'
-#' @export
-#'
-getinfo <- function(obj, arg) {
-  UseMethod("getinfo")
-}
-
+#' @rdname getinfo
 #' @export
 getinfo.UserClass <- function(obj, arg) {
   if(arg=="arglist"){
@@ -83,7 +63,11 @@ getinfo.UserClass <- function(obj, arg) {
 #' @return TRUE if object is of class UserClass
 #'
 #' @export
-
+#'
+#' @examples
+#' uc <- UserClass(list(Users = data.frame(UserName = "interviewer1")))
+#' is.UserClass(uc)
+#' is.UserClass(data.frame())
 
 is.UserClass <- function(x) {
   inherits(x, "UserClass")
