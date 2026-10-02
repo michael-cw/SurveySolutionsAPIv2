@@ -96,13 +96,23 @@ registries and field monitoring dashboards.</p>
 <p>Administrators can partition projects into isolated workspaces
 (e.g. by region, pilot vs. main survey, or distinct administrative
 units).</p>
+<blockquote>
+<p><strong>Note on Permissions</strong>: Workspace administration
+operations (<code>suso_createWorkspace</code>,
+<code>suso_updateWorkspace</code>, <code>suso_deleteWorkspace</code>,
+<code>suso_enableWorkspace</code>, and
+<code>suso_assignWorkspace</code>) require server-level
+<strong>Administrator (<code>admin</code>)</strong> credentials. Regular
+API user accounts are restricted to their assigned workspace and cannot
+create, modify, or delete workspaces.</p>
+</blockquote>
 <div class="section level3">
 <h3 id="creating-a-new-workspace">Creating a New Workspace<a class="anchor" aria-label="anchor" href="#creating-a-new-workspace"></a>
 </h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Create a dedicated workspace for a regional survey</span></span>
+<code class="sourceCode R"><span><span class="co"># Create a dedicated workspace for a regional survey (requires admin credentials)</span></span>
 <span><span class="fu"><a href="../reference/suso_createWorkspace.html">suso_createWorkspace</a></span><span class="op">(</span></span>
-<span>  workspace <span class="op">=</span> <span class="st">"central_region"</span>,</span>
+<span>  new_workspace <span class="op">=</span> <span class="st">"central_region"</span>,</span>
 <span>  displayName <span class="op">=</span> <span class="st">"Central Region Survey 2025"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -195,17 +205,16 @@ interviewers or supervisors.</p>
 <h3 id="creating-preloaded-assignments">Creating Preloaded Assignments<a class="anchor" aria-label="anchor" href="#creating-preloaded-assignments"></a>
 </h3>
 <p>Assignments can be created with pre-filled sample identifiers
-(e.g. household ID, cluster, address, or target respondent name):</p>
+(e.g. household ID, cluster, address, or target respondent name) using
+<code><a href="../reference/suso_createASS.html">suso_createASS()</a></code>:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create assignments for a questionnaire</span></span>
-<span><span class="fu"><a href="../reference/suso_set_assignments.html">suso_set_assignments</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="../reference/suso_createASS.html">suso_createASS</a></span><span class="op">(</span></span>
 <span>  questID <span class="op">=</span> <span class="st">"17a9fa22-1ef6-46d2-8c30-426aa876f273"</span>,</span>
 <span>  version <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  responsible <span class="op">=</span> <span class="st">"interviewer01"</span>,</span>
-<span>  quantity <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  prefill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    cluster_id <span class="op">=</span> <span class="fl">101</span>,</span>
-<span>    region <span class="op">=</span> <span class="st">"Capital"</span></span>
+<span>  df <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    ResponsibleName <span class="op">=</span> <span class="st">"interviewer01"</span>,</span>
+<span>    Quantity <span class="op">=</span> <span class="fl">10</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>

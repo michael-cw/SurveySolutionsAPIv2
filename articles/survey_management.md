@@ -17,13 +17,21 @@ monitoring dashboards.
 Administrators can partition projects into isolated workspaces (e.g. by
 region, pilot vs. main survey, or distinct administrative units).
 
+> **Note on Permissions**: Workspace administration operations
+> (`suso_createWorkspace`, `suso_updateWorkspace`,
+> `suso_deleteWorkspace`, `suso_enableWorkspace`, and
+> `suso_assignWorkspace`) require server-level **Administrator
+> (`admin`)** credentials. Regular API user accounts are restricted to
+> their assigned workspace and cannot create, modify, or delete
+> workspaces.
+
 ### Creating a New Workspace
 
 ``` r
 
-# Create a dedicated workspace for a regional survey
+# Create a dedicated workspace for a regional survey (requires admin credentials)
 suso_createWorkspace(
-  workspace = "central_region",
+  new_workspace = "central_region",
   displayName = "Central Region Survey 2025"
 )
 ```
@@ -130,19 +138,18 @@ or supervisors.
 ### Creating Preloaded Assignments
 
 Assignments can be created with pre-filled sample identifiers
-(e.g. household ID, cluster, address, or target respondent name):
+(e.g. household ID, cluster, address, or target respondent name) using
+[`suso_createASS()`](https://michael-cw.github.io/SurveySolutionsAPIv2/reference/suso_createASS.md):
 
 ``` r
 
 # Create assignments for a questionnaire
-suso_set_assignments(
+suso_createASS(
   questID = "17a9fa22-1ef6-46d2-8c30-426aa876f273",
   version = 1,
-  responsible = "interviewer01",
-  quantity = 10,
-  prefill = list(
-    cluster_id = 101,
-    region = "Capital"
+  df = list(
+    ResponsibleName = "interviewer01",
+    Quantity = 10
   )
 )
 ```
