@@ -2,7 +2,7 @@ Package: SurveySolutionsAPIv2
 Title: Comprehensive API Access to Your Survey Solutions Server Using 'httr2'
 Version: 0.1.2
 Authors@R: 
-    person("Michael", "Wild", , "mwild@worldbank.org", role = c("aut", "cre", "cph"))
+    person("Michael", "Wild", , "michael.wild@me.com", role = c("aut", "cre", "cph"))
 Description: A comprehensive suite of functions for interfacing
     with the Survey Solutions APIs
     (<https://demo.mysurvey.solutions/apidocs/index.html> and
