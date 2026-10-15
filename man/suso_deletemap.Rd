@@ -33,11 +33,12 @@ A data.table containing the deleted map details (file name, shape type, and impo
 Allows the user to delete maps stored on the server.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_deletemap(
   workspace = "myworkspace",
   fileName = "Lat9264Lon625_ALL.tif"
 )
 }
-
+\dontshow{\}) # examplesIf}
 }

@@ -60,8 +60,8 @@
 #' }
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # List all questionnaires on the server
 #' q_list <- suso_getQuestDetails(operation.type = "list")
 #'
@@ -369,8 +369,8 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
       }
       
       # bind all together
-      quest2<-data.table::rbindlist(quest2, fill = T)
-      quest1<-data.table::rbindlist(list(quest1,quest2), fill = T)
+      quest2<-data.table::rbindlist(quest2, fill = TRUE)
+      quest1<-data.table::rbindlist(list(quest1,quest2), fill = TRUE)
       
     }
     
@@ -385,7 +385,7 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
                                    "receivedByInterviewerAtUtc", "clientKey"),
                            new = c("QuestionnaireId", "QuestionnaireVariable", "QuestionnaireVersion", "AssignmentId", "ResponsibleId",
                                    "ResponsibleName", "Status", "InterviewId", "FeaturedQuestions", "ErrorsCount", "LastEntryDate",
-                                   "ReceivedByDeviceAtUtc", "InterviewKey"), skip_absent = T
+                                   "ReceivedByDeviceAtUtc", "InterviewKey"), skip_absent = TRUE
       )
       quest1[,LastEntryDate:=lubridate::as_datetime(LastEntryDate)]
       quest1[,ReceivedByDeviceAtUtc:=lubridate::as_datetime(ReceivedByDeviceAtUtc)][]
@@ -416,8 +416,8 @@ suso_getQuestDetails <- function(server = suso_get_api_key("susoServer"),
 #'
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # Get current criticality level
 #' suso_questCriticalityLevel(
 #'   questID = "11111111-2222-3333-4444-555555555555",
@@ -504,8 +504,8 @@ suso_questCriticalityLevel <- function(server = suso_get_api_key("susoServer"),
 #'
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # Get current audio recording setting
 #' suso_questRecordAudio(
 #'   questID = "11111111-2222-3333-4444-555555555555",

@@ -297,7 +297,7 @@
             function(x,y) list(AnswerValue = x, AnswerText = y),
             c(1:maxCount),
             sprintf("%s__%d", varName, 0:(maxCount-1)),
-            SIMPLIFY = F, USE.NAMES = F
+            SIMPLIFY = FALSE, USE.NAMES = FALSE
           )
           islink<-TRUE
         }

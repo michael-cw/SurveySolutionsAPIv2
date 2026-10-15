@@ -37,10 +37,12 @@ Returns all questions for a single questionnaire (ONLY if they contain responses
 from any questionnaire on the server, use \code{suso_getQuestDetails(..., operation.type = "structure")}.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_getQuestionsQuestionnaire(
   questID = "11111111-2222-3333-4444-555555555555",
   version = 1
 )
 }
+\dontshow{\}) # examplesIf}
 }

@@ -22,14 +22,13 @@ functions. The function also checks if the workspace name is correct, and the us
 authorized.If the workspace requires different credentials, then use \code{\link{suso_set_key}} again.
 }
 \examples{
-\dontrun{
-
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # switch to workspace "windows"
 suso_set_workspace("windows")
 
 # switch to primary (default) workspace
 suso_set_workspace()
-
 }
-
+\dontshow{\}) # examplesIf}
 }

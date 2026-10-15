@@ -9,8 +9,8 @@
 #' no workspace is provided defaults to primary workspace.
 #' @param token If Survey Solutions server token is provided \emph{apiUser} and \emph{apiPass} will be ignored
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # receive all supervisors in the workspace
 #' suso_getSV()
 #' }
@@ -72,7 +72,7 @@ suso_getSV <- function(server = suso_get_api_key("susoServer"),
     rest<-tot-100
     loop.counter<-ceiling(rest/100)
     df<-1:loop.counter
-    requests <- lapply(df, .genrequests_w_offset, url, lim = 100, off = 1, multi = F)
+    requests <- lapply(df, .genrequests_w_offset, url, lim = 100, off = 1, multi = FALSE)
 
     # generate list of tempfiles used in path to write response (seems to be faster than using resp_body_json)
     tmpfiles <- tempfile(sprintf("suso_%d", df), tmpdir = tempdir(), fileext = ".json")
@@ -151,8 +151,8 @@ suso_getSV <- function(server = suso_get_api_key("susoServer"),
 #' requests will be performed in parallel, but do not allow for teams larger 100 interviewers.
 #'
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #'
 #' # Get all members for a single supervisor
 #' suso_getINT(
@@ -228,7 +228,7 @@ suso_getINT <- function(server=suso_get_api_key("susoServer"),
       rest<-tot-100
       loop.counter<-ceiling(rest/100)
       df<-1:loop.counter
-      requests <- lapply(df, .genrequests_w_offset, url, lim = 100, off = 1, multi = F)
+      requests <- lapply(df, .genrequests_w_offset, url, lim = 100, off = 1, multi = FALSE)
 
       # generate list of tempfiles used in path to write response (seems to be faster than using resp_body_json)
       tmpfiles <- tempfile(sprintf("suso_%d", df), tmpdir = tempdir(), fileext = ".json")
@@ -252,7 +252,7 @@ suso_getINT <- function(server=suso_get_api_key("susoServer"),
 
       # transform response from json tempfile takes 2.51 seconds
       full_data2<-lapply(tmpfiles, .transformresponses_jsonlite, "Users") |>
-        data.table::rbindlist(fill = T)
+        data.table::rbindlist(fill = TRUE)
       # remove tempfile
       unlink(tmpfiles)
 
@@ -260,7 +260,7 @@ suso_getINT <- function(server=suso_get_api_key("susoServer"),
       # With User class for later use
       #test_json$Users<-data.table::rbindlist(list(full_data1, full_data2))
       #test_json<-UserClass(test_json)
-      test_json<-data.table::rbindlist(list(full_data1, full_data2), fill = T)
+      test_json<-data.table::rbindlist(list(full_data1, full_data2), fill = TRUE)
       # modify data types
       if(nrow(test_json>0)) {
         # add sv id for anonymous call
@@ -302,10 +302,10 @@ suso_getINT <- function(server=suso_get_api_key("susoServer"),
       if(interactive()){
         pgtext<-sprintf("Loading all interviewers in workspace %s.", workspace)
         test_json<-lapply(cli::cli_progress_along(allsv$UserId, pgtext, length(allsv$UserId)), .svget, allsv$UserId) |>
-          data.table::rbindlist(fill = T)
+          data.table::rbindlist(fill = TRUE)
       } else {
         test_json<-lapply(seq_along(allsv$UserId), .svget, allsv$UserId) |>
-          data.table::rbindlist(fill = T)
+          data.table::rbindlist(fill = TRUE)
       }
     } else {
       # ii.1 generate requests by sv_id
@@ -350,7 +350,7 @@ suso_getINT <- function(server=suso_get_api_key("susoServer"),
 
       # ADD sv id-->only if no failes (for now)
       if(length(failed)==0) names(test_json)<-allsv$UserId
-      test_json<-data.table::rbindlist(test_json, fill = T, idcol = "sv_id")
+      test_json<-data.table::rbindlist(test_json, fill = TRUE, idcol = "sv_id")
 
     }
   }
@@ -396,8 +396,8 @@ suso_getINT <- function(server=suso_get_api_key("susoServer"),
 #' YYYY-MM-DD, and will end at 23:59:59 server time of the specified day. If not end date is provided, the current
 #' date will be used
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_getINT_info(
 #'           workspace = "myworkspace",
 #'           int_id = "xxxx-xxxx-xxxx-xxx"
@@ -509,8 +509,8 @@ suso_getINT_info<-function(server=suso_get_api_key("susoServer"), apiUser = suso
 #' @param workspace server workspace name
 #' @param token API token
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_getSV_info(
 #'   workspace = "myworkspace",
 #'   sv_id = "xxxx-xxxx-xxxx-xxx"
@@ -567,8 +567,8 @@ suso_getSV_info <- function(server = suso_get_api_key("susoServer"),
 #' no workspace is provided defaults to primary workspace.
 #' @param token If Survey Solutions server token is provided \emph{usr} and \emph{pass} will be ignored
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_getUSR(
 #'           workspace = "myworkspace",
 #'           user_id = "xxxx-xxxx-xxxx-xxx"
@@ -652,8 +652,8 @@ suso_getUSR<-function(server=suso_get_api_key("susoServer"), apiUser = suso_get_
 #' @param token If Survey Solutions server token is provided \emph{usr} and \emph{pass} will be ignored
 #'
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # you can archive a user by archive=T
 #' suso_archUSR(
 #'           workspace = "myworkspace",
@@ -672,7 +672,7 @@ suso_getUSR<-function(server=suso_get_api_key("susoServer"), apiUser = suso_get_
 #' @export
 #'
 suso_archUSR<-function(server=suso_get_api_key("susoServer"), apiUser = suso_get_api_key("susoUser"), apiPass = suso_get_api_key("susoPass"),
-                       user_id = NULL, archive = F, workspace = suso_get_api_key("workspace"), token = NULL) {
+                       user_id = NULL, archive = FALSE, workspace = suso_get_api_key("workspace"), token = NULL) {
   ## default workspace
   workspace<-.ws_default(ws = workspace)
 

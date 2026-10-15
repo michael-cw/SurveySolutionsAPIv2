@@ -32,14 +32,16 @@ object depending on the api endpoint.
 To retrieve all availalbe arguments use \code{arg="arglist"}
 }
 \examples{
-\dontrun{
+ass_list <- list(
+  Assignments = data.frame(Id = 1, ResponsibleName = "interviewer1"),
+  ResponsibleId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+)
+asslist <- assignmentClass(ass_list)
 
-# retrieve the uid of the person responsible after retrieving details for specific assignment
+# retrieve the uid of the person responsible
 getinfo(asslist, "responsibleid")
 
 # see all available attribute names
 getinfo(asslist, "arglist")
-
-}
 
 }

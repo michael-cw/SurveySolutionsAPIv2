@@ -58,14 +58,13 @@ suso_keys <- function() getOption("SurveySolutionsAPI")
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' suso_set_key(
 #'   suso_server = "https://demo.mysurvey.solutions",
 #'   suso_user = "api_user",
 #'   suso_password = "password123",
 #'   workspace = "primary"
 #' )
-#' }
+#' suso_clear_keys()
 #'
 suso_set_key <- function(
   suso_server = "",
@@ -115,15 +114,13 @@ suso_set_key <- function(
 #'
 #' @return invisibly TRUE if successful.
 #'
-#' @examples
-#' \dontrun{
-#'
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # switch to workspace "windows"
 #' suso_set_workspace("windows")
 #'
 #' # switch to primary (default) workspace
 #' suso_set_workspace()
-#'
 #' }
 #'
 #' @export
@@ -222,9 +219,14 @@ suso_get_api_key <- function(api = c("susoServer", "susoUser", "susoPass", "work
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' suso_set_key(
+#'   suso_server = "https://demo.mysurvey.solutions",
+#'   suso_user = "api_user",
+#'   suso_password = "password123",
+#'   workspace = "primary"
+#' )
 #' suso_get_default_key("susoServer")
-#' }
+#' suso_clear_keys()
 suso_get_default_key <- function(api = c("susoServer", "susoUser", "susoPass", "workspace")) {
   rlang::arg_match(api)
   key <- getOption("SurveySolutionsAPI")[['suso']][[api]]
@@ -257,8 +259,8 @@ suso_get_default_key <- function(api = c("susoServer", "susoUser", "susoPass", "
 #'
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_PwCheck(
 #'   server = "https://demo.mysurvey.solutions",
 #'   apiUser = "api_user",

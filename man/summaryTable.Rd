@@ -42,13 +42,14 @@ count as well as count of NA values.
 }
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 questlist<-suso_getQuestDetails()
 
 ### MAIN DATA
 export <- suso_export(questID = questlist$QuestionnaireId[7],
                       version = questlist$Version[7],
-                      combineFiles = T,
+                      combineFiles = TRUE,
                       reloadTimeDiff = 20)
 
 # Create a summary table
@@ -56,19 +57,25 @@ summary_data_table <- summaryTable(export)
 
 # Display the summary table
 summary_data_table
-
-
-
 }
+\dontshow{\}) # examplesIf}
+dt <- data.table::data.table(q1 = 1:10, q2 = 11:20)
+vlabs <- data.table::data.table(
+  VariableName = c("q1", "q2"),
+  QuestionText = c("Question 1", "Question 2")
+)
+ec <- exportClass(dt, varLabels = vlabs)
+summaryTable(ec, useDT = FALSE)
 
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 questlist<-suso_getQuestDetails()
 
 ### PARADATA
 # 1. Pre-Processed tables created during export
 para<-suso_export_paradata(questID = questlist$QuestionnaireId[1],
                           version = questlist$Version[1], reloadTimeDiff = 24,
-                          workStatus = "All", asList = F, onlyActiveEvents = T)
+                          workStatus = "All", asList = FALSE, onlyActiveEvents = TRUE)
 
 # Create a summary table of all event counts by action (includes always passive and active one)
 actions <- summaryTable(para, "action")
@@ -87,8 +94,6 @@ resptime_type <- summaryTable(para, "type")
 
 # Create a summary table of the average response time by user
 resptime_user <- summaryTable(para, "responsible")
-
-
 }
-
+\dontshow{\}) # examplesIf}
 }

@@ -30,7 +30,9 @@ A data.table listing questionnaires with statistics.
 Retrieves the list of questionnaires that have statistics data on the server.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_getStatsQuestionnaires()
 }
+\dontshow{\}) # examplesIf}
 }

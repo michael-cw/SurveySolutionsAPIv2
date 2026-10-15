@@ -42,10 +42,12 @@ A data.table indicating the assignment status.
 Reassigns an interview to a specified interviewer or supervisor.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_assignInterview(
   intID = "11111111-2222-3333-4444-555555555555",
   userName = "interviewer01"
 )
 }
+\dontshow{\}) # examplesIf}
 }

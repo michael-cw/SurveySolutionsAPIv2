@@ -33,10 +33,12 @@ A data.table indicating the enable/disable status.
 Enables or disables access to a specified workspace. Accessible only to administrator.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # Enable workspace
 suso_enableWorkspace(workspace = "my_ws", enable = TRUE)
 # Disable workspace
 suso_enableWorkspace(workspace = "my_ws", enable = FALSE)
 }
+\dontshow{\}) # examplesIf}
 }

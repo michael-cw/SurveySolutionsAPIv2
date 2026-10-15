@@ -33,11 +33,12 @@ A data.table containing supervisor details.
 Gets detailed info about a single supervisor by supervisor ID.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_getSV_info(
   workspace = "myworkspace",
   sv_id = "xxxx-xxxx-xxxx-xxx"
 )
 }
-
+\dontshow{\}) # examplesIf}
 }

@@ -19,9 +19,9 @@
 #' RejectedByHeadquarters,ApprovedByHeadquarters,Deleted}), if NULL only completed interviews will be shown.
 #'
 #'
-#' @examples
-#' \dontrun{
-#' To get all interviews for a specific questionnaire and a specific status
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
+#' # To get all interviews for a specific questionnaire and a specific status
 #'      suso_getAllInterviewQuestionnaire(
 #'               workspace = "myworkspace",
 #'               questID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea",
@@ -93,8 +93,8 @@ suso_getAllInterviewQuestionnaire <- function(server= suso_get_api_key("susoServ
 #' @param token If Survey Solutions server token is provided \emph{apiUser} and \emph{apiPass} will be ignored
 #' @param intID the \emph{InterviewId} of the interview. To get a list of all interview for a specific questionnaire, execute \code{suso_getAllInterviewQuestionnaire}
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_getAllAnswerInterview(
 #'           workspace = "myworkspace",
 #'           intID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea"
@@ -144,7 +144,7 @@ suso_getAllAnswerInterview <- function(server= suso_get_api_key("susoServer"),
   if(resp_has_body(resp)){
     # get body by content type
     if(resp_content_type(resp) == "application/json") {
-      test_json<-resp_body_json(resp, simplifyVector = T, flatten = F)
+      test_json<-resp_body_json(resp, simplifyVector = TRUE, flatten = FALSE)
       # Export only records
       test_json<-data.table(test_json$Answers)
       # Set date time to utc with lubridate
@@ -167,8 +167,8 @@ suso_getAllAnswerInterview <- function(server= suso_get_api_key("susoServer"),
 #' @param token If Survey Solutions server token is provided \emph{apiUser} and \emph{apiPass} will be ignored
 #' @param intID the \emph{InterviewId} of the interview.
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_getAllHistoryInterview(
 #'           workspace = "myworkspace",
 #'           intID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea"
@@ -239,8 +239,8 @@ suso_getAllHistoryInterview <- function(server= suso_get_api_key("susoServer"),
 #' @param token If Survey Solutions server token is provided \emph{apiUser} and \emph{apiPass} will be ignored
 #' @param intID a single or multiple \emph{InterviewId}.
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_get_stats_interview(
 #'           workspace = "myworkspace",
 #'           intID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea"
@@ -344,7 +344,7 @@ suso_get_stats_interview<-function(server= suso_get_api_key("susoServer"),
     .transformresponses_tj<-function(i ,resp) {
       # i. Convert to json
       test_json <-resp[[i]] |>
-        resp_body_json(simplifyVector = T, flatten = TRUE)
+        resp_body_json(simplifyVector = TRUE, flatten = TRUE)
 
       # Export only records
       tj<-as.data.table(t(unlist(test_json)))
@@ -361,7 +361,7 @@ suso_get_stats_interview<-function(server= suso_get_api_key("susoServer"),
       "responses", "interviewers", workspace,
       success
     )
-    tj<-data.table::rbindlist(test_json, fill = T)
+    tj<-data.table::rbindlist(test_json, fill = TRUE)
     return(tj)
   }
 
@@ -389,8 +389,8 @@ suso_get_stats_interview<-function(server= suso_get_api_key("susoServer"),
 #' @param HQ if FALSE, reject as supervisor, if TRUE rejected as headquarters
 #' @param comment comment which should be sent with the questionnaire
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # reject the interview as supervisor
 #' suso_patchRejectInterview(
 #'           workspace = "myworkspace",
@@ -497,8 +497,8 @@ suso_patchRejectInterview <- function(server= suso_get_api_key("susoServer"),
 #' @param hqunapprove if TRUE, unapprove from headquarters status (hqunapprove)
 #' @param comment comment which should be sent with the questionnaire
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # approve the interview as supervisor
 #' suso_patchApproveInterview(
 #'           workspace = "myworkspace",
@@ -580,8 +580,8 @@ suso_patchApproveInterview <- function(server= suso_get_api_key("susoServer"),
 #' @return A data.table indicating the deletion status.
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_deleteInterview(intID = "11111111-2222-3333-4444-555555555555")
 #' }
 suso_deleteInterview <- function(server = suso_get_api_key("susoServer"),
@@ -626,8 +626,8 @@ suso_deleteInterview <- function(server = suso_get_api_key("susoServer"),
 #' @return The file path where the PDF was saved.
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' pdf_path <- suso_getInterviewPDF(intID = "11111111-2222-3333-4444-555555555555")
 #' }
 suso_getInterviewPDF <- function(server = suso_get_api_key("susoServer"),
@@ -677,8 +677,8 @@ suso_getInterviewPDF <- function(server = suso_get_api_key("susoServer"),
 #' @return A data.table indicating the assignment status.
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_assignInterview(
 #'   intID = "11111111-2222-3333-4444-555555555555",
 #'   userName = "interviewer01"
@@ -742,8 +742,8 @@ suso_assignInterview <- function(server = suso_get_api_key("susoServer"),
 #' @return A data.table indicating the comment status.
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_commentInterview(
 #'   intID = "11111111-2222-3333-4444-555555555555",
 #'   variable = "age",

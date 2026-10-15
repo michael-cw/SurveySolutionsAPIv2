@@ -49,7 +49,8 @@ is the case, then you need to make sure, that all assignments, interviews, team 
 that for using this call you require admin credentials, and not the regular API user credentials.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 ## Use Admin Credentials!
 
 # Assign a new workspace to a single user, keep old one(s)
@@ -95,5 +96,5 @@ suso_assignWorkspace(
           )
 
 }
-
+\dontshow{\}) # examplesIf}
 }

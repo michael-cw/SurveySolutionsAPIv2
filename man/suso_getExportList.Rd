@@ -55,8 +55,10 @@ A data.table containing the list of export processes.
 Retrieves a list of export processes matching specified filters.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # List all export processes in workspace
 exp_list <- suso_getExportList()
 }
+\dontshow{\}) # examplesIf}
 }

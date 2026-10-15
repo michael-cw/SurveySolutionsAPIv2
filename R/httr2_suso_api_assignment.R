@@ -33,8 +33,8 @@
 #' the data.table will be NULL, however any information returned from the API can be retrieved by using the \code{getinfo()}
 #' function with the corresponding arguments.
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #'
 #' # get all assignment for specific workspace
 #' asslist<-suso_get_assignments(
@@ -62,10 +62,10 @@
 #'                    AssId = 1,
 #'                    operations.type = "assignmentQuantitySettings")
 #' asslist
-#' Null data.table (0 rows and 0 cols)
+#' # Null data.table (0 rows and 0 cols)
 #'
 #' getinfo(asslist, "canchangequantity")
-#' [1] TRUE
+#' # [1] TRUE
 #' }
 #'
 #'
@@ -213,7 +213,7 @@ suso_get_assignments<-function(server = suso_get_api_key("susoServer"),
         1:loop.counter,
         .genrequests_w_offset,
         "requests", "assignments", workspace,
-        url, lim = 100, off = 100, multi = T,
+        url, lim = 100, off = 100, multi = TRUE,
         call = rlang::caller_env()
       )
 
@@ -246,7 +246,7 @@ suso_get_assignments<-function(server = suso_get_api_key("susoServer"),
         tmpfiles, "Assignments",
         call = rlang::caller_env()
       )
-      full_data2<-data.table::rbindlist(full_data2, fill = T)
+      full_data2<-data.table::rbindlist(full_data2, fill = TRUE)
 
       # remove tempfile
       unlink(tmpfiles)
@@ -424,8 +424,8 @@ suso_get_assignments<-function(server = suso_get_api_key("susoServer"),
 #'
 #' @return Returns an S3 object of assignmentClass
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #'
 #' # (re-)assign existing assignment by UUID, username, or data.frame
 #' asslist<-suso_set_assignments(

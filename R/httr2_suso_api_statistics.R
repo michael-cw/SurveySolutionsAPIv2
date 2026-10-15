@@ -17,8 +17,8 @@
 #' @return A data.table containing the summary statistics for the question.
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_get_stats(
 #'   questID = "11111111-2222-3333-4444-555555555555",
 #'   version = 1,
@@ -106,8 +106,8 @@ suso_get_stats <- function(server = suso_get_api_key("susoServer"),
 #' @return A data.table listing questionnaires with statistics.
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_getStatsQuestionnaires()
 #' }
 suso_getStatsQuestionnaires <- function(server = suso_get_api_key("susoServer"),
@@ -156,8 +156,8 @@ suso_getStatsQuestionnaires <- function(server = suso_get_api_key("susoServer"),
 #' @return A data.table listing questions with responses for the questionnaire.
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_getQuestionsQuestionnaire(
 #'   questID = "11111111-2222-3333-4444-555555555555",
 #'   version = 1

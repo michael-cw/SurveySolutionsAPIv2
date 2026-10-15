@@ -190,14 +190,14 @@ summaryTable <- function(x , ... ){ #,includeFactors = FALSE, useDT = TRUE,  DTs
 #' }
 #'
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' questlist<-suso_getQuestDetails()
 #'
 #' ### MAIN DATA
 #' export <- suso_export(questID = questlist$QuestionnaireId[7],
 #'                       version = questlist$Version[7],
-#'                       combineFiles = T,
+#'                       combineFiles = TRUE,
 #'                       reloadTimeDiff = 20)
 #'
 #' # Create a summary table
@@ -205,9 +205,6 @@ summaryTable <- function(x , ... ){ #,includeFactors = FALSE, useDT = TRUE,  DTs
 #'
 #' # Display the summary table
 #' summary_data_table
-#'
-#'
-#'
 #' }
 #'
 #' @export
@@ -317,7 +314,7 @@ summaryTable.exportClass <- function(x, ... ,includeFactors = FALSE, useDT = TRU
 
       # render
       DT<-DT::datatable(summary_data,
-                        smTabDir, rownames = F
+                        smTabDir, rownames = FALSE
                         #style = "bootstrap4"
       ) |>
         DT::formatStyle(1:length(summary_data),
@@ -340,7 +337,7 @@ summaryTable.exportClass <- function(x, ... ,includeFactors = FALSE, useDT = TRU
       ## calculate new...
       # 1. response time by ...
         cond<-rlang::parse_expr(sprintf('%s!= "<NA>"', arg))
-        summary_data<-x[eval(cond),.(`Av. Response Time (in seconds)` = mean(resp_time, na.rm = T)), by= arg]
+        summary_data<-x[eval(cond),.(`Av. Response Time (in seconds)` = mean(resp_time, na.rm = TRUE)), by= arg]
 
     }
 
@@ -388,7 +385,7 @@ summaryTable.exportClass <- function(x, ... ,includeFactors = FALSE, useDT = TRU
 
       # render
       DT<-DT::datatable(summary_data,
-                        smTabDir, rownames = F
+                        smTabDir, rownames = FALSE
                         #style = "bootstrap4"
       ) |>
         DT::formatStyle(1:length(summary_data),
@@ -417,14 +414,23 @@ summaryTable.exportClass <- function(x, ... ,includeFactors = FALSE, useDT = TRU
 #'
 #'
 #' @examples
-#' \dontrun{
+#' dt <- data.table::data.table(q1 = 1:10, q2 = 11:20)
+#' vlabs <- data.table::data.table(
+#'   VariableName = c("q1", "q2"),
+#'   QuestionText = c("Question 1", "Question 2")
+#' )
+#' ec <- exportClass(dt, varLabels = vlabs)
+#' summaryTable(ec, useDT = FALSE)
+#'
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' questlist<-suso_getQuestDetails()
 #'
 #' ### PARADATA
 #' # 1. Pre-Processed tables created during export
 #' para<-suso_export_paradata(questID = questlist$QuestionnaireId[1],
 #'                           version = questlist$Version[1], reloadTimeDiff = 24,
-#'                           workStatus = "All", asList = F, onlyActiveEvents = T)
+#'                           workStatus = "All", asList = FALSE, onlyActiveEvents = TRUE)
 #'
 #' # Create a summary table of all event counts by action (includes always passive and active one)
 #' actions <- summaryTable(para, "action")
@@ -443,8 +449,6 @@ summaryTable.exportClass <- function(x, ... ,includeFactors = FALSE, useDT = TRU
 #'
 #' # Create a summary table of the average response time by user
 #' resptime_user <- summaryTable(para, "responsible")
-#'
-#'
 #' }
 #'
 #' @export
@@ -554,7 +558,7 @@ summaryTable.paradata <- function(x, ... ,useDT = TRUE, DTstyle = TRUE) {
 
       # render
       DT<-DT::datatable(summary_data,
-                        smTabDir, rownames = F
+                        smTabDir, rownames = FALSE
                         #style = "bootstrap4"
       ) |>
         DT::formatStyle(1:length(summary_data),
@@ -581,7 +585,7 @@ summaryTable.paradata <- function(x, ... ,useDT = TRUE, DTstyle = TRUE) {
       ## calculate new...
       # 1. response time by ...
       cond<-rlang::parse_expr(sprintf('%s!= "<NA>"', arg))
-      summary_data<-x[eval(cond),.(`Av. Response Time (in seconds)` = mean(resp_time, na.rm = T)), by= arg]
+      summary_data<-x[eval(cond),.(`Av. Response Time (in seconds)` = mean(resp_time, na.rm = TRUE)), by= arg]
 
     }
 
@@ -629,7 +633,7 @@ summaryTable.paradata <- function(x, ... ,useDT = TRUE, DTstyle = TRUE) {
 
       # render
       DT<-DT::datatable(summary_data,
-                        smTabDir, rownames = F
+                        smTabDir, rownames = FALSE
                         #style = "bootstrap4"
       ) |>
         DT::formatStyle(1:length(summary_data),
@@ -660,19 +664,13 @@ summaryTable.paradata <- function(x, ... ,useDT = TRUE, DTstyle = TRUE) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Load your package
-#' export <- suso_export(questID = questlist$QuestionnaireId[7],
-#'                       version = questlist$Version[7],
-#'                       combineFiles = T,
-#'                       reloadTimeDiff = 20)
-#'
-#' # Create a summary table
-#' boxplot_summary <- boxplot(export)
-#'
-#' # Display the summary table
-#' boxplot_summary
-#' }
+#' dt <- data.table::data.table(q1 = 1:10, q2 = 11:20)
+#' vlabs <- data.table::data.table(
+#'   VariableName = c("q1", "q2"),
+#'   QuestionText = c("Question 1", "Question 2")
+#' )
+#' ec <- exportClass(dt, varLabels = vlabs)
+#' boxplot_summary(ec)
 #'
 #' @return A ggplot2 plot object if useGGplot2 is TRUE, or a base R boxplot list invisibly otherwise
 #' @export

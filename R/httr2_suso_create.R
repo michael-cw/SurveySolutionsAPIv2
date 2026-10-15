@@ -21,8 +21,8 @@
 #'
 #' @return Returns a data.table with a row for each assignment, containing identifying data, responsible id etc.
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #'
 #' # get the list of questionnaires in the workspace
 #' questlist<-suso_getQuestDetails()

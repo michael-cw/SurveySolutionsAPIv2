@@ -45,11 +45,13 @@ A data.table indicating the comment status.
 Leaves a comment on a question using either the questionId or the questionnaire variable name.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_commentInterview(
   intID = "11111111-2222-3333-4444-555555555555",
   variable = "age",
   comment = "Please verify respondent age."
 )
 }
+\dontshow{\}) # examplesIf}
 }

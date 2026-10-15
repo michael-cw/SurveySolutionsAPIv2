@@ -19,8 +19,8 @@
 #' provided in the required format.
 #' @return A data.table containing the user information and HTTP response status code for each created user.
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' new_users <- data.frame(
 #'   Role = "Interviewer",
 #'   UserName = "interviewer01",
@@ -180,7 +180,7 @@ suso_createUSER <- function(userlist = NULL,
       } else if(status==200) {
         # i. Convert to json
         tmp <-responses[[i]] |>
-          resp_body_json(simplifyVector = T, flatten = TRUE)
+          resp_body_json(simplifyVector = TRUE, flatten = TRUE)
         # ii. Transform to data.table
         tmp<-data.table::data.table(t(unlist(tmp)))
         tmp<-cbind(userlist[i,], tmp)

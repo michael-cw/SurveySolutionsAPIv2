@@ -40,11 +40,12 @@ A data.table containing user details.
 Get any user's info, by either providing the user id, email, or the user name
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_getUSR(
           workspace = "myworkspace",
           user_id = "xxxx-xxxx-xxxx-xxx"
           )
 }
-
+\dontshow{\}) # examplesIf}
 }

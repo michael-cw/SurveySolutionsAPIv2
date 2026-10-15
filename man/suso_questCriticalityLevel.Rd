@@ -41,7 +41,8 @@ When \code{level} is provided, returns \code{TRUE} invisibly upon successful upd
 Gets or sets the criticality level setting for a specific questionnaire.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # Get current criticality level
 suso_questCriticalityLevel(
   questID = "11111111-2222-3333-4444-555555555555",
@@ -54,4 +55,5 @@ suso_questCriticalityLevel(
   level = "Warn"
 )
 }
+\dontshow{\}) # examplesIf}
 }

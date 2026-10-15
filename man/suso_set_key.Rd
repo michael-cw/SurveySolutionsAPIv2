@@ -41,13 +41,12 @@ In case \emph{suso_token} is provided, only token authentication will be attempt
 in Survey Solutions please see \url{https://docs.mysurvey.solutions/headquarters/accounts/token-based-authentication/}.
 }
 \examples{
-\dontrun{
 suso_set_key(
   suso_server = "https://demo.mysurvey.solutions",
   suso_user = "api_user",
   suso_password = "password123",
   workspace = "primary"
 )
-}
+suso_clear_keys()
 
 }

@@ -15,8 +15,8 @@
 #'
 #' @return Returns a data.table, with information about the uploaded maps
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # either upload the content of a folder
 #' suso_mapupload(workspace = "myworkspace",
 #'               path_to_zip = "./mapfiles/")
@@ -52,7 +52,7 @@ suso_mapupload <- function(server= suso_get_api_key("susoServer"),
     # directory to zip in temporary
     fl<-list.files(path_to_zip,
                    pattern = "(.shp)|(.shx)|(.dbf)|(.prj)|(.tpk)|(.tif)|(.tiff)|(.mmpk)",
-                   full.names = T)
+                   full.names = TRUE)
     tmpzip<-tempfile(fileext = ".zip")
     zip::zip(tmpzip, files = fl, mode = "cherry-pick")
     path_to_zip<-tmpzip
@@ -101,8 +101,8 @@ suso_mapupload <- function(server= suso_get_api_key("susoServer"),
 #' @return Returns a data.table, with all the maps and additonal information. If multiple users are assigned to a map,
 #' the table is expanded, such that there is one user per map.
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_mapinfo(workspace = "myworkspace")
 #' }
 #'
@@ -143,7 +143,7 @@ suso_mapinfo <- function(server= suso_get_api_key("susoServer"),
     rc<-nrow(result$maps$nodes)
     resultdt<-result$maps$nodes
     # extract user list with tidyr::unnest
-    resultdt<-tidyr::unnest(resultdt, "users", keep_empty = T)
+    resultdt<-tidyr::unnest(resultdt, "users", keep_empty = TRUE)
 
     # create data.table
     resultdt<-data.table::data.table(resultdt)
@@ -173,8 +173,8 @@ suso_mapinfo <- function(server= suso_get_api_key("susoServer"),
 #' @param assignUser if TRUE user will be assigned to map, if FALSE user will be removed from map
 #'
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_mapassign(workspace = "myworkspace",
 #'               fileName = "Lat9264Lon625_ALL.tif",
 #'               userName = "INT0004")
@@ -254,8 +254,8 @@ suso_mapassign <- function(server= suso_get_api_key("susoServer"),
 #' @param fileName the name of the map file on the server
 #'
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_deletemap(
 #'   workspace = "myworkspace",
 #'   fileName = "Lat9264Lon625_ALL.tif"
@@ -328,8 +328,8 @@ suso_deletemap <- function(server= suso_get_api_key("susoServer"),
 #' @param notAnsweredCount number of unanswered questions
 #'
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_mapreport(
 #'   workspace = "myworkspace",
 #'   questID = "11111111-2222-3333-4444-555555555555",

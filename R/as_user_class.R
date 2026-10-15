@@ -100,9 +100,8 @@ is.UserClass <- function(x) {
 #'
 #' @export
 #'
-#' @examples
-#' \dontrun{
-#'
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' allintprim<-suso_getINT(workspace = "primary")
 #'
 #' # Create a summary table
@@ -162,10 +161,10 @@ summaryTable.UserClass <- function(x, includeFactors = FALSE, useDT = TRUE, DTst
 
     progressr::handler_cli()
     if(!(shiny::isRunning())){
-      progressr::handlers(global = T)
+      progressr::handlers(global = TRUE)
       # run outside shiny
       prog<-progressr::progressor(along = intids)
-      compcount1<-future.apply::future_sapply(intids, gqlpar_w_progr , USE.NAMES = F)
+      compcount1<-future.apply::future_sapply(intids, gqlpar_w_progr , USE.NAMES = FALSE)
 
     } else {
       # inside shiny
@@ -174,7 +173,7 @@ summaryTable.UserClass <- function(x, includeFactors = FALSE, useDT = TRUE, DTst
         detail = "Loading ...",
         value = 0, {
           prog<-progressr::progressor(along = intids)
-          compcount1<-future.apply::future_sapply(intids, gqlpar_w_progr , USE.NAMES = F)
+          compcount1<-future.apply::future_sapply(intids, gqlpar_w_progr , USE.NAMES = FALSE)
         }
       )
     }
@@ -194,7 +193,7 @@ summaryTable.UserClass <- function(x, includeFactors = FALSE, useDT = TRUE, DTst
       workspace = ws,
       responsibleName = x,
       status = "COMPLETED"
-    )$interviews$filteredCount, USE.NAMES = F)
+    )$interviews$filteredCount, USE.NAMES = FALSE)
   }
   # add completed count
   summary_data[,Completed:=compcount1]
@@ -229,10 +228,10 @@ summaryTable.UserClass <- function(x, includeFactors = FALSE, useDT = TRUE, DTst
 
     progressr::handler_cli()
     if(!(shiny::isRunning())){
-      progressr::handlers(global = T)
+      progressr::handlers(global = TRUE)
       # run outside shiny
       prog<-progressr::progressor(along = intids)
-      compcount1<-future.apply::future_sapply(intids, gqlpar_w_progr , USE.NAMES = F)
+      compcount1<-future.apply::future_sapply(intids, gqlpar_w_progr , USE.NAMES = FALSE)
 
     } else {
       # inside shiny
@@ -241,7 +240,7 @@ summaryTable.UserClass <- function(x, includeFactors = FALSE, useDT = TRUE, DTst
         detail = "Loading ...",
         value = 0, {
           prog<-progressr::progressor(along = intids)
-          compcount1<-future.apply::future_sapply(intids, gqlpar_w_progr , USE.NAMES = F)
+          compcount1<-future.apply::future_sapply(intids, gqlpar_w_progr , USE.NAMES = FALSE)
         }
       )
     }
@@ -255,7 +254,7 @@ summaryTable.UserClass <- function(x, includeFactors = FALSE, useDT = TRUE, DTst
       password = p,
       workspace = ws,
       responsibleId = x
-    )$assignments$filteredCount, USE.NAMES = F)
+    )$assignments$filteredCount, USE.NAMES = FALSE)
   }
   # add ass count
   summary_data[,Assigned:=compcount1]
@@ -296,7 +295,7 @@ summaryTable.UserClass <- function(x, includeFactors = FALSE, useDT = TRUE, DTst
 
     # render
     DT<-DT::datatable(summary_data,
-                      smTabDir, rownames = F
+                      smTabDir, rownames = FALSE
                       #style = "bootstrap4"
     ) |>
       DT::formatStyle(1:length(summary_data),

@@ -33,8 +33,10 @@ A data.table containing the canceled export process information.
 Cancels an ongoing export process or deletes an export process by ID.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # Cancel an ongoing export process
 suso_cancelExport(jobid = 123)
 }
+\dontshow{\}) # examplesIf}
 }

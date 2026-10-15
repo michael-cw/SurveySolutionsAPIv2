@@ -33,7 +33,9 @@ A data.table indicating the deletion status.
 Deletes an interview from the Survey Solutions server.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_deleteInterview(intID = "11111111-2222-3333-4444-555555555555")
 }
+\dontshow{\}) # examplesIf}
 }

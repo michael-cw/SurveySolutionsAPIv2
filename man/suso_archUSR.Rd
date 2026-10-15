@@ -9,7 +9,7 @@ suso_archUSR(
   apiUser = suso_get_api_key("susoUser"),
   apiPass = suso_get_api_key("susoPass"),
   user_id = NULL,
-  archive = F,
+  archive = FALSE,
   workspace = suso_get_api_key("workspace"),
   token = NULL
 )
@@ -37,7 +37,8 @@ A data.table containing the user ID, archive timestamp, and archive status.
 (Un-)Archive user
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # you can archive a user by archive=T
 suso_archUSR(
           workspace = "myworkspace",
@@ -51,5 +52,5 @@ suso_archUSR(
           archive = FALSE
           )
 }
-
+\dontshow{\}) # examplesIf}
 }

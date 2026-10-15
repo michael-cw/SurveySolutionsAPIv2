@@ -46,11 +46,12 @@ A data.table containing interviewer details or audit logs.
 Get details of a single interviewer or retrieve the action log
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_getINT_info(
           workspace = "myworkspace",
           int_id = "xxxx-xxxx-xxxx-xxx"
           )
 }
-
+\dontshow{\}) # examplesIf}
 }

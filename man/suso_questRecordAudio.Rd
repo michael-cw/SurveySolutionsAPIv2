@@ -41,7 +41,8 @@ When \code{enabled} is provided, returns \code{TRUE} invisibly upon successful u
 Gets or sets the audio recording setting for a specific questionnaire.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # Get current audio recording setting
 suso_questRecordAudio(
   questID = "11111111-2222-3333-4444-555555555555",
@@ -54,4 +55,5 @@ suso_questRecordAudio(
   enabled = TRUE
 )
 }
+\dontshow{\}) # examplesIf}
 }

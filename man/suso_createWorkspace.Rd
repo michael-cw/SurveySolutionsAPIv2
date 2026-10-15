@@ -39,7 +39,8 @@ you require admin credentials.
 Be aware, that for using this call you require the ADMIN credentials, and not the regular API user credentials.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # Use Admin Credentials!
 suso_createWorkspace(
           new_workspace = "myworkspace1",
@@ -48,5 +49,5 @@ suso_createWorkspace(
           apiPass = "xxxxxx")
 }
 
-
+\dontshow{\}) # examplesIf}
 }

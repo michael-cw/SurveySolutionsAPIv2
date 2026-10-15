@@ -39,10 +39,11 @@ A data.table containing the map assignment details (file name, user name, shape 
 Allows the user to assign/unassign a map to an interviewer to be used in CAPI data collection.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_mapassign(workspace = "myworkspace",
               fileName = "Lat9264Lon625_ALL.tif",
               userName = "INT0004")
 }
-
+\dontshow{\}) # examplesIf}
 }

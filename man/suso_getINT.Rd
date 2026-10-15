@@ -38,7 +38,8 @@ An object of class UserClass (inheriting from data.table) containing the intervi
 Get list of all interviewers by supervisor id, or a list of all interviewers in the workspace.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 
 # Get all members for a single supervisor
 suso_getINT(
@@ -49,5 +50,5 @@ suso_getINT(
 suso_getINT()
 
 }
-
+\dontshow{\}) # examplesIf}
 }

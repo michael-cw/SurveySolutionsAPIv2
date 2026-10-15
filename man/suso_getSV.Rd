@@ -31,9 +31,10 @@ An object of class \code{UserClass} (inheriting from data.table) containing the 
 Gets list of supervisors
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # receive all supervisors in the workspace
 suso_getSV()
 }
-
+\dontshow{\}) # examplesIf}
 }

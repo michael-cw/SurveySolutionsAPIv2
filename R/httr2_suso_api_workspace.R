@@ -13,19 +13,19 @@
 #' @param status if status is \emph{TRUE} worskpace must be not NULL and status information about a specific
 #' workspace is requested
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # This assumes, that suso_PwCheck(workspace = "myworkspace") was
 #' # sucessful
 #'
 #' # shows all workspaces in the system AND the user has access to
 #' suso_getWorkspace(
-#'           status = F)
+#'           status = FALSE)
 #'
 #' # shows details for specific workspace myworkspace
 #' suso_getWorkspace(
 #'           workspace = "myworkspace",
-#'           status = T)
+#'           status = TRUE)
 #' }
 #'
 #' @return A data.table containing workspace information or status.
@@ -58,7 +58,7 @@ suso_getWorkspace <- function(server = suso_get_api_key("susoServer"),
     if(resp_has_body(resp)){
       # get body by content type
       if(resp_content_type(resp) == "application/json") {
-        test_json<-resp_body_json(resp, simplifyVector = T, flatten = F)
+        test_json<-resp_body_json(resp, simplifyVector = TRUE, flatten = FALSE)
         # Export only records
         test_json<-data.table(test_json$Workspaces)
         # Set date time to utc with lubridate
@@ -86,7 +86,7 @@ suso_getWorkspace <- function(server = suso_get_api_key("susoServer"),
     if(resp_has_body(resp)){
       # get body by content type
       if(resp_content_type(resp) == "application/json") {
-        test_json<-resp_body_json(resp, simplifyVector = T, flatten = F)
+        test_json<-resp_body_json(resp, simplifyVector = TRUE, flatten = FALSE)
         # Export only records
         test_json<-data.table(t(test_json))
         # Set date time to utc with lubridate
@@ -119,8 +119,8 @@ suso_getWorkspace <- function(server = suso_get_api_key("susoServer"),
 #' under \url{https://docs.mysurvey.solutions/headquarters/accounts/workspaces/}
 #' @param displayName The name visible to the users
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # Use Admin Credentials!
 #' suso_createWorkspace(
 #'           new_workspace = "myworkspace1",
@@ -166,7 +166,7 @@ suso_createWorkspace <- function(server = suso_get_api_key("susoServer"),
   if(resp_has_body(resp)){
     # get body by content type
     if(resp_content_type(resp) == "application/json") {
-      test_json<-resp_body_json(resp, simplifyVector = T, flatten = F)
+      test_json<-resp_body_json(resp, simplifyVector = TRUE, flatten = FALSE)
       # Export only records
       test_json<-data.table(t(test_json))
       # Set date time to utc with lubridate
@@ -206,8 +206,8 @@ suso_createWorkspace <- function(server = suso_get_api_key("susoServer"),
 #'
 #' @return If successful, returns a data.table with the details as well as the Status message \code{workspace list updated}.
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' ## Use Admin Credentials!
 #'
 #' # Assign a new workspace to a single user, keep old one(s)
@@ -338,7 +338,7 @@ suso_assignWorkspace <- function(server = suso_get_api_key("susoServer"),
     if(resp_has_body(resp)){
       # get body by content type
       if(resp_content_type(resp) == "application/json") {
-        test_json<-resp_body_json(resp, simplifyVector = T, flatten = F)
+        test_json<-resp_body_json(resp, simplifyVector = TRUE, flatten = FALSE)
         # Export only records
         test_json<-data.table((test_json$Errors))
         # Set date time to utc with lubridate
@@ -365,7 +365,7 @@ suso_assignWorkspace <- function(server = suso_get_api_key("susoServer"),
         return(ws)
       }
       # Now a matrix with one row for each uid
-      assign_workspace<-t(sapply(uid, getwsold, assign_workspace, USE.NAMES = F, simplify = T))
+      assign_workspace<-t(sapply(uid, getwsold, assign_workspace, USE.NAMES = FALSE, simplify = TRUE))
 
       # define the expression for the loop
       js_ch<-rlang::expr(
@@ -444,8 +444,8 @@ suso_assignWorkspace <- function(server = suso_get_api_key("susoServer"),
 #' @return A data.table indicating the update status.
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_updateWorkspace(workspace = "my_ws", displayName = "Renamed Workspace")
 #' }
 suso_updateWorkspace <- function(server = suso_get_api_key("susoServer"),
@@ -489,8 +489,8 @@ suso_updateWorkspace <- function(server = suso_get_api_key("susoServer"),
 #' @return A data.table indicating the deletion status.
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' suso_deleteWorkspace(workspace = "old_ws")
 #' }
 suso_deleteWorkspace <- function(server = suso_get_api_key("susoServer"),
@@ -532,8 +532,8 @@ suso_deleteWorkspace <- function(server = suso_get_api_key("susoServer"),
 #' @return A data.table indicating the enable/disable status.
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # Enable workspace
 #' suso_enableWorkspace(workspace = "my_ws", enable = TRUE)
 #' # Disable workspace

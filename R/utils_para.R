@@ -47,10 +47,10 @@
   ##  1. Use fread from data.table (fastest, needs to be tested for reliability)
   HEADER<-c("interview__id", "counter", "action", "responsible", "role", "time", "tz","var_resp")
   file<-fread(file=fp,
-              header = T,
+              header = TRUE,
               data.table = TRUE,
               #col.names = HEADER,
-              fill = T,sep = "\t",
+              fill = TRUE,sep = "\t",
               colClasses = list(character=c(1,3:8),
                                 numeric=c(2)),
               blank.lines.skip=TRUE,
@@ -59,20 +59,20 @@
   ## check lines
   if(nrow(file)==0) return(NULL)
   ## message if large file
-  if(nrow(file)>100000) cat("There are", nrow(file), "individual events. Processing may take a while!")
+  if(nrow(file)>100000) message("There are ", nrow(file), " individual events. Processing may take a while!")
   ## splitting response variable
   #names(file)<-
   ## Exract the VARIABLENAME
-  resps<-file[,tstrsplit(var_resp, "||", fixed=T, names = T, fill = "<NA>")][]
+  resps<-file[,tstrsplit(var_resp, "||", fixed=TRUE, names = TRUE, fill = "<NA>")][]
   file[,var:=resps[,.(V1)]]
   if (allResponses) {
     ## Extract all responses if TRUE
-    resps1<-resps[,tstrsplit(V2, "(\\|)|(,)", fixed=F, names = T, fill = "<NA>")][]
+    resps1<-resps[,tstrsplit(V2, "(\\|)|(,)", fixed=FALSE, names = TRUE, fill = "<NA>")][]
     file[,c(paste0("response", 1:(length(resps1)))):=resps1]
     splits <- (length(resps1))
     # Check if V3 exists in names
     if("V3" %in% names(resps)){
-      resps2<-resps[,tstrsplit(V3, "(,)", fixed=F, names = T, fill = "<NA>")][]
+      resps2<-resps[,tstrsplit(V3, "(,)", fixed=FALSE, names = TRUE, fill = "<NA>")][]
       file[,c(paste0("rid", 1:(length(resps2)))):=resps2]
     }
   } else {
@@ -140,7 +140,7 @@
   `%doselect%` <-ifelse(parallel, `%dopar%`, `%do%`)
   para_data<-foreach(i=1:simu, #.packages = pack_dp_sp,
                      .combine=c,
-                     .multicombine = T,
+                     .multicombine = TRUE,
                      .export = c("para_data"),
                      #.verbose = T,
                      .errorhandling="pass") %doselect% {
@@ -165,7 +165,7 @@
                          AnswerRemoved[, count:=length(counter), by=interview__id]
                          AnswerRemoved[,c("responsible", "role"):=NULL]
                          AnswerRemoved<-droplevels(AnswerRemoved)
-                         AnswerRemoved<-merge(AnswerRemoved, para1_answer_merge, by="interview__id", allow.cartesian=T)
+                         AnswerRemoved<-merge(AnswerRemoved, para1_answer_merge, by="interview__id", allow.cartesian=TRUE)
                          setkeyv(AnswerRemoved, "interview__id")
                          if(exists("gps_file_merge")) AnswerRemoved<-gps_file_merge[AnswerRemoved, on="interview__id"]
                          AnswerRemoved<-KeyAssigned_merge[AnswerRemoved, on="interview__id"]

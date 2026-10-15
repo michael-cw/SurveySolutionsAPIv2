@@ -110,7 +110,8 @@ In this way it is straightforward to use the return value for questionnaire manu
 In case interviews is selected, a list of all interviews for the specific questionnaire is returned.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # List all questionnaires on the server
 q_list <- suso_getQuestDetails(operation.type = "list")
 
@@ -121,5 +122,5 @@ q_struct <- suso_getQuestDetails(
   operation.type = "structure"
 )
 }
-
+\dontshow{\}) # examplesIf}
 }

@@ -33,12 +33,13 @@ A data.table containing all answers for the given interview.
 Returns all responses for a specific interview
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_getAllAnswerInterview(
           workspace = "myworkspace",
           intID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea"
           )
 
 }
-
+\dontshow{\}) # examplesIf}
 }

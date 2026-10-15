@@ -36,7 +36,9 @@ The file path where the PDF was saved.
 Downloads the PDF transcript of a completed interview.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 pdf_path <- suso_getInterviewPDF(intID = "11111111-2222-3333-4444-555555555555")
 }
+\dontshow{\}) # examplesIf}
 }

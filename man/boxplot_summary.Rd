@@ -27,18 +27,12 @@ This function generates a box plot for the numeric variables in a exportClass
 object.
 }
 \examples{
-\dontrun{
-# Load your package
-export <- suso_export(questID = questlist$QuestionnaireId[7],
-                      version = questlist$Version[7],
-                      combineFiles = T,
-                      reloadTimeDiff = 20)
-
-# Create a summary table
-boxplot_summary <- boxplot(export)
-
-# Display the summary table
-boxplot_summary
-}
+dt <- data.table::data.table(q1 = 1:10, q2 = 11:20)
+vlabs <- data.table::data.table(
+  VariableName = c("q1", "q2"),
+  QuestionText = c("Question 1", "Question 2")
+)
+ec <- exportClass(dt, varLabels = vlabs)
+boxplot_summary(ec)
 
 }

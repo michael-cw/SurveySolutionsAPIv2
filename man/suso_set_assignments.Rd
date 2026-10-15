@@ -50,7 +50,8 @@ If it is \emph{changeStatus} the payload must be the new status string (e.g. "Cl
 If it is \emph{changeTargetArea} the payload must be the new target area string.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 
 # (re-)assign existing assignment by UUID, username, or data.frame
 asslist<-suso_set_assignments(
@@ -72,5 +73,5 @@ asslist<-suso_set_assignments(
                    operations.type = "downsize"
                    )
 }
-
+\dontshow{\}) # examplesIf}
 }

@@ -30,7 +30,9 @@ A data.table indicating the deletion status.
 Deletes a specified workspace. Accessible only to administrator.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_deleteWorkspace(workspace = "old_ws")
 }
+\dontshow{\}) # examplesIf}
 }

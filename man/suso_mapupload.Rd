@@ -38,7 +38,8 @@ Resources for upload must meet the requirements specified under:
 Attention: this uses the GraphQL API, not the REST API.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # either upload the content of a folder
 suso_mapupload(workspace = "myworkspace",
               path_to_zip = "./mapfiles/")
@@ -50,5 +51,5 @@ suso_mapupload(workspace = "myworkspace",
 
 
 
-
+\dontshow{\}) # examplesIf}
 }

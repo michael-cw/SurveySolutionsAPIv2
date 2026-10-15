@@ -43,7 +43,8 @@ the user information as well as the response's status code. Important is also th
 provided in the required format.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 new_users <- data.frame(
   Role = "Interviewer",
   UserName = "interviewer01",
@@ -52,5 +53,5 @@ new_users <- data.frame(
 )
 suso_createUSER(userlist = new_users)
 }
-
+\dontshow{\}) # examplesIf}
 }

@@ -34,7 +34,8 @@ When \code{action = "set"} or \code{"delete"}, returns \code{TRUE} invisibly on 
 Allows getting, setting, and removing the global notice displayed in the Survey Solutions Headquarters application.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # Get current global notice
 suso_globalNotice(action = "get")
 
@@ -45,5 +46,5 @@ suso_globalNotice(action = "set",
 # Delete the global notice
 suso_globalNotice(action = "delete")
 }
-
+\dontshow{\}) # examplesIf}
 }

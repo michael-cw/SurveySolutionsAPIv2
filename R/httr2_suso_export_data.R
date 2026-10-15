@@ -76,16 +76,17 @@
 #'
 #' @return a single exportClass data.table or a list of exportClass data.tables, see details.
 #'
-#' @examplesIf suso_PwCheck()==200
-#'
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' questlist<-suso_getQuestDetails()
 #'
 #' exp<-suso_export(questID = questlist$QuestionnaireId[1],
 #'                  version = questlist$Version[1],
-#'                  workStatus = "All", process_mapquestions = T,
-#'                  combineFiles = T,
+#'                  workStatus = "All", process_mapquestions = TRUE,
+#'                  combineFiles = TRUE,
 #'                  reloadTimeDiff = 0,
 #'                  translationLanguage = "italian")
+#' }
 #'
 #' @export
 #'
@@ -109,7 +110,7 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
                                    "ApprovedByHeadquarters"),
                       addTranslation = FALSE, translationLanguage = NULL,
                       reloadTimeDiff=1,
-                      inShinyApp=F,
+                      inShinyApp=FALSE,
                       verbose = FALSE,
                       weight_file = NULL,
                       process_mapquestions = FALSE,
@@ -230,7 +231,7 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
     # subset existing exports & check time diff parameter with last creation date
     # 1. Check qid
     exlist_sub<-exlist[QuestionnaireId==qid]
-    exlist_sub<-exlist_sub[HasExportFile==T]
+    exlist_sub<-exlist_sub[HasExportFile==TRUE]
     
     # 2. Check other paramters -->TD
     
@@ -342,7 +343,7 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
       if(resp_has_body(resp)){
         # get body by content type
         if(resp_content_type(resp) == "application/json") {
-          test_json<-resp_body_json(resp, simplifyVector = T)
+          test_json<-resp_body_json(resp, simplifyVector = TRUE)
           exlist1<-data.table::as.data.table((test_json))
           # name cancel and file link
           if(nrow(exlist1)==2) {
@@ -384,7 +385,7 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
         if(resp_has_body(resp)){
           # get body by content type
           if(resp_content_type(resp) == "application/json") {
-            test_json<-resp_body_json(resp, simplifyVector = T)
+            test_json<-resp_body_json(resp, simplifyVector = TRUE)
             status<-test_json$ExportStatus
             progresp<-test_json$Progress
           }
@@ -422,21 +423,19 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
   # PROCESSING OF DOWNLOAD
   # DEBUG: print all inputs for check
   if(verbose){
-    cat("\n\n")
-    cat("Server: ", server, "\n")
-    cat("Workspace: ", workspace, "\n")
-    cat("Url: ", url$url, "\n")
-    cat("Questionnaire ID: ", questID, "\n")
-    cat("Questionnaire Version: ", version, "\n")
-    cat("From Date: ", from_date, "\n")
-    cat("From Time: ", from_datetime, "\n")
-    cat("To Date: ", to_date, "\n")
-    cat("To Time: ", to_datetime, "\n")
-    cat("Work Status: ", workStatus, "\n")
-    cat("Add Translation: ", addTranslation, "\n")
-    cat("Reload Time Difference: ", reloadTimeDiff, "\n")
-    cat("In Shiny App: ", inShinyApp, "\n")
-    cat("\n\n")
+    message("Server: ", server)
+    message("Workspace: ", workspace)
+    message("Url: ", url$url)
+    message("Questionnaire ID: ", questID)
+    message("Questionnaire Version: ", version)
+    message("From Date: ", from_date)
+    message("From Time: ", from_datetime)
+    message("To Date: ", to_date)
+    message("To Time: ", to_datetime)
+    message("Work Status: ", workStatus)
+    message("Add Translation: ", addTranslation)
+    message("Reload Time Difference: ", reloadTimeDiff)
+    message("In Shiny App: ", inShinyApp)
   }
   
   # temp zip file
@@ -467,7 +466,7 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
   if(addTranslation) {
     trfp<-file.path(tmpdir, "Questionnaire", "Translations")
     if(dir.exists(trfp)) {
-      flist<-list.files(trfp, pattern = ".xlsx", full.names = T)
+      flist<-list.files(trfp, pattern = ".xlsx", full.names = TRUE)
       if(length(flist)>0) {
         # check package availability
         rlang::check_installed(
@@ -476,8 +475,8 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
         )
         # read all translation files
         flistxlxs<-sapply(flist, function(x) as.data.table(readxl::read_xlsx(x)), 
-                           USE.NAMES = F, 
-                           simplify = F)
+                           USE.NAMES = FALSE, 
+                           simplify = FALSE)
         # names(flistxlxs)<-(basename(tools::file_path_sans_ext(flist)))
         tranlLanguage<-suso_getQuestDetails()
         tranlLanguage<-tranlLanguage[QuestionnaireId==questID & Version==version]
@@ -597,26 +596,26 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
   # get roster titles and source questions keys
   if(exists("roster_titlesL1") && nrow(roster_titlesL1)>0){
     roster_titlesL1[,isFixeRoster:=lapply(.SD, function(x) length(x[[1]]$FixedRosterTitles))>0, .SDcols="..JSON", by = .(PublicKey)]
-    roster_titlesL1[isFixeRoster==F ,RsizeKey:=lapply(.SD, function(x) ifelse(!is.null(x[[1]]$RosterSizeQuestionId), x[[1]]$RosterSizeQuestionId, ""))
+    roster_titlesL1[isFixeRoster==FALSE ,RsizeKey:=lapply(.SD, function(x) ifelse(!is.null(x[[1]]$RosterSizeQuestionId), x[[1]]$RosterSizeQuestionId, ""))
                     , .SDcols="..JSON", by = .(PublicKey)][,..JSON:=NULL]
-    roster_titlesL1[isFixeRoster==F,Rtype:=allquestions[PublicKey==RsizeKey, type], by=RsizeKey]
-    roster_titlesL1[isFixeRoster==F,Rvar:=allquestions[PublicKey==RsizeKey, VariableName], by=RsizeKey]
+    roster_titlesL1[isFixeRoster==FALSE,Rtype:=allquestions[PublicKey==RsizeKey, type], by=RsizeKey]
+    roster_titlesL1[isFixeRoster==FALSE,Rvar:=allquestions[PublicKey==RsizeKey, VariableName], by=RsizeKey]
   }
   
   if(exists("roster_titlesL2") && nrow(roster_titlesL2)>0){
     roster_titlesL2[,isFixeRoster:=lapply(.SD, function(x) length(x[[1]]$FixedRosterTitles))>0, .SDcols="..JSON", by = .(PublicKey)]
-    roster_titlesL2[isFixeRoster==F ,RsizeKey:=lapply(.SD, function(x) ifelse(!is.null(x[[1]]$RosterSizeQuestionId), x[[1]]$RosterSizeQuestionId, ""))
+    roster_titlesL2[isFixeRoster==FALSE ,RsizeKey:=lapply(.SD, function(x) ifelse(!is.null(x[[1]]$RosterSizeQuestionId), x[[1]]$RosterSizeQuestionId, ""))
                     , .SDcols="..JSON", by = .(PublicKey)][,..JSON:=NULL]
-    roster_titlesL2[isFixeRoster==F,Rtype:=allquestions[PublicKey==RsizeKey, type], by=RsizeKey]
-    roster_titlesL2[isFixeRoster==F,Rvar:=allquestions[PublicKey==RsizeKey, VariableName], by=RsizeKey]
+    roster_titlesL2[isFixeRoster==FALSE,Rtype:=allquestions[PublicKey==RsizeKey, type], by=RsizeKey]
+    roster_titlesL2[isFixeRoster==FALSE,Rvar:=allquestions[PublicKey==RsizeKey, VariableName], by=RsizeKey]
   }
   
   if(exists("roster_titlesL3") && nrow(roster_titlesL3)>0){
     roster_titlesL3[,isFixeRoster:=lapply(.SD, function(x) length(x[[1]]$FixedRosterTitles))>0, .SDcols="..JSON", by = .(PublicKey)]
-    roster_titlesL3[isFixeRoster==F ,RsizeKey:=lapply(.SD, function(x) ifelse(!is.null(x[[1]]$RosterSizeQuestionId), x[[1]]$RosterSizeQuestionId, ""))
+    roster_titlesL3[isFixeRoster==FALSE ,RsizeKey:=lapply(.SD, function(x) ifelse(!is.null(x[[1]]$RosterSizeQuestionId), x[[1]]$RosterSizeQuestionId, ""))
                     , .SDcols="..JSON", by = .(PublicKey)][,..JSON:=NULL]
-    roster_titlesL3[isFixeRoster==F,Rtype:=allquestions[PublicKey==RsizeKey, type], by=RsizeKey]
-    roster_titlesL3[isFixeRoster==F,Rvar:=allquestions[PublicKey==RsizeKey, VariableName], by=RsizeKey]
+    roster_titlesL3[isFixeRoster==FALSE,Rtype:=allquestions[PublicKey==RsizeKey, type], by=RsizeKey]
+    roster_titlesL3[isFixeRoster==FALSE,Rvar:=allquestions[PublicKey==RsizeKey, VariableName], by=RsizeKey]
   }
   # bind for processing of merge variables
   nros<-length(Lindata)-1
@@ -1106,7 +1105,7 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
         file_collector$R1[[rn]]<-data.table::dcast(file_collector$R1[[rn]], eval(rlang::parse_expr(dcarg)), value.var = valvar, sep = "__")
       }
     } else {
-      stop("Nothing to process", call. = F)
+      stop("Nothing to process", call. = FALSE)
     }
     
     ## MERGE ##########################
@@ -1265,7 +1264,7 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
       
       return(exportClass(mainout, quest[,.(VariableName, QuestionText)]))
     } else {
-      stop("Nothing to process", call. = F)
+      stop("Nothing to process", call. = FALSE)
       
     }
     
@@ -1299,8 +1298,8 @@ suso_export<-function(server = suso_get_api_key("susoServer"),
 #' @return A data.table containing the list of export processes.
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # List all export processes in workspace
 #' exp_list <- suso_getExportList()
 #' }
@@ -1393,8 +1392,8 @@ suso_getExportList <- function(server = suso_get_api_key("susoServer"),
 #' @return A data.table containing export process details.
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # Get status of export process by jobid
 #' proc_info <- suso_getExportProcess(jobid = 123)
 #' }
@@ -1447,8 +1446,8 @@ suso_getExportProcess <- function(server = suso_get_api_key("susoServer"),
 #' @return A data.table containing the canceled export process information.
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # Cancel an ongoing export process
 #' suso_cancelExport(jobid = 123)
 #' }

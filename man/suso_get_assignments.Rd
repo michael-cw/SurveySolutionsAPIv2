@@ -76,7 +76,8 @@ function with the corresponding arguments.
 \code{suso_get_assignments} calls the Survey Solutions assignment API
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 
 # get all assignment for specific workspace
 asslist<-suso_get_assignments(
@@ -104,11 +105,11 @@ asslist<-suso_get_assignments(
                    AssId = 1,
                    operations.type = "assignmentQuantitySettings")
 asslist
-Null data.table (0 rows and 0 cols)
+# Null data.table (0 rows and 0 cols)
 
 getinfo(asslist, "canchangequantity")
-[1] TRUE
+# [1] TRUE
 }
 
-
+\dontshow{\}) # examplesIf}
 }

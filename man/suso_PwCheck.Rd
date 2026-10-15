@@ -34,11 +34,13 @@ If the app runs interactively, status is printed to the console, if it runs in a
 notification will be shown, if option \option{suso.useshiny} is \code{TRUE}.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_PwCheck(
   server = "https://demo.mysurvey.solutions",
   apiUser = "api_user",
   apiPass = "password123"
 )
 }
+\dontshow{\}) # examplesIf}
 }

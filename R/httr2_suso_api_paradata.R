@@ -49,8 +49,8 @@
 #'
 #' @return a single exportClass data.table or a list of data.tables.
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' questlist<-suso_getQuestDetails()
 #' # Get a single data.table with response timings,
 #' # only active events,
@@ -61,7 +61,7 @@
 #'                            workStatus = "All",
 #'                            asList = FALSE,
 #'                            onlyActiveEvents = TRUE,
-#'                            allResponses = F)
+#'                            allResponses = FALSE)
 #'
 #' # Create a summary table
 #' summary_data_table <- summaryTable(para)
@@ -206,7 +206,7 @@ suso_export_paradata<-function(server = suso_get_api_key("susoServer"),
     # subset existing exports & check time diff parameter with last creation date
     # 1. Check qid
     exlist_sub<-exlist[QuestionnaireId==qid]
-    exlist_sub<-exlist_sub[HasExportFile==T]
+    exlist_sub<-exlist_sub[HasExportFile==TRUE]
     
     # 2. Check other paramters -->TD
     
@@ -319,7 +319,7 @@ suso_export_paradata<-function(server = suso_get_api_key("susoServer"),
       if(resp_has_body(resp)){
         # get body by content type
         if(resp_content_type(resp) == "application/json") {
-          test_json<-resp_body_json(resp, simplifyVector = T)
+          test_json<-resp_body_json(resp, simplifyVector = TRUE)
           exlist1<-data.table::as.data.table((test_json))
           # name cancel and file link
           if(nrow(exlist1)==2) {
@@ -359,7 +359,7 @@ suso_export_paradata<-function(server = suso_get_api_key("susoServer"),
         if(resp_has_body(resp)){
           # get body by content type
           if(resp_content_type(resp) == "application/json") {
-            test_json<-resp_body_json(resp, simplifyVector = T)
+            test_json<-resp_body_json(resp, simplifyVector = TRUE)
             status<-test_json$ExportStatus
             progresp<-test_json$Progress
           }
@@ -389,21 +389,19 @@ suso_export_paradata<-function(server = suso_get_api_key("susoServer"),
   # PROCESSING OF DOWNLOAD
   # DEBUG: print all inputs for check
   if(verbose){
-    cat("\n\n")
-    cat("Server: ", server, "\n")
-    cat("Workspace: ", workspace, "\n")
-    cat("Url: ", url$url, "\n")
-    cat("Questionnaire ID: ", questID, "\n")
-    cat("Questionnaire Version: ", version, "\n")
-    cat("From Date: ", from_date, "\n")
-    cat("From Time: ", from_datetime, "\n")
-    cat("To Date: ", to_date, "\n")
-    cat("To Time: ", to_datetime, "\n")
-    cat("Work Status: ", workStatus, "\n")
-    #cat("Add Translation: ", addTranslation, "\n")
-    cat("Reload Time Difference: ", reloadTimeDiff, "\n")
-    cat("In Shiny App: ", inShinyApp, "\n")
-    cat("\n\n")
+    message("Server: ", server)
+    message("Workspace: ", workspace)
+    message("Url: ", url$url)
+    message("Questionnaire ID: ", questID)
+    message("Questionnaire Version: ", version)
+    message("From Date: ", from_date)
+    message("From Time: ", from_datetime)
+    message("To Date: ", to_date)
+    message("To Time: ", to_datetime)
+    message("Work Status: ", workStatus)
+    #message("Add Translation: ", addTranslation)
+    message("Reload Time Difference: ", reloadTimeDiff)
+    message("In Shiny App: ", inShinyApp)
   }
   
   
@@ -458,7 +456,7 @@ suso_export_paradata<-function(server = suso_get_api_key("susoServer"),
   #toDate<-as.character(max(paradata_files$date, na.rm = T), "%d %B, %Y")
   
   paradata_files<-paradata_files[,VariableName:=var]
-  paradata_files <- merge(paradata_files, allquestions[,.(VariableName, type, QuestionText, Featured)], all.x = T, by = "VariableName")
+  paradata_files <- merge(paradata_files, allquestions[,.(VariableName, type, QuestionText, Featured)], all.x = TRUE, by = "VariableName")
   paradata_files[,VariableName:=NULL]
   
   
@@ -509,17 +507,17 @@ suso_export_paradata<-function(server = suso_get_api_key("susoServer"),
   
   ##  3. Time Difference (SORT by counter)
   ##  3.1. Function (use shift/lead, and check lead date is the same)
-  cat("\nCalculating Response Timings.\n")
+  if(verbose) message("Calculating Response Timings.")
   para1_answer<-.calcTimeDiff(para1_answer)
   ##  3.2. Other calculations
   para1_answer<-para1_answer[!is.na(breaks)]
-  para1_answer[,duration:=round((sum(resp_time, na.rm = T))/60, 4), by = .(interview__id)]
-  para1_answer[breaks==0,durationNOBREAK:=round((sum(resp_time, na.rm = T))/60, 4), by = .(interview__id)]
-  para1_answer[,m_resp_time_varTRIM:=(mean(resp_time, na.rm = T, trim = 0.05)), by = .(var)]
-  para1_answer[,m_resp_time_var:=(mean(resp_time, na.rm = T)), by = .(var)]
+  para1_answer[,duration:=round((sum(resp_time, na.rm = TRUE))/60, 4), by = .(interview__id)]
+  para1_answer[breaks==0,durationNOBREAK:=round((sum(resp_time, na.rm = TRUE))/60, 4), by = .(interview__id)]
+  para1_answer[,m_resp_time_varTRIM:=(mean(resp_time, na.rm = TRUE, trim = 0.05)), by = .(var)]
+  para1_answer[,m_resp_time_var:=(mean(resp_time, na.rm = TRUE)), by = .(var)]
   para1_answer[breaks==0,m_diff_dev:=resp_time-m_resp_time_varTRIM]
-  para1_answer[,start:=as_datetime(min(dateTime, na.rm = T), tz = getOption("suso.para.tz")), by=.(interview__id)]
-  para1_answer[,startHour:=min(hour(time), na.rm = T), by=.(interview__id)]
+  para1_answer[,start:=as_datetime(min(dateTime, na.rm = TRUE), tz = getOption("suso.para.tz")), by=.(interview__id)]
+  para1_answer[,startHour:=min(hour(time), na.rm = TRUE), by=.(interview__id)]
   para1_answer[,role:=droplevels(role)][,responsible:=droplevels(responsible)]
   para1_answer[,var:=as.factor(var)]
   para1_answer_merge<-para1_answer[,.SD[1], by=.(interview__id, role)]
@@ -566,14 +564,14 @@ suso_export_paradata<-function(server = suso_get_api_key("susoServer"),
       setkeyv(gps_file_merge, "interview__id")
     } else {
       if (!allResponses) {
-        gp<-gps_file[,tstrsplit(response, ",", fixed=T, fill = "<NA>", names = TRUE)][]
+        gp<-gps_file[,tstrsplit(response, ",", fixed=TRUE, fill = "<NA>", names = TRUE)][]
         gps_file<-cbind(gps_file, gp)
         setnames(gps_file, c("V1", "V2"), c("response1", "response2"))
       }
       
       gps_file<-gps_file[, .(interview__id, responsible, time, var_resp, var,
                              date, durationNOBREAK, response1, response2)]
-      gps_file<-gps_file[,c("long"):=tstrsplit(response2, "[", fixed=T ,keep=c(1))][]
+      gps_file<-gps_file[,c("long"):=tstrsplit(response2, "[", fixed=TRUE ,keep=c(1))][]
       gps_file[,lat:=as.numeric(as.character(response1))]
       gps_file[,long:=as.numeric(as.character(long))]
       gpsSelect<-sum(!is.na(gps_file$lat))
@@ -583,13 +581,13 @@ suso_export_paradata<-function(server = suso_get_api_key("susoServer"),
         gpsVar<-gpsVarMain[k]
         gps_file<-para1_answer[var==gpsVar]
         if (!allResponses) {
-          gp<-gps_file[,tstrsplit(response, ",", fixed=T, fill = "<NA>", names = TRUE)][]
+          gp<-gps_file[,tstrsplit(response, ",", fixed=TRUE, fill = "<NA>", names = TRUE)][]
           gps_file<-cbind(gps_file, gp)
           setnames(gps_file, c("V1", "V2"), c("response1", "response2"))
         }
         gps_file<-gps_file[, .(interview__id, responsible, time, var_resp,
                                date, durationNOBREAK, response1, response2)]
-        gps_file<-gps_file[,c("long"):=tstrsplit(response2, "[", fixed=T ,keep=c(1))][]
+        gps_file<-gps_file[,c("long"):=tstrsplit(response2, "[", fixed=TRUE ,keep=c(1))][]
         gps_file[,lat:=as.numeric(as.character(response1))]
         gps_file[,long:=as.numeric(as.character(long))]
         k<-k+1
@@ -642,7 +640,7 @@ suso_export_paradata<-function(server = suso_get_api_key("susoServer"),
     para_data[["actionDistr"]]<-actionDistr
     para_data[["userDistr"]]<-userDistr
     para_data[["roleDistr"]]<-roleDistr
-    cat("\nExport & Transformation finished.\n")
+    if(verbose) message("Export & Transformation finished.")
     
   } else if(is.numeric(multiCore) && multiCore>1) {
     ###############################
@@ -659,7 +657,7 @@ suso_export_paradata<-function(server = suso_get_api_key("susoServer"),
     options(future.globals.maxSize=sizeRamMB*1024^2)
     ncores<-getOption("suso.para.maxcore")
     multiCore <- min(simu, ncores)
-    cat("\nStarting Multicore with:\t", multiCore, " cores.\n")
+    if(verbose) message("Starting Multicore with: ", multiCore, " cores.")
     
     # launching the future backend
     # get the options
@@ -735,7 +733,7 @@ suso_export_paradata<-function(server = suso_get_api_key("susoServer"),
     cli::cli_alert_info("Processing single dataframe object.")
     # list for paradata to be handed to exportClass
     para_data_all<-list()
-    pdmain<-data.table::rbindlist(para_data[c("AnswerSet", "AnswerRemoved", "Restarted")], fill = T)
+    pdmain<-data.table::rbindlist(para_data[c("AnswerSet", "AnswerRemoved", "Restarted")], fill = TRUE)
     # adjust names to match suso
     setnames(pdmain,
              old = c("var", "key"),

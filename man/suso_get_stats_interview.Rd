@@ -33,12 +33,13 @@ A data.table containing statistics for the requested interview(s).
 Fetch statistics for a specific interview, vectorized over interview id (int_id)
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_get_stats_interview(
           workspace = "myworkspace",
           intID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea"
           )
 
 }
-
+\dontshow{\}) # examplesIf}
 }

@@ -33,7 +33,9 @@ A data.table indicating the update status.
 Updates the display name of a workspace. Accessible only to administrator.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_updateWorkspace(workspace = "my_ws", displayName = "Renamed Workspace")
 }
+\dontshow{\}) # examplesIf}
 }

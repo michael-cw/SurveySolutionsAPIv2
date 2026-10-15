@@ -12,8 +12,8 @@
 #' @return When \code{action = "get"}, returns a character string with the current notice (or NULL if no notice is set).
 #'   When \code{action = "set"} or \code{"delete"}, returns \code{TRUE} invisibly on success.
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf suso_PwCheck() == 200
+#' \donttest{
 #' # Get current global notice
 #' suso_globalNotice(action = "get")
 #'

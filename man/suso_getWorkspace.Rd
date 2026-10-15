@@ -36,18 +36,19 @@ as well as workspace statuses. Workspaces as well as Workspaces information can 
 are eligible. For more details please read \url{https://docs.mysurvey.solutions/headquarters/accounts/workspaces/}
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # This assumes, that suso_PwCheck(workspace = "myworkspace") was
 # sucessful
 
 # shows all workspaces in the system AND the user has access to
 suso_getWorkspace(
-          status = F)
+          status = FALSE)
 
 # shows details for specific workspace myworkspace
 suso_getWorkspace(
           workspace = "myworkspace",
-          status = T)
+          status = TRUE)
 }
-
+\dontshow{\}) # examplesIf}
 }

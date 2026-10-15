@@ -153,7 +153,7 @@
 # transform multiple responses to data.table with path and jsonlite
 .transformresponses_jsonlite<-function(path, data) {
   # i. Convert to json
-  respfull <-jsonlite::fromJSON(path,simplifyVector = T, flatten = TRUE)
+  respfull <-jsonlite::fromJSON(path,simplifyVector = TRUE, flatten = TRUE)
 
   # ii. Get identifying data
   # transform to wide format
@@ -165,7 +165,7 @@
 .transformresponses_jsonlite_iter<-function(i, pathVector, data) {
   # i. Convert to json
   path<-pathVector[i]
-  respfull <-jsonlite::fromJSON(path,simplifyVector = T, flatten = TRUE)
+  respfull <-jsonlite::fromJSON(path,simplifyVector = TRUE, flatten = TRUE)
 
   # ii. Get identifying data
   # transform to wide format
@@ -177,7 +177,7 @@
 .transformresponses<-function(i ,resp, data) {
   # i. Convert to json
   respfull <-resp[[i]] |>
-    resp_body_json(simplifyVector = T, flatten = TRUE)
+    resp_body_json(simplifyVector = TRUE, flatten = TRUE)
 
   # ii. Get identifying data
   # transform to wide format

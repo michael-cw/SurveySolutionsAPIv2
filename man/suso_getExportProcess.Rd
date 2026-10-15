@@ -33,8 +33,10 @@ A data.table containing export process details.
 Retrieves status and details of a single export process by its ID.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # Get status of export process by jobid
 proc_info <- suso_getExportProcess(jobid = 123)
 }
+\dontshow{\}) # examplesIf}
 }

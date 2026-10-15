@@ -121,9 +121,9 @@ suso_createCALEV <- function(server= suso_get_api_key("susoServer"),
                          comment = comment,
                          startDateTime = startDateTime,
                          startTZ = startTZ)},
-                     USE.NAMES = F, simplify = F)
+                     USE.NAMES = FALSE, simplify = FALSE)
 
-      result<-data.table::rbindlist(result, fill = T)
+      result<-data.table::rbindlist(result, fill = TRUE)
     }
   } else if(!is.null(intID)){
     # check interview uuid
@@ -154,9 +154,9 @@ suso_createCALEV <- function(server= suso_get_api_key("susoServer"),
                          comment = comment,
                          startDateTime = startDateTime,
                          startTZ = startTZ)},
-                     USE.NAMES = F, simplify = F)
+                     USE.NAMES = FALSE, simplify = FALSE)
 
-      result<-data.table::rbindlist(result, fill = T)
+      result<-data.table::rbindlist(result, fill = TRUE)
 
     }
   } else {
@@ -274,8 +274,8 @@ suso_delCALEV <- function(server= suso_get_api_key("susoServer"),
       }
       result<-sapply(seq_along(publicKey),
                      delmulti,
-                     USE.NAMES = F, simplify = F)
-      result<-data.table::rbindlist(result, fill = T)
+                     USE.NAMES = FALSE, simplify = FALSE)
+      result<-data.table::rbindlist(result, fill = TRUE)
     }
   } else {
     cli::cli_abort(c("x" = "Please provide a calendar event public key."))

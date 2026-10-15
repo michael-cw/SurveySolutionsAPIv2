@@ -61,8 +61,9 @@ Allows the user to retrieve filtered or unfiltered map data inlcuding map detail
 Attention: this uses the GraphQL API, not the REST API.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_mapinfo(workspace = "myworkspace")
 }
-
+\dontshow{\}) # examplesIf}
 }

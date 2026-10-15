@@ -244,7 +244,7 @@
   dcarg<-sprintf("%s ~ %s", paste(id, collapse = "+"), name.var)
   dtwide <- dcast(dtlong,  eval(rlang::parse_expr(dcarg)),
                   value.var = valvar)
-  dt<-merge(dt, dtwide, all.x = T)
+  dt<-merge(dt, dtwide, all.x = TRUE)
   return(dt)
 
 }

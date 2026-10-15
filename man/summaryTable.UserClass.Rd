@@ -34,8 +34,8 @@ a progress bar for shiny applications is included and active when running in a s
 be displayed.
 }
 \examples{
-\dontrun{
-
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 allintprim<-suso_getINT(workspace = "primary")
 
 # Create a summary table
@@ -44,5 +44,5 @@ summary_data_table <- summaryTable(allintprim)
 # Display the summary table
 summary_data_table
 }
-
+\dontshow{\}) # examplesIf}
 }

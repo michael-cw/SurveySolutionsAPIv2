@@ -46,11 +46,13 @@ Returns summary tables for individual questions from Survey Solutions statistics
 If no responses have been provided, an empty table will be returned.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_get_stats(
   questID = "11111111-2222-3333-4444-555555555555",
   version = 1,
   qQuest = "age"
 )
 }
+\dontshow{\}) # examplesIf}
 }

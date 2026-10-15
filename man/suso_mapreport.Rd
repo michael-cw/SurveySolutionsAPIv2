@@ -78,7 +78,8 @@ A list containing the map report result.
 Allows the user to create a map report with pre-specified parameters.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 suso_mapreport(
   workspace = "myworkspace",
   questID = "11111111-2222-3333-4444-555555555555",
@@ -86,5 +87,5 @@ suso_mapreport(
   variable = "gps_loc"
 )
 }
-
+\dontshow{\}) # examplesIf}
 }

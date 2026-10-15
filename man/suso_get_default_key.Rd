@@ -18,7 +18,12 @@ Character string of the requested credential, or throws error if not set.
 Helper function
 }
 \examples{
-\dontrun{
+suso_set_key(
+  suso_server = "https://demo.mysurvey.solutions",
+  suso_user = "api_user",
+  suso_password = "password123",
+  workspace = "primary"
+)
 suso_get_default_key("susoServer")
-}
+suso_clear_keys()
 }

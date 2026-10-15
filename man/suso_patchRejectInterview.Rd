@@ -47,7 +47,8 @@ For details please see:
 \url{https://docs.mysurvey.solutions/headquarters/interviews/survey-workflow/}
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 # reject the interview as supervisor
 suso_patchRejectInterview(
           workspace = "myworkspace",
@@ -73,5 +74,5 @@ suso_patchRejectInterview(
           )
 
 }
-
+\dontshow{\}) # examplesIf}
 }

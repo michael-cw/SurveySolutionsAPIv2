@@ -47,7 +47,8 @@ for ID data, matching the required type, as well as \emph{Quantity} and \emph{Re
 with the ID data, if successful.
 }
 \examples{
-\dontrun{
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
 
 # get the list of questionnaires in the workspace
 questlist<-suso_getQuestDetails()
@@ -61,5 +62,5 @@ asslist <- suso_createASS(df = IdentifyingData,
 }
 
 
-
+\dontshow{\}) # examplesIf}
 }

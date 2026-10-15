@@ -48,8 +48,9 @@ ATTENTION: This function only exists for consistency reasons with the original S
 it uses \code{\link{suso_getQuestDetails}}, which is based on the GraphQL API.
 }
 \examples{
-\dontrun{
-To get all interviews for a specific questionnaire and a specific status
+\dontshow{if (suso_PwCheck() == 200) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\donttest{
+# To get all interviews for a specific questionnaire and a specific status
      suso_getAllInterviewQuestionnaire(
               workspace = "myworkspace",
               questID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea",
@@ -64,5 +65,5 @@ To get all interviews for a specific questionnaire and a specific status
               )
 
 }
-
+\dontshow{\}) # examplesIf}
 }
