@@ -89,8 +89,10 @@ A data.table containing the list of export processes.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # List all export processes in workspace
 exp_list <- suso_getExportList()
-} # }
+# }
+}
 ```

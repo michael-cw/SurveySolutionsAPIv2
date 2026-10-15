@@ -49,8 +49,10 @@ A data.table containing the canceled export process information.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # Cancel an ongoing export process
 suso_cancelExport(jobid = 123)
-} # }
+# }
+}
 ```

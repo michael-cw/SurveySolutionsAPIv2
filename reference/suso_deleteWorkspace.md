@@ -43,7 +43,9 @@ A data.table indicating the deletion status.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_deleteWorkspace(workspace = "old_ws")
-} # }
+# }
+}
 ```

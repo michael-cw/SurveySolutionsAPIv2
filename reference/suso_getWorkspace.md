@@ -55,17 +55,19 @@ A data.table containing workspace information or status.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # This assumes, that suso_PwCheck(workspace = "myworkspace") was
 # sucessful
 
 # shows all workspaces in the system AND the user has access to
 suso_getWorkspace(
-          status = F)
+          status = FALSE)
 
 # shows details for specific workspace myworkspace
 suso_getWorkspace(
           workspace = "myworkspace",
-          status = T)
-} # }
+          status = TRUE)
+# }
+}
 ```

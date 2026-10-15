@@ -119,3 +119,42 @@ using the
 function with the corresponding arguments.
 
 ## Examples
+
+``` r
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
+
+# get all assignment for specific workspace
+asslist<-suso_get_assignments(
+                   workspace = "myworkspace"
+                   )
+# get all assignment for specific responsible
+asslist<-suso_get_assignments(
+                   workspace = "myworkspace",
+                   responsibleID = "a67d2b82-bf28-40cf-bd1a-7901225c0885"
+                   )
+# get the overall count
+getinfo(asslist, "totalcount")
+
+#get all single assignment details
+asslist<-suso_get_assignments(
+                   workspace = "myworkspace",
+                   AssId = 1
+                   )
+# retrieve the uid of the person responsible
+getinfo(asslist, "responsibleid")
+
+# get the status of the quantitysettings
+asslist<-suso_get_assignments(
+                   workspace = "myworkspace",
+                   AssId = 1,
+                   operations.type = "assignmentQuantitySettings")
+asslist
+# Null data.table (0 rows and 0 cols)
+
+getinfo(asslist, "canchangequantity")
+# [1] TRUE
+# }
+
+}
+```

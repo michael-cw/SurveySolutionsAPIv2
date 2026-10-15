@@ -56,10 +56,12 @@ A data.table listing questions with responses for the questionnaire.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_getQuestionsQuestionnaire(
   questID = "11111111-2222-3333-4444-555555555555",
   version = 1
 )
-} # }
+# }
+}
 ```

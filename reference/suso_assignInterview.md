@@ -63,10 +63,12 @@ A data.table indicating the assignment status.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_assignInterview(
   intID = "11111111-2222-3333-4444-555555555555",
   userName = "interviewer01"
 )
-} # }
+# }
+}
 ```

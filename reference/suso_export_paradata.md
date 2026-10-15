@@ -163,7 +163,8 @@ attempt to extract all responses and setting them to factors.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 questlist<-suso_getQuestDetails()
 # Get a single data.table with response timings,
 # only active events,
@@ -174,12 +175,13 @@ para<-suso_export_paradata(questID = questlist$QuestionnaireId[1],
                            workStatus = "All",
                            asList = FALSE,
                            onlyActiveEvents = TRUE,
-                           allResponses = F)
+                           allResponses = FALSE)
 
 # Create a summary table
 summary_data_table <- summaryTable(para)
 
 # Display the summary table
 summary_data_table
-} # }
+# }
+}
 ```

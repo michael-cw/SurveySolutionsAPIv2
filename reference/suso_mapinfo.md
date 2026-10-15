@@ -98,7 +98,9 @@ Attention: this uses the GraphQL API, not the REST API.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_mapinfo(workspace = "myworkspace")
-} # }
+# }
+}
 ```

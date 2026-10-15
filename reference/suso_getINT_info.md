@@ -70,10 +70,12 @@ A data.table containing interviewer details or audit logs.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_getINT_info(
           workspace = "myworkspace",
           int_id = "xxxx-xxxx-xxxx-xxx"
           )
-} # }
+# }
+}
 ```

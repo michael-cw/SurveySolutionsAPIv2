@@ -51,11 +51,13 @@ suso.useshiny is `TRUE`.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_PwCheck(
   server = "https://demo.mysurvey.solutions",
   apiUser = "api_user",
   apiPass = "password123"
 )
-} # }
+# }
+}
 ```

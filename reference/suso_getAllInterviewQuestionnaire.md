@@ -74,3 +74,24 @@ original SurveySolutionsAPI package. Under the hood it uses
 which is based on the GraphQL API.
 
 ## Examples
+
+``` r
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
+# To get all interviews for a specific questionnaire and a specific status
+     suso_getAllInterviewQuestionnaire(
+              workspace = "myworkspace",
+              questID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea",
+              version = 1,
+              workStatus = "InterviewerAssigned"
+              )
+# or to get all interviews in status completed
+     suso_getAllInterviewQuestionnaire(
+              workspace = "myworkspace",
+              questID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea",
+              version = 1
+              )
+
+# }
+}
+```

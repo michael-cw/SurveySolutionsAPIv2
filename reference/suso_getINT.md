@@ -61,7 +61,8 @@ interviewers.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 
 # Get all members for a single supervisor
 suso_getINT(
@@ -71,5 +72,6 @@ suso_getINT(
 # Get all members in the workspace
 suso_getINT()
 
-} # }
+# }
+}
 ```

@@ -50,11 +50,13 @@ A data.table containing statistics for the requested interview(s).
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_get_stats_interview(
           workspace = "myworkspace",
           intID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea"
           )
 
-} # }
+# }
+}
 ```

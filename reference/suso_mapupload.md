@@ -57,7 +57,8 @@ Attention: this uses the GraphQL API, not the REST API.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # either upload the content of a folder
 suso_mapupload(workspace = "myworkspace",
               path_to_zip = "./mapfiles/")
@@ -65,8 +66,9 @@ suso_mapupload(workspace = "myworkspace",
 # or a zip file with the files included
 suso_mapupload(workspace = "myworkspace",
               path_to_zip = "../mapfiles/maps.zip")
-} # }
+# }
 
 
 
+}
 ```

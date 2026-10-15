@@ -61,10 +61,12 @@ A data.table containing user details.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_getUSR(
           workspace = "myworkspace",
           user_id = "xxxx-xxxx-xxxx-xxx"
           )
-} # }
+# }
+}
 ```

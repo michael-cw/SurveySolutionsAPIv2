@@ -62,9 +62,11 @@ name, shape type, and import timestamp).
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_mapassign(workspace = "myworkspace",
               fileName = "Lat9264Lon625_ALL.tif",
               userName = "INT0004")
-} # }
+# }
+}
 ```

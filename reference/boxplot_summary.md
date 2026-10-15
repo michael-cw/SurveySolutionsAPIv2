@@ -37,17 +37,67 @@ invisibly otherwise
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-# Load your package
-export <- suso_export(questID = questlist$QuestionnaireId[7],
-                      version = questlist$Version[7],
-                      combineFiles = T,
-                      reloadTimeDiff = 20)
+dt <- data.table::data.table(q1 = 1:10, q2 = 11:20)
+vlabs <- data.table::data.table(
+  VariableName = c("q1", "q2"),
+  QuestionText = c("Question 1", "Question 2")
+)
+ec <- exportClass(dt, varLabels = vlabs)
+boxplot_summary(ec)
 
-# Create a summary table
-boxplot_summary <- boxplot(export)
 
-# Display the summary table
-boxplot_summary
-} # }
+#> $q1
+#> $q1$stats
+#>      [,1]
+#> [1,]  1.0
+#> [2,]  3.0
+#> [3,]  5.5
+#> [4,]  8.0
+#> [5,] 10.0
+#> 
+#> $q1$n
+#> [1] 10
+#> 
+#> $q1$conf
+#>          [,1]
+#> [1,] 3.001801
+#> [2,] 7.998199
+#> 
+#> $q1$out
+#> numeric(0)
+#> 
+#> $q1$group
+#> numeric(0)
+#> 
+#> $q1$names
+#> [1] "1"
+#> 
+#> 
+#> $q2
+#> $q2$stats
+#>      [,1]
+#> [1,] 11.0
+#> [2,] 13.0
+#> [3,] 15.5
+#> [4,] 18.0
+#> [5,] 20.0
+#> 
+#> $q2$n
+#> [1] 10
+#> 
+#> $q2$conf
+#>         [,1]
+#> [1,] 13.0018
+#> [2,] 17.9982
+#> 
+#> $q2$out
+#> numeric(0)
+#> 
+#> $q2$group
+#> numeric(0)
+#> 
+#> $q2$names
+#> [1] "1"
+#> 
+#> 
 ```

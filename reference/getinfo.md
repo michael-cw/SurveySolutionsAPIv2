@@ -40,13 +40,17 @@ To retrieve all availalbe arguments use `arg="arglist"`
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+ass_list <- list(
+  Assignments = data.frame(Id = 1, ResponsibleName = "interviewer1"),
+  ResponsibleId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+)
+asslist <- assignmentClass(ass_list)
 
-# retrieve the uid of the person responsible after retrieving details for specific assignment
+# retrieve the uid of the person responsible
 getinfo(asslist, "responsibleid")
+#> [1] "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
 
 # see all available attribute names
 getinfo(asslist, "arglist")
-
-} # }
+#> [1] "responsibleid"
 ```

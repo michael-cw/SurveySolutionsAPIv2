@@ -45,7 +45,9 @@ A data.table listing questionnaires with statistics.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_getStatsQuestionnaires()
-} # }
+# }
+}
 ```

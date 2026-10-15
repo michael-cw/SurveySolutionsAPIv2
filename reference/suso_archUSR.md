@@ -10,7 +10,7 @@ suso_archUSR(
   apiUser = suso_get_api_key("susoUser"),
   apiPass = suso_get_api_key("susoPass"),
   user_id = NULL,
-  archive = F,
+  archive = FALSE,
   workspace = suso_get_api_key("workspace"),
   token = NULL
 )
@@ -57,7 +57,8 @@ status.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # you can archive a user by archive=T
 suso_archUSR(
           workspace = "myworkspace",
@@ -70,5 +71,6 @@ suso_archUSR(
           user_id = "xxxx-xxxx-xxxx-xxx",
           archive = FALSE
           )
-} # }
+# }
+}
 ```

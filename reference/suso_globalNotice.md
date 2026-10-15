@@ -54,7 +54,8 @@ notice (or NULL if no notice is set). When `action = "set"` or
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # Get current global notice
 suso_globalNotice(action = "get")
 
@@ -64,5 +65,6 @@ suso_globalNotice(action = "set",
 
 # Delete the global notice
 suso_globalNotice(action = "delete")
-} # }
+# }
+}
 ```

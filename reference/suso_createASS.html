@@ -127,7 +127,8 @@ with the ID data, if successful.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># suso_PwCheck() == 200</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get the list of questionnaires in the workspace</span></span></span>
 <span class="r-in"><span><span class="va">questlist</span><span class="op">&lt;-</span><span class="fu"><a href="suso_getQuestDetails.html">suso_getQuestDetails</a></span><span class="op">(</span><span class="op">)</span></span></span>
@@ -138,10 +139,10 @@ with the ID data, if successful.</p>
 <span class="r-in"><span>                          questID <span class="op">=</span> <span class="va">questlist</span><span class="op">$</span><span class="va">QuestionnaireId</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>                          version <span class="op">=</span> <span class="va">questlist</span><span class="op">$</span><span class="va">Version</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

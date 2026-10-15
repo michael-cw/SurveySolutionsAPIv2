@@ -49,8 +49,10 @@ A data.table containing export process details.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # Get status of export process by jobid
 proc_info <- suso_getExportProcess(jobid = 123)
-} # }
+# }
+}
 ```

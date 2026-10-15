@@ -192,7 +192,8 @@ specific questionnaire is returned.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # List all questionnaires on the server
 q_list <- suso_getQuestDetails(operation.type = "list")
 
@@ -202,5 +203,6 @@ q_struct <- suso_getQuestDetails(
   version = q_list$Version[1],
   operation.type = "structure"
 )
-} # }
+# }
+}
 ```

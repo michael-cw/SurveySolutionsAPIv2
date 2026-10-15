@@ -91,19 +91,69 @@ a base R boxplot is returned.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Load your package</span></span></span>
-<span class="r-in"><span><span class="va">export</span> <span class="op">&lt;-</span> <span class="fu"><a href="suso_export.html">suso_export</a></span><span class="op">(</span>questID <span class="op">=</span> <span class="va">questlist</span><span class="op">$</span><span class="va">QuestionnaireId</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span>,</span></span>
-<span class="r-in"><span>                      version <span class="op">=</span> <span class="va">questlist</span><span class="op">$</span><span class="va">Version</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span>,</span></span>
-<span class="r-in"><span>                      combineFiles <span class="op">=</span> <span class="cn">T</span>,</span></span>
-<span class="r-in"><span>                      reloadTimeDiff <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Create a summary table</span></span></span>
-<span class="r-in"><span><span class="va">boxplot_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html" class="external-link">boxplot</a></span><span class="op">(</span><span class="va">export</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Display the summary table</span></span></span>
-<span class="r-in"><span><span class="va">boxplot_summary</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>q1 <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, q2 <span class="op">=</span> <span class="fl">11</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">vlabs</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  VariableName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"q1"</span>, <span class="st">"q2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  QuestionText <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Question 1"</span>, <span class="st">"Question 2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ec</span> <span class="op">&lt;-</span> <span class="fu"><a href="exportClass.html">exportClass</a></span><span class="op">(</span><span class="va">dt</span>, varLabels <span class="op">=</span> <span class="va">vlabs</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">boxplot_summary</span><span class="op">(</span><span class="va">ec</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="boxplot_summary-1.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="boxplot_summary-2.png" alt="" width="700" height="433"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $q1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $q1$stats</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [,1]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  1.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  3.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]  5.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  8.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 10.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $q1$n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $q1$conf</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 3.001801</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 7.998199</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $q1$out</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numeric(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $q1$group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numeric(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $q1$names</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $q2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $q2$stats</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [,1]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 11.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 13.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 15.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 18.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 20.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $q2$n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $q2$conf</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         [,1]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 13.0018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 17.9982</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $q2$out</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numeric(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $q2$group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numeric(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $q2$names</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

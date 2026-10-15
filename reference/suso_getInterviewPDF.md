@@ -53,7 +53,9 @@ The file path where the PDF was saved.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 pdf_path <- suso_getInterviewPDF(intID = "11111111-2222-3333-4444-555555555555")
-} # }
+# }
+}
 ```

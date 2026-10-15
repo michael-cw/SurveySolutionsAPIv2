@@ -46,8 +46,10 @@ the list of supervisors.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # receive all supervisors in the workspace
 suso_getSV()
-} # }
+# }
+}
 ```

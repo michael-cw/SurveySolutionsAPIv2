@@ -50,10 +50,12 @@ and import timestamp).
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_deletemap(
   workspace = "myworkspace",
   fileName = "Lat9264Lon625_ALL.tif"
 )
-} # }
+# }
+}
 ```

@@ -49,7 +49,9 @@ A data.table indicating the update status.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_updateWorkspace(workspace = "my_ws", displayName = "Renamed Workspace")
-} # }
+# }
+}
 ```

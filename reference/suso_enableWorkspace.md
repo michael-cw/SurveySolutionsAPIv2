@@ -50,10 +50,12 @@ A data.table indicating the enable/disable status.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # Enable workspace
 suso_enableWorkspace(workspace = "my_ws", enable = TRUE)
 # Disable workspace
 suso_enableWorkspace(workspace = "my_ws", enable = FALSE)
-} # }
+# }
+}
 ```

@@ -78,7 +78,8 @@ string.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 
 # (re-)assign existing assignment by UUID, username, or data.frame
 asslist<-suso_set_assignments(
@@ -99,5 +100,6 @@ asslist<-suso_set_assignments(
                    AssId = 10,
                    operations.type = "downsize"
                    )
-} # }
+# }
+}
 ```

@@ -24,7 +24,13 @@ set.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+suso_set_key(
+  suso_server = "https://demo.mysurvey.solutions",
+  suso_user = "api_user",
+  suso_password = "password123",
+  workspace = "primary"
+)
 suso_get_default_key("susoServer")
-} # }
+#> [1] "https://demo.mysurvey.solutions/"
+suso_clear_keys()
 ```

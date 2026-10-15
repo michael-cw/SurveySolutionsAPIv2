@@ -63,7 +63,8 @@ returns `TRUE` invisibly upon successful update.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # Get current audio recording setting
 suso_questRecordAudio(
   questID = "11111111-2222-3333-4444-555555555555",
@@ -75,5 +76,6 @@ suso_questRecordAudio(
   version = 1,
   enabled = TRUE
 )
-} # }
+# }
+}
 ```

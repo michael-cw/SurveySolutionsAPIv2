@@ -23,7 +23,7 @@ suso_export(
   addTranslation = FALSE,
   translationLanguage = NULL,
   reloadTimeDiff = 1,
-  inShinyApp = F,
+  inShinyApp = FALSE,
   verbose = FALSE,
   weight_file = NULL,
   process_mapquestions = FALSE,
@@ -212,14 +212,15 @@ too, and is as such ready for analysis.
 
 ``` r
 if (FALSE) { # suso_PwCheck() == 200
-
+# \donttest{
 questlist<-suso_getQuestDetails()
 
 exp<-suso_export(questID = questlist$QuestionnaireId[1],
                  version = questlist$Version[1],
-                 workStatus = "All", process_mapquestions = T,
-                 combineFiles = T,
+                 workStatus = "All", process_mapquestions = TRUE,
+                 combineFiles = TRUE,
                  reloadTimeDiff = 0,
                  translationLanguage = "italian")
+# }
 }
 ```

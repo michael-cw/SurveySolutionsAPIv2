@@ -73,7 +73,8 @@ is a data.table, with the ID data, if successful.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 
 # get the list of questionnaires in the workspace
 questlist<-suso_getQuestDetails()
@@ -84,7 +85,8 @@ asslist <- suso_createASS(df = IdentifyingData,
                           questID = questlist$QuestionnaireId[1],
                           version = questlist$Version[1])
 
-} # }
+# }
 
 
+}
 ```

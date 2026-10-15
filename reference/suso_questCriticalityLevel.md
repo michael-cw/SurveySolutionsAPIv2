@@ -62,7 +62,8 @@ When `level = NULL`, returns the current criticality level setting. When
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # Get current criticality level
 suso_questCriticalityLevel(
   questID = "11111111-2222-3333-4444-555555555555",
@@ -74,5 +75,6 @@ suso_questCriticalityLevel(
   version = 1,
   level = "Warn"
 )
-} # }
+# }
+}
 ```

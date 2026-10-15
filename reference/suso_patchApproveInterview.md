@@ -71,7 +71,8 @@ For details please see:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # approve the interview as supervisor
 suso_patchApproveInterview(
           workspace = "myworkspace",
@@ -83,5 +84,6 @@ suso_patchApproveInterview(
           intID = "dee7705f-d611-4b12-9b97-2b8e5b80c4ea",
           HQ = TRUE
           )
-} # }
+# }
+}
 ```

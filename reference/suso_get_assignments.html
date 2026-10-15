@@ -167,7 +167,43 @@ function with the corresponding arguments.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># suso_PwCheck() == 200</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># get all assignment for specific workspace</span></span></span>
+<span class="r-in"><span><span class="va">asslist</span><span class="op">&lt;-</span><span class="fu">suso_get_assignments</span><span class="op">(</span></span></span>
+<span class="r-in"><span>                   workspace <span class="op">=</span> <span class="st">"myworkspace"</span></span></span>
+<span class="r-in"><span>                   <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># get all assignment for specific responsible</span></span></span>
+<span class="r-in"><span><span class="va">asslist</span><span class="op">&lt;-</span><span class="fu">suso_get_assignments</span><span class="op">(</span></span></span>
+<span class="r-in"><span>                   workspace <span class="op">=</span> <span class="st">"myworkspace"</span>,</span></span>
+<span class="r-in"><span>                   responsibleID <span class="op">=</span> <span class="st">"a67d2b82-bf28-40cf-bd1a-7901225c0885"</span></span></span>
+<span class="r-in"><span>                   <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># get the overall count</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="getinfo.html">getinfo</a></span><span class="op">(</span><span class="va">asslist</span>, <span class="st">"totalcount"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#get all single assignment details</span></span></span>
+<span class="r-in"><span><span class="va">asslist</span><span class="op">&lt;-</span><span class="fu">suso_get_assignments</span><span class="op">(</span></span></span>
+<span class="r-in"><span>                   workspace <span class="op">=</span> <span class="st">"myworkspace"</span>,</span></span>
+<span class="r-in"><span>                   AssId <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span>                   <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># retrieve the uid of the person responsible</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="getinfo.html">getinfo</a></span><span class="op">(</span><span class="va">asslist</span>, <span class="st">"responsibleid"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># get the status of the quantitysettings</span></span></span>
+<span class="r-in"><span><span class="va">asslist</span><span class="op">&lt;-</span><span class="fu">suso_get_assignments</span><span class="op">(</span></span></span>
+<span class="r-in"><span>                   workspace <span class="op">=</span> <span class="st">"myworkspace"</span>,</span></span>
+<span class="r-in"><span>                   AssId <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                   operations.type <span class="op">=</span> <span class="st">"assignmentQuantitySettings"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">asslist</span></span></span>
+<span class="r-in"><span><span class="co"># Null data.table (0 rows and 0 cols)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="getinfo.html">getinfo</a></span><span class="op">(</span><span class="va">asslist</span>, <span class="st">"canchangequantity"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># [1] TRUE</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+</code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

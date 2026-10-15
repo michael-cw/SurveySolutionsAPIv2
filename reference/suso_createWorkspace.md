@@ -59,13 +59,15 @@ and not the regular API user credentials.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # Use Admin Credentials!
 suso_createWorkspace(
           new_workspace = "myworkspace1",
           displayName = "SpecialWorkspace",
           apiUser = "xxxxxx",
           apiPass = "xxxxxx")
-} # }
+# }
 
+}
 ```

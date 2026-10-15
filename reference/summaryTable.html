@@ -108,13 +108,14 @@ count as well as count of NA values.</p></li>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># suso_PwCheck() == 200</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">questlist</span><span class="op">&lt;-</span><span class="fu"><a href="suso_getQuestDetails.html">suso_getQuestDetails</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### MAIN DATA</span></span></span>
 <span class="r-in"><span><span class="va">export</span> <span class="op">&lt;-</span> <span class="fu"><a href="suso_export.html">suso_export</a></span><span class="op">(</span>questID <span class="op">=</span> <span class="va">questlist</span><span class="op">$</span><span class="va">QuestionnaireId</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>                      version <span class="op">=</span> <span class="va">questlist</span><span class="op">$</span><span class="va">Version</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span>,</span></span>
-<span class="r-in"><span>                      combineFiles <span class="op">=</span> <span class="cn">T</span>,</span></span>
+<span class="r-in"><span>                      combineFiles <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                      reloadTimeDiff <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create a summary table</span></span></span>
@@ -122,19 +123,29 @@ count as well as count of NA values.</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Display the summary table</span></span></span>
 <span class="r-in"><span><span class="va">summary_data_table</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>q1 <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, q2 <span class="op">=</span> <span class="fl">11</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">vlabs</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  VariableName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"q1"</span>, <span class="st">"q2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  QuestionText <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Question 1"</span>, <span class="st">"Question 2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ec</span> <span class="op">&lt;-</span> <span class="fu"><a href="exportClass.html">exportClass</a></span><span class="op">(</span><span class="va">dt</span>, varLabels <span class="op">=</span> <span class="va">vlabs</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">summaryTable</span><span class="op">(</span><span class="va">ec</span>, useDT <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Variable      Label  Mean    SD   Max   Min Count NA_Count count</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;char&gt;     &lt;char&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt;    &lt;num&gt; &lt;int&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:       q1 Question 1   5.5 3.028    10     1    NA        0    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:       q2 Question 2  15.5 3.028    20    11    NA        0    10</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># suso_PwCheck() == 200</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">questlist</span><span class="op">&lt;-</span><span class="fu"><a href="suso_getQuestDetails.html">suso_getQuestDetails</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### PARADATA</span></span></span>
 <span class="r-in"><span><span class="co"># 1. Pre-Processed tables created during export</span></span></span>
 <span class="r-in"><span><span class="va">para</span><span class="op">&lt;-</span><span class="fu"><a href="suso_export_paradata.html">suso_export_paradata</a></span><span class="op">(</span>questID <span class="op">=</span> <span class="va">questlist</span><span class="op">$</span><span class="va">QuestionnaireId</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>                          version <span class="op">=</span> <span class="va">questlist</span><span class="op">$</span><span class="va">Version</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, reloadTimeDiff <span class="op">=</span> <span class="fl">24</span>,</span></span>
-<span class="r-in"><span>                          workStatus <span class="op">=</span> <span class="st">"All"</span>, asList <span class="op">=</span> <span class="cn">F</span>, onlyActiveEvents <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                          workStatus <span class="op">=</span> <span class="st">"All"</span>, asList <span class="op">=</span> <span class="cn">FALSE</span>, onlyActiveEvents <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create a summary table of all event counts by action (includes always passive and active one)</span></span></span>
 <span class="r-in"><span><span class="va">actions</span> <span class="op">&lt;-</span> <span class="fu">summaryTable</span><span class="op">(</span><span class="va">para</span>, <span class="st">"action"</span><span class="op">)</span></span></span>
@@ -153,10 +164,8 @@ count as well as count of NA values.</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create a summary table of the average response time by user</span></span></span>
 <span class="r-in"><span><span class="va">resptime_user</span> <span class="op">&lt;-</span> <span class="fu">summaryTable</span><span class="op">(</span><span class="va">para</span>, <span class="st">"responsible"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

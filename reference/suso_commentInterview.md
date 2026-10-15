@@ -69,11 +69,13 @@ A data.table indicating the comment status.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_commentInterview(
   intID = "11111111-2222-3333-4444-555555555555",
   variable = "age",
   comment = "Please verify respondent age."
 )
-} # }
+# }
+}
 ```

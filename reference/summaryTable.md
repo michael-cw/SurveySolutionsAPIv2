@@ -59,13 +59,14 @@ if `useDT = TRUE`, and a plain data.table otherwise.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 questlist<-suso_getQuestDetails()
 
 ### MAIN DATA
 export <- suso_export(questID = questlist$QuestionnaireId[7],
                       version = questlist$Version[7],
-                      combineFiles = T,
+                      combineFiles = TRUE,
                       reloadTimeDiff = 20)
 
 # Create a summary table
@@ -73,19 +74,29 @@ summary_data_table <- summaryTable(export)
 
 # Display the summary table
 summary_data_table
+# }
+}
+dt <- data.table::data.table(q1 = 1:10, q2 = 11:20)
+vlabs <- data.table::data.table(
+  VariableName = c("q1", "q2"),
+  QuestionText = c("Question 1", "Question 2")
+)
+ec <- exportClass(dt, varLabels = vlabs)
+summaryTable(ec, useDT = FALSE)
+#>    Variable      Label  Mean    SD   Max   Min Count NA_Count count
+#>      <char>     <char> <num> <num> <num> <num> <num>    <num> <int>
+#> 1:       q1 Question 1   5.5 3.028    10     1    NA        0    10
+#> 2:       q2 Question 2  15.5 3.028    20    11    NA        0    10
 
-
-
-} # }
-
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 questlist<-suso_getQuestDetails()
 
 ### PARADATA
 # 1. Pre-Processed tables created during export
 para<-suso_export_paradata(questID = questlist$QuestionnaireId[1],
                           version = questlist$Version[1], reloadTimeDiff = 24,
-                          workStatus = "All", asList = F, onlyActiveEvents = T)
+                          workStatus = "All", asList = FALSE, onlyActiveEvents = TRUE)
 
 # Create a summary table of all event counts by action (includes always passive and active one)
 actions <- summaryTable(para, "action")
@@ -104,7 +115,6 @@ resptime_type <- summaryTable(para, "type")
 
 # Create a summary table of the average response time by user
 resptime_user <- summaryTable(para, "responsible")
-
-
-} # }
+# }
+}
 ```

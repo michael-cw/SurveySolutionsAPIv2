@@ -64,7 +64,8 @@ UserName and Password are provided in the required format.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 new_users <- data.frame(
   Role = "Interviewer",
   UserName = "interviewer01",
@@ -72,5 +73,6 @@ new_users <- data.frame(
   Supervisor = "supervisor01"
 )
 suso_createUSER(userlist = new_users)
-} # }
+# }
+}
 ```

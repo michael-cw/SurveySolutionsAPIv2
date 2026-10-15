@@ -75,7 +75,7 @@
 <span>  addTranslation <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  translationLanguage <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  reloadTimeDiff <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  inShinyApp <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>  inShinyApp <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  weight_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  process_mapquestions <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -219,15 +219,16 @@ for analysis.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># suso_PwCheck() == 200</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">questlist</span><span class="op">&lt;-</span><span class="fu"><a href="suso_getQuestDetails.html">suso_getQuestDetails</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">exp</span><span class="op">&lt;-</span><span class="fu">suso_export</span><span class="op">(</span>questID <span class="op">=</span> <span class="va">questlist</span><span class="op">$</span><span class="va">QuestionnaireId</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>                 version <span class="op">=</span> <span class="va">questlist</span><span class="op">$</span><span class="va">Version</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span></span>
-<span class="r-in"><span>                 workStatus <span class="op">=</span> <span class="st">"All"</span>, process_mapquestions <span class="op">=</span> <span class="cn">T</span>,</span></span>
-<span class="r-in"><span>                 combineFiles <span class="op">=</span> <span class="cn">T</span>,</span></span>
+<span class="r-in"><span>                 workStatus <span class="op">=</span> <span class="st">"All"</span>, process_mapquestions <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                 combineFiles <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                 reloadTimeDiff <span class="op">=</span> <span class="fl">0</span>,</span></span>
 <span class="r-in"><span>                 translationLanguage <span class="op">=</span> <span class="st">"italian"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>

@@ -124,12 +124,14 @@ A list containing the map report result.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_mapreport(
   workspace = "myworkspace",
   questID = "11111111-2222-3333-4444-555555555555",
   version = 1,
   variable = "gps_loc"
 )
-} # }
+# }
+}
 ```

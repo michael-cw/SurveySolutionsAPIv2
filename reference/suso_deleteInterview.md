@@ -48,7 +48,9 @@ A data.table indicating the deletion status.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_deleteInterview(intID = "11111111-2222-3333-4444-555555555555")
-} # }
+# }
+}
 ```

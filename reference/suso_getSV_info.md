@@ -48,10 +48,12 @@ A data.table containing supervisor details.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 suso_getSV_info(
   workspace = "myworkspace",
   sv_id = "xxxx-xxxx-xxxx-xxx"
 )
-} # }
+# }
+}
 ```

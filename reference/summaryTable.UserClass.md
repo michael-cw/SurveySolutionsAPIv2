@@ -55,8 +55,8 @@ otherwise a cli progress bar will be displayed.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 allintprim<-suso_getINT(workspace = "primary")
 
 # Create a summary table
@@ -64,5 +64,6 @@ summary_data_table <- summaryTable(allintprim)
 
 # Display the summary table
 summary_data_table
-} # }
+# }
+}
 ```

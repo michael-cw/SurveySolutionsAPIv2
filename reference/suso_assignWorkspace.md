@@ -78,7 +78,8 @@ the regular API user credentials.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 ## Use Admin Credentials!
 
 # Assign a new workspace to a single user, keep old one(s)
@@ -123,5 +124,6 @@ suso_assignWorkspace(
           keep_old_workspace = TRUE
           )
 
-} # }
+# }
+}
 ```

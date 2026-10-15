@@ -32,13 +32,13 @@ again.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-
+if (FALSE) { # suso_PwCheck() == 200
+# \donttest{
 # switch to workspace "windows"
 suso_set_workspace("windows")
 
 # switch to primary (default) workspace
 suso_set_workspace()
-
-} # }
+# }
+}
 ```
