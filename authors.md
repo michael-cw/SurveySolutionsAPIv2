@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/michael-cw/SurveySolutionsAPIv2/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/michael-cw/SurveySolutionsAPIv2/blob/v0.1.2/DESCRIPTION)
 
 Wild M (2026). *SurveySolutionsAPIv2: Comprehensive API Access to Your
 'Survey Solutions' Server Using 'httr2'*. R package version 0.1.2,

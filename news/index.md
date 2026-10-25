@@ -2,6 +2,8 @@
 
 ## SurveySolutionsAPIv2 0.1.2
 
+CRAN release: 2026-10-24
+
 #### New Features & Endpoint Parity
 
 - Completed coverage of all Survey Solutions REST (v1, v2) and GraphQL
