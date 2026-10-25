@@ -52,7 +52,7 @@ automated data pipelines.
 
 ## Installation
 
-### From CRAN (once published)
+### From CRAN
 
 ``` r
 
@@ -134,12 +134,13 @@ Distribute assignments to field enumerators with preloaded sample data:
 
 ``` r
 
-suso_set_assignments(
-  questID     = quest_list$QuestionnaireId[1],
-  version     = quest_list$Version[1],
-  responsible = "interviewer01",
-  quantity    = 10,
-  prefill     = list(cluster_id = 101, region = "North")
+suso_createASS(
+  questID = quest_list$QuestionnaireId[1],
+  version = quest_list$Version[1],
+  df = list(
+    ResponsibleName = "interviewer01",
+    Quantity        = 10
+  )
 )
 ```
 
