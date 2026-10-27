@@ -212,6 +212,23 @@ website](https://michael-cw.github.io/SurveySolutionsAPIv2/):
 
 ------------------------------------------------------------------------
 
+## Acknowledgments
+
+Parts of the development of this package were co-financed by the Yemen
+Resilience, Recovery, and Reconstruction Trust Fund (Yemen Fund), which
+was established by the World Bank in 2022 as a pooled funding mechanism
+and a partnership platform to support Yemen’s transition over a 10-year
+horizon. The Yemen Fund is supported by the United Kingdom’s Foreign,
+Commonwealth and Development Office, the Kingdom of the Netherlands, the
+Swiss Confederation, and the European Union Delegation to Yemen. The
+author would like to express gratitude for this important and timely
+contribution.
+
+For more information about the Yemen Fund, visit:
+<https://www.worldbank.org/en/programs/the-yemen-fund>
+
+------------------------------------------------------------------------
+
 ## License
 
 This project is licensed under the MIT License — see the
